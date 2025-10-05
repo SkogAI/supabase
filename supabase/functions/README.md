@@ -7,12 +7,31 @@ Edge Functions are server-side TypeScript functions that run on Deno, distribute
 ```
 functions/
 ├── README.md
+├── deno.json         # Deno configuration and import maps
 └── hello-world/
     ├── index.ts      # Main function code
     └── test.ts       # Unit tests
 ```
 
 ## Development
+
+### Configuration
+
+The `deno.json` file provides:
+- **Import Maps**: Centralized dependency management with shorthand imports
+- **Compiler Options**: TypeScript configuration for strict type checking
+- **Linting Rules**: Consistent code quality standards
+- **Formatting**: Automated code formatting settings
+
+You can use import maps in your functions:
+
+```typescript
+// Instead of: import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { serve } from "std/http/server.ts";
+
+// Instead of: import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "@supabase/supabase-js";
+```
 
 ### Creating a New Function
 
