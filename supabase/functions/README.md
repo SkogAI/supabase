@@ -18,6 +18,9 @@ functions/
 │   └── test.ts       # Unit tests
 └── openrouter-chat/
     ├── index.ts      # Example: OpenRouter (100+ AI models)
+├── deno.json         # Deno configuration and import maps
+└── hello-world/
+    ├── index.ts      # Main function code
     └── test.ts       # Unit tests
 ```
 
