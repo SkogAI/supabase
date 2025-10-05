@@ -226,12 +226,23 @@ gh secret set SUPABASE_DB_PASSWORD
 
 Current schema includes:
 
-- **`profiles`** - User profiles with RLS policies
-- **`posts`** - User-generated content
+- **`profiles`** - User profiles with comprehensive RLS policies
+- **`posts`** - User-generated content with role-based access
 - **Automatic triggers** - `updated_at` timestamp management
 - **Auto profile creation** - On user signup via Auth
 
 See `supabase/migrations/` for full schema.
+
+### Row Level Security (RLS)
+
+All tables have comprehensive RLS policies:
+
+- ✅ **Service Role**: Full admin access for backend operations
+- ✅ **Authenticated Users**: Can view all public data, manage own resources
+- ✅ **Anonymous Users**: Read-only access to published content
+- ✅ **Security**: Users cannot access or modify other users' private data
+
+See **[docs/RLS_POLICIES.md](docs/RLS_POLICIES.md)** for complete policy documentation and patterns.
 
 ### Example: Using RLS Policies
 
@@ -242,6 +253,7 @@ ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
 -- Policy: Users can only see their own drafts
 CREATE POLICY "Users see own drafts"
   ON posts FOR SELECT
+  TO authenticated
   USING (published = true OR auth.uid() = user_id);
 ```
 
@@ -261,6 +273,8 @@ npm run lint:sql
 ## 📚 Documentation
 
 - **[DEVOPS.md](DEVOPS.md)** - Complete DevOps guide with secrets, workflows, troubleshooting
+- **[docs/RLS_POLICIES.md](docs/RLS_POLICIES.md)** - Complete RLS policy guide with patterns and best practices
+- **[docs/RLS_TESTING.md](docs/RLS_TESTING.md)** - RLS testing guidelines for local and CI/CD
 - **[supabase/functions/README.md](supabase/functions/README.md)** - Edge functions guide
 - [Supabase CLI Reference](https://supabase.com/docs/reference/cli)
 - [Local Development Guide](https://supabase.com/docs/guides/local-development)
