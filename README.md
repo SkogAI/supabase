@@ -247,10 +247,28 @@ CREATE POLICY "Users see own drafts"
 
 ## 🧪 Testing
 
+### Edge Functions
+
 ```bash
-# Test edge functions
+# Run all function tests
 npm run test:functions
 
+# Run tests with coverage
+npm run test:functions:coverage
+
+# Run tests in watch mode
+npm run test:functions:watch
+
+# Use the test runner script
+cd supabase/functions
+./run-tests.sh --coverage
+```
+
+**📖 See [supabase/functions/TESTING.md](supabase/functions/TESTING.md) for comprehensive testing guide**
+
+### Database
+
+```bash
 # Validate migrations locally
 npm run db:reset
 

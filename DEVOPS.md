@@ -134,7 +134,17 @@ Complete function validation:
 - Linting
 - Unit tests
 - Integration tests with local Supabase
+- Test coverage reporting (minimum 80% threshold)
 - Security analysis
+
+**Testing Framework Features:**
+- Shared test utilities and helpers
+- Mock data fixtures for consistent testing
+- Integration test helpers for database operations
+- Coverage reporting with LCOV format
+- CI/CD integration with automatic reports
+
+**📖 See [supabase/functions/TESTING.md](supabase/functions/TESTING.md) for complete testing guide**
 
 #### 5. **Schema Linting** (`schema-lint.yml`)
 
