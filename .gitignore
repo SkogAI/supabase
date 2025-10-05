@@ -14,6 +14,11 @@ signing_keys.json
 
 # OS
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
 # IDE
@@ -22,13 +27,40 @@ Thumbs.db
 *.swo
 *~
 
-# Node (if using)
+# Node
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
 dist/
 .next/
 out/
+build/
+
+# TypeScript
+*.tsbuildinfo
+
+# Generated types (uncomment to ignore)
+# types/database.ts
+
+# Backups
+backups/
+*.backup
+*.dump
+
+# Testing
+coverage/
+.nyc_output/
 
 # Docker
 .dockerignore
 docker-compose.override.yml
+
+# Misc
 .github/.claude/data/sessions
+*.pid
+*.seed
+*.pid.lock
+.claude/data/sessions

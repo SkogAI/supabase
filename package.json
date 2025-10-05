@@ -1,0 +1,42 @@
+{
+  "name": "supabase-project",
+  "version": "1.0.0",
+  "description": "Local Supabase development with database, auth, storage, and edge functions",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "db:status": "supabase status",
+    "db:diff": "supabase db diff --use-migra",
+    "migration:new": "supabase migration new",
+    "migration:up": "supabase db reset",
+    "functions:serve": "supabase functions serve",
+    "functions:new": "supabase functions new",
+    "functions:deploy": "supabase functions deploy",
+    "types:generate": "supabase gen types typescript --local > types/database.ts",
+    "types:watch": "nodemon --watch supabase/migrations --exec npm run types:generate",
+    "lint:sql": "sqlfluff lint supabase/migrations",
+    "lint:functions": "cd supabase/functions && deno lint",
+    "format:functions": "cd supabase/functions && deno fmt",
+    "test:functions": "cd supabase/functions && deno test --allow-all",
+    "dev": "npm-run-all --parallel db:start functions:serve",
+    "setup": "npm run db:start && npm run types:generate"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "nodemon": "^3.0.2",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.3.3"
+  },
+  "keywords": [
+    "supabase",
+    "postgres",
+    "database",
+    "edge-functions",
+    "backend"
+  ],
+  "author": "",
+  "license": "MIT"
+}
