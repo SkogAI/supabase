@@ -7,8 +7,11 @@ Edge Functions are server-side TypeScript functions that run on Deno, distribute
 ```
 functions/
 ├── README.md
-└── hello-world/
-    ├── index.ts      # Main function code
+├── hello-world/
+│   ├── index.ts      # Example: Basic function with auth & database
+│   └── test.ts       # Unit tests
+└── openai-chat/
+    ├── index.ts      # Example: OpenAI integration
     └── test.ts       # Unit tests
 ```
 
@@ -232,6 +235,15 @@ const response = await fetch("https://api.example.com/data", {
 
 const result = await response.json();
 ```
+
+**Example: OpenAI Integration**
+
+See the `openai-chat` function for a complete example of integrating OpenAI with Supabase Edge Functions. It demonstrates:
+- External API calls (OpenAI)
+- Environment variable handling
+- Error handling for API failures
+- User authentication
+- See [OPENAI_SETUP.md](../../OPENAI_SETUP.md) for setup instructions
 
 ### Scheduled Functions (via cron)
 
