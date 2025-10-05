@@ -21,6 +21,8 @@
     "lint:functions": "cd supabase/functions && deno lint",
     "format:functions": "cd supabase/functions && deno fmt",
     "test:functions": "cd supabase/functions && deno test --allow-all",
+    "test:storage": "deno test --allow-all tests/storage-test-example.ts",
+    "test:all": "npm run test:functions && npm run test:storage",
     "dev": "npm-run-all --parallel db:start functions:serve",
     "setup": "npm run db:start && npm run types:generate"
   },
