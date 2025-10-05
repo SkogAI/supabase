@@ -73,22 +73,16 @@ jobs:
             echo "No edge functions to deploy"
           fi
 
-      - name: Generate deployment summary
-        run: |
-          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Successfully deployed to **${{ github.event.inputs.environment || 'production' }}**" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Deployed Components" >> $GITHUB_STEP_SUMMARY
-          echo "- Database migrations" >> $GITHUB_STEP_SUMMARY
-
-          if [ -d "supabase/functions" ] && [ -n "$(ls -A supabase/functions 2>/dev/null)" ]; then
-            echo "- Edge functions:" >> $GITHUB_STEP_SUMMARY
-            cd supabase/functions
-            for dir in */; do
-              echo "  - \`${dir%/}\`" >> $GITHUB_STEP_SUMMARY
-            done
-          fi
+      - name: Generate deployment summary with Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          prompt: |
+            Generate a comprehensive deployment summary report and write to $GITHUB_STEP_SUMMARY:
+            - Environment deployed: ${{ github.event.inputs.environment || 'production' }}
+            - List all database migrations that were applied
+            - List all edge functions that were deployed (check supabase/functions/ directory)
+            - Include deployment timestamp and git commit
+            - Add any relevant deployment notes or warnings
 
       - name: Notify deployment
         if: success()

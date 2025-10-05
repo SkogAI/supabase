@@ -68,21 +68,15 @@ jobs:
             ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC
           "
 
-      - name: Generate performance report
-        run: |
-          echo "## Database Performance Report" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Performance Analysis Completed" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          if [ -f "potential-index-candidates.json" ]; then
-            echo "📊 Performance data collected" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Recommendations:**" >> $GITHUB_STEP_SUMMARY
-            echo "- Review columns with high n_distinct values for potential indexing" >> $GITHUB_STEP_SUMMARY
-            echo "- Monitor query performance using pg_stat_statements" >> $GITHUB_STEP_SUMMARY
-            echo "- Consider partitioning large tables" >> $GITHUB_STEP_SUMMARY
-          fi
+      - name: Generate performance report with Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          prompt: |
+            Analyze the performance data files and generate a comprehensive report:
+            - Review potential-index-candidates.json for indexing opportunities
+            - Analyze active-queries.json for query patterns
+            - Provide specific, actionable recommendations
+            - Write the report to $GITHUB_STEP_SUMMARY in markdown format
 
       - name: Upload performance artifacts
         uses: actions/upload-artifact@v4
@@ -144,11 +138,15 @@ EOF
             echo "No edge functions to benchmark"
           fi
 
-      - name: Generate benchmark summary
-        run: |
-          echo "## Edge Functions Benchmark" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Benchmark completed" >> $GITHUB_STEP_SUMMARY
+      - name: Generate benchmark summary with Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          prompt: |
+            Analyze the edge function benchmark results and create a summary report.
+            Write a comprehensive benchmark report to $GITHUB_STEP_SUMMARY including:
+            - Performance metrics for each function
+            - Comparison of response times
+            - Recommendations for optimization
 
       - name: Stop Supabase
         if: always()

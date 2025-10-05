@@ -49,22 +49,21 @@ jobs:
             fi
           fi
 
-      - name: Generate migration report
+      - name: Generate migration analysis with Claude Code
         if: github.event_name == 'pull_request'
-        run: |
-          echo "## Migration Validation Report" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ All migrations applied successfully" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Migration Files" >> $GITHUB_STEP_SUMMARY
-          cd supabase/migrations
-          if [ -d "$(pwd)" ] && [ -n "$(ls -A *.sql 2>/dev/null)" ]; then
-            ls -1 *.sql | while read file; do
-              echo "- \`$file\`" >> $GITHUB_STEP_SUMMARY
-            done
-          else
-            echo "- No migration files found" >> $GITHUB_STEP_SUMMARY
-          fi
+        uses: anthropics/claude-code-action@v1
+        with:
+          prompt: |
+            Analyze the database migrations and generate a comprehensive validation report to $GITHUB_STEP_SUMMARY:
+            1. Review all migration files in supabase/migrations/
+            2. Analyze each migration for:
+               - Breaking changes
+               - Performance implications
+               - Data integrity risks
+               - Rollback procedures
+            3. Check for best practices (indexes, constraints, etc.)
+            4. Provide migration order verification
+            5. Suggest testing strategies for each migration
 
       - name: Stop Supabase
         if: always()

@@ -31,3 +31,4 @@ out/
 # Docker
 .dockerignore
 docker-compose.override.yml
+.github/.claude/data/sessions

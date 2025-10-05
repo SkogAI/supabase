@@ -54,38 +54,31 @@ jobs:
           name: typescript-types-${{ github.run_number }}
           path: types/database.ts
 
-      - name: Create PR comment with types
+      - name: Analyze types and create PR comment with Claude Code
         if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
+        uses: anthropics/claude-code-action@v1
         with:
-          script: |
-            const fs = require('fs');
-            let message = '## 🔷 TypeScript Types Generated\n\n';
-            message += '✅ Database types have been generated successfully.\n\n';
-            message += 'Download the artifact from this workflow run to get the latest `database.ts` file.\n\n';
-            message += '### Usage\n';
-            message += '```typescript\n';
-            message += 'import { Database } from "./types/database"\n\n';
-            message += 'const supabase = createClient<Database>(url, key)\n';
-            message += '```\n';
+          prompt: |
+            Analyze the generated TypeScript types file at types/database.ts and:
+            1. Review the type definitions for any issues or improvements
+            2. Generate a detailed PR comment explaining:
+               - What database schema changes are reflected in the types
+               - New tables/columns added
+               - Any breaking changes to existing types
+               - Usage examples specific to the new types
+            3. Post the comment to PR #${{ github.event.pull_request.number }}
+            4. Include download instructions for the artifact
 
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: message
-            });
-
-      - name: Generate summary
-        run: |
-          echo "## TypeScript Type Generation" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Types generated: \`types/database.ts\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
-          echo "1. Download the artifact from this workflow run" >> $GITHUB_STEP_SUMMARY
-          echo "2. Add the types file to your frontend project" >> $GITHUB_STEP_SUMMARY
-          echo "3. Import and use with your Supabase client" >> $GITHUB_STEP_SUMMARY
+      - name: Generate comprehensive type summary with Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          prompt: |
+            Generate a comprehensive TypeScript type generation summary to $GITHUB_STEP_SUMMARY:
+            1. Analyze types/database.ts and list all generated types
+            2. Provide integration guide with code examples
+            3. Document best practices for using these types
+            4. Include troubleshooting tips
+            5. Add migration guide if types changed significantly
 
       - name: Stop Supabase
         if: always()
