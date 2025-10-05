@@ -136,7 +136,7 @@ I've created 12 comprehensive issues to track additional features:
 - #2 - Setup edge functions directory ✅ (COMPLETED)
 - #3 - Create database seed data ✅ (COMPLETED)
 - #4 - Setup Row Level Security policies ⚡ (Initial RLS complete, expand as needed)
-- #5 - Configure storage buckets
+- #5 - Configure storage buckets ✅ (COMPLETED)
 - #6 - Setup TypeScript type generation ✅ (COMPLETED)
 - #7 - Configure GitHub Actions secrets (ACTION REQUIRED)
 - #8 - Setup local development documentation ✅ (COMPLETED)
@@ -168,11 +168,7 @@ I've created 12 comprehensive issues to track additional features:
    - Add policies for new tables
    - Test policies thoroughly
 
-5. **Setup Storage** (Issue #5)
-   - Configure buckets for file uploads
-   - Add storage RLS policies
-
-6. **Customize Edge Functions** (Issue #2)
+5. **Customize Edge Functions** (Issue #2)
    - Adapt hello-world example
    - Add your business logic
    - Write comprehensive tests
@@ -230,7 +226,7 @@ Before deploying to production:
 - [ ] Strong database password set
 - [ ] Security scans passing
 - [ ] No hardcoded secrets in code
-- [ ] Storage policies configured
+- [x] Storage policies configured
 - [ ] Authentication flows tested
 
 ## 🆘 Need Help?

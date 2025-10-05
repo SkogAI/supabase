@@ -261,6 +261,7 @@ npm run lint:sql
 ## 📚 Documentation
 
 - **[DEVOPS.md](DEVOPS.md)** - Complete DevOps guide with secrets, workflows, troubleshooting
+- **[STORAGE.md](STORAGE.md)** - Storage buckets, file uploads, and usage patterns
 - **[supabase/functions/README.md](supabase/functions/README.md)** - Edge functions guide
 - [Supabase CLI Reference](https://supabase.com/docs/reference/cli)
 - [Local Development Guide](https://supabase.com/docs/guides/local-development)

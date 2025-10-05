@@ -412,6 +412,7 @@ supabase functions logs <name> --tail
 - [Edge Functions Guide](https://supabase.com/docs/guides/functions)
 - [Database Migrations](https://supabase.com/docs/guides/database/migrations)
 - [Row Level Security](https://supabase.com/docs/guides/database/postgres/row-level-security)
+- [Storage Guide](https://supabase.com/docs/guides/storage) - See also [STORAGE.md](STORAGE.md) for project-specific patterns
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 
 ---
