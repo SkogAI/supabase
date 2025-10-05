@@ -235,6 +235,7 @@ Before deploying to production:
 
 ## 🆘 Need Help?
 
+- **Maintainers** - Contact @Skogix or @Ic0n for assistance
 - **DEVOPS.md** - Complete DevOps guide with troubleshooting
 - **README.md** - Development workflow guide
 - **GitHub Issues** - Track feature development
