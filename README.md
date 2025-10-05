@@ -262,6 +262,17 @@ All tables have comprehensive RLS policies:
 
 See **[docs/RLS_POLICIES.md](docs/RLS_POLICIES.md)** for complete policy documentation and patterns.
 
+### Row Level Security (RLS)
+
+All tables have comprehensive RLS policies:
+
+- ✅ **Service Role**: Full admin access for backend operations
+- ✅ **Authenticated Users**: Can view all public data, manage own resources
+- ✅ **Anonymous Users**: Read-only access to published content
+- ✅ **Security**: Users cannot access or modify other users' private data
+
+See **[docs/RLS_POLICIES.md](docs/RLS_POLICIES.md)** for complete policy documentation and patterns.
+
 ### Example: Using RLS Policies
 
 ```sql
@@ -515,17 +526,8 @@ For more details, see `examples/realtime/README.md`
 
 ### Core Documentation
 - **[DEVOPS.md](DEVOPS.md)** - Complete DevOps guide with secrets, workflows, troubleshooting
-- **[QUICKSTART_OPENAI.md](QUICKSTART_OPENAI.md)** - 5-minute OpenAI setup guide ⚡
-- **[OPENAI_SETUP.md](OPENAI_SETUP.md)** - OpenAI integration guide for Studio AI features and Edge Functions
 - **[docs/RLS_POLICIES.md](docs/RLS_POLICIES.md)** - Complete RLS policy guide with patterns and best practices
 - **[docs/RLS_TESTING.md](docs/RLS_TESTING.md)** - RLS testing guidelines for local and CI/CD
-
-### MCP Server Infrastructure (AI Agents)
-- **[docs/MCP_SERVER_ARCHITECTURE.md](docs/MCP_SERVER_ARCHITECTURE.md)** - MCP server architecture and design patterns for AI agents
-- **[docs/MCP_SERVER_CONFIGURATION.md](docs/MCP_SERVER_CONFIGURATION.md)** - Configuration templates for all agent types and environments
-- **[docs/MCP_AUTHENTICATION.md](docs/MCP_AUTHENTICATION.md)** - Authentication strategies and security best practices
-- **[docs/MCP_CONNECTION_EXAMPLES.md](docs/MCP_CONNECTION_EXAMPLES.md)** - Code examples in Node.js, Python, Deno, and more
-- **[docs/MCP_IMPLEMENTATION_SUMMARY.md](docs/MCP_IMPLEMENTATION_SUMMARY.md)** - Complete MCP implementation overview
 - **[supabase/functions/README.md](supabase/functions/README.md)** - Edge functions guide
 - [Supabase CLI Reference](https://supabase.com/docs/reference/cli)
 - [Local Development Guide](https://supabase.com/docs/guides/local-development)
