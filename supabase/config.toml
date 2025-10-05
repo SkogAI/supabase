@@ -10,8 +10,11 @@ enabled = true
 port = 8000
 # Schemas to expose in your API. Tables, views and stored procedures in this schema will get API
 # endpoints. `public` and `graphql_public` schemas are included by default.
+# To expose additional schemas, add them to this list: schemas = ["public", "graphql_public", "my_schema"]
+# See: SCHEMA_ORGANIZATION.md for schema organization and custom types documentation
 schemas = ["public", "graphql_public"]
 # Extra schemas to add to the search_path of every request.
+# This allows referencing objects without schema qualification.
 extra_search_path = ["public", "extensions"]
 # The maximum number of rows returns from a view, table, or stored procedure. Limits payload size
 # for accidental or malicious requests.

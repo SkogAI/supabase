@@ -16,7 +16,75 @@ SET client_min_messages = warning;
 -- TEST USERS
 -- ============================================================================
 -- Note: In production, users are created via Supabase Auth
--- For local testing, we'll create profiles directly
+-- For local testing, we'll create auth users first, then profiles
+
+-- Create auth users (required for foreign key constraint)
+INSERT INTO auth.users (
+    id,
+    instance_id,
+    aud,
+    role,
+    email,
+    encrypted_password,
+    email_confirmed_at,
+    created_at,
+    updated_at,
+    raw_app_meta_data,
+    raw_user_meta_data,
+    is_super_admin,
+    confirmation_token,
+    recovery_token
+)
+VALUES
+    (
+        '00000000-0000-0000-0000-000000000001',
+        '00000000-0000-0000-0000-000000000000',
+        'authenticated',
+        'authenticated',
+        'alice@example.com',
+        crypt('password123', gen_salt('bf')),
+        NOW() - INTERVAL '30 days',
+        NOW() - INTERVAL '30 days',
+        NOW() - INTERVAL '30 days',
+        '{"provider": "email", "providers": ["email"]}',
+        '{"username": "alice", "full_name": "Alice Johnson"}',
+        false,
+        '',
+        ''
+    ),
+    (
+        '00000000-0000-0000-0000-000000000002',
+        '00000000-0000-0000-0000-000000000000',
+        'authenticated',
+        'authenticated',
+        'bob@example.com',
+        crypt('password123', gen_salt('bf')),
+        NOW() - INTERVAL '25 days',
+        NOW() - INTERVAL '25 days',
+        NOW() - INTERVAL '25 days',
+        '{"provider": "email", "providers": ["email"]}',
+        '{"username": "bob", "full_name": "Bob Smith"}',
+        false,
+        '',
+        ''
+    ),
+    (
+        '00000000-0000-0000-0000-000000000003',
+        '00000000-0000-0000-0000-000000000000',
+        'authenticated',
+        'authenticated',
+        'charlie@example.com',
+        crypt('password123', gen_salt('bf')),
+        NOW() - INTERVAL '20 days',
+        NOW() - INTERVAL '20 days',
+        NOW() - INTERVAL '20 days',
+        '{"provider": "email", "providers": ["email"]}',
+        '{"username": "charlie", "full_name": "Charlie Davis"}',
+        false,
+        '',
+        ''
+    )
+ON CONFLICT (id) DO NOTHING;
 
 -- Test user profiles
 INSERT INTO public.profiles (id, username, full_name, avatar_url, bio, created_at)
