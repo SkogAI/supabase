@@ -36,6 +36,7 @@ This will:
    ```bash
    cp .env.example .env
    # Edit .env and add your API keys (optional for local dev)
+   # For OpenAI integration, see OPENAI_SETUP.md
    ```
 
 4. **Start Supabase**
@@ -261,6 +262,7 @@ npm run lint:sql
 ## 📚 Documentation
 
 - **[DEVOPS.md](DEVOPS.md)** - Complete DevOps guide with secrets, workflows, troubleshooting
+- **[OPENAI_SETUP.md](OPENAI_SETUP.md)** - OpenAI integration guide for Studio AI features and Edge Functions
 - **[supabase/functions/README.md](supabase/functions/README.md)** - Edge functions guide
 - [Supabase CLI Reference](https://supabase.com/docs/reference/cli)
 - [Local Development Guide](https://supabase.com/docs/guides/local-development)
