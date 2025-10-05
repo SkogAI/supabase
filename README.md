@@ -83,9 +83,22 @@ This will:
 │   ├── backup.yml
 │   └── dependency-updates.yml
 ├── DEVOPS.md                    # Complete DevOps guide
+├── QUICKSTART_OPENAI.md         # Quick OpenAI setup (5 min)
+├── OPENAI_SETUP.md              # Detailed OpenAI guide
 ├── package.json                 # npm scripts
 └── .env.example                 # Environment template
 ```
+
+## 🤖 OpenAI Integration
+
+Integrate OpenAI with Supabase for AI-powered features:
+
+- **Studio AI Features**: SQL generation, query assistance
+- **Edge Functions**: Custom AI endpoints
+
+**Quick Start**: See [QUICKSTART_OPENAI.md](QUICKSTART_OPENAI.md) for 5-minute setup  
+**Full Guide**: See [OPENAI_SETUP.md](OPENAI_SETUP.md) for complete documentation  
+**Example**: See [supabase/functions/openai-chat](supabase/functions/openai-chat) for working code
 
 ## 💻 Development Workflow
 
@@ -263,6 +276,7 @@ npm run lint:sql
 ## 📚 Documentation
 
 - **[DEVOPS.md](DEVOPS.md)** - Complete DevOps guide with secrets, workflows, troubleshooting
+- **[QUICKSTART_OPENAI.md](QUICKSTART_OPENAI.md)** - 5-minute OpenAI setup guide ⚡
 - **[OPENAI_SETUP.md](OPENAI_SETUP.md)** - OpenAI integration guide for Studio AI features and Edge Functions
 - **[supabase/functions/README.md](supabase/functions/README.md)** - Edge functions guide
 - [Supabase CLI Reference](https://supabase.com/docs/reference/cli)
