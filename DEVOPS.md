@@ -32,6 +32,7 @@ Configure these secrets in GitHub Settings → Secrets and variables → Actions
 | `CLAUDE_CODE_OAUTH_TOKEN` | Claude Code integration token | PR analysis, automated reviews |
 | `SUPABASE_OPENAI_API_KEY` | OpenAI API key for Studio AI features | Local development (optional), see [OPENAI_SETUP.md](OPENAI_SETUP.md) |
 | `OPENAI_API_KEY` | OpenAI API key for Edge Functions | Custom AI features, see [openai-chat function](supabase/functions/openai-chat/) |
+| `OPENROUTER_API_KEY` | OpenRouter API key for Edge Functions | Access 100+ AI models, see [openrouter-chat function](supabase/functions/openrouter-chat/) |
 
 ### Setting Up Secrets
 
