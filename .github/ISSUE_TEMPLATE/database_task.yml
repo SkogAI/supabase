@@ -1,0 +1,101 @@
+name: 🗄️ Database Task
+description: Track database schema changes, migrations, or RLS policy updates
+title: "[Database]: "
+labels: ["database", "migration"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for database-related tasks including migrations, schema changes, and RLS policies.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Task Description
+      description: Describe the database change or migration needed
+      placeholder: We need to add/modify...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Task Type
+      description: What type of database task is this?
+      options:
+        - New Table
+        - Schema Change
+        - Migration
+        - RLS Policy
+        - Index Optimization
+        - Data Migration
+        - Function/Trigger
+        - Performance Tuning
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: schema
+    attributes:
+      label: Schema/SQL
+      description: Provide the SQL schema or migration code (if applicable)
+      placeholder: |
+        ```sql
+        CREATE TABLE ...
+        ```
+      render: sql
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: What needs to be completed for this task to be done?
+      placeholder: |
+        - [ ] Migration created
+        - [ ] RLS policies added
+        - [ ] Tests passing
+        - [ ] Documentation updated
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-deployment Checklist
+      description: Ensure these items are addressed before deploying
+      options:
+        - label: Migration tested locally
+        - label: Rollback plan documented
+        - label: RLS policies configured (if applicable)
+        - label: Indexes optimized (if applicable)
+        - label: Breaking changes documented
+        - label: Data migration strategy defined (if applicable)
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact Assessment
+      description: What is the impact of this change?
+      placeholder: |
+        - Affects tables: ...
+        - Breaking changes: ...
+        - Performance impact: ...
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How urgent is this database change?
+      options:
+        - High - Critical/Blocking
+        - Medium - Should be done soon
+        - Low - Nice to have
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any other relevant information or links

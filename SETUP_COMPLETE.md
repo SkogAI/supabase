@@ -131,22 +131,49 @@ npm run functions:serve
 supabase functions deploy my-function
 ```
 
-## 📊 GitHub Issues Created
+## 📊 GitHub Issues
 
-I've created 12 comprehensive issues to track additional features:
+### Issue Management System
 
-- #1 - Setup database migrations directory ✅ (COMPLETED)
-- #2 - Setup edge functions directory ✅ (COMPLETED)
-- #3 - Create database seed data ✅ (COMPLETED)
-- #4 - Setup Row Level Security policies ⚡ (Initial RLS complete, expand as needed)
-- #5 - Configure storage buckets
-- #6 - Setup TypeScript type generation ✅ (COMPLETED)
-- #7 - Configure GitHub Actions secrets (ACTION REQUIRED)
-- #8 - Setup local development documentation ✅ (COMPLETED)
-- #9 - Configure custom database schemas ✅ (COMPLETED)
-- #10 - Setup testing framework ✅ (COMPLETED)
-- #11 - Database performance monitoring
-- #12 - Configure realtime subscriptions
+We've set up a comprehensive issue management system with:
+
+- ✅ **Issue Templates** - Structured templates for bugs, features, DevOps tasks, and database changes
+- ✅ **Issue Creation Script** - Automated script to create project tracking issues
+- ✅ **Documentation** - Complete guide in `docs/ISSUE_MANAGEMENT.md`
+
+### Creating Issues
+
+**Via Script** (recommended for initial setup):
+```bash
+./scripts/create-issues.sh
+```
+
+**Via GitHub Web**:
+Visit https://github.com/SkogAI/supabase/issues/new/choose
+
+**Via GitHub CLI**:
+```bash
+gh issue create --repo SkogAI/supabase --web
+```
+
+### Recommended Issues to Track
+
+The issue creation script will create 12 comprehensive issues:
+
+1. **Configure Storage Buckets** - File upload infrastructure
+2. **Database Performance Monitoring** - Track and optimize queries
+3. **Configure Realtime Subscriptions** - Live updates for tables
+4. **Expand RLS Policies for Production** - Enhanced security (High Priority)
+5. **Edge Functions - Production Examples** - Real-world function templates
+6. **Configure GitHub Actions Secrets** - Enable CI/CD (High Priority)
+7. **Testing Framework Enhancement** - Improve test coverage
+8. **Custom Database Schemas Enhancement** - Advanced type system
+9. **Documentation Review and Updates** - Keep docs current
+10. **Security Audit and Hardening** - Production security (High Priority)
+11. **Backup and Recovery Procedures** - Disaster recovery (High Priority)
+12. **Monitoring and Alerting Setup** - Operational monitoring
+
+See `docs/ISSUE_MANAGEMENT.md` for detailed information on using the issue system.
 
 ## 🎯 Priority Actions
 

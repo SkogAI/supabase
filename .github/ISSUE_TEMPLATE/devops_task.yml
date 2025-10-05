@@ -1,0 +1,94 @@
+name: 🔧 DevOps Task
+description: Track DevOps, infrastructure, or CI/CD related tasks
+title: "[DevOps]: "
+labels: ["devops", "infrastructure"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for DevOps, infrastructure, CI/CD, or deployment-related tasks.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Task Description
+      description: Describe the DevOps task or infrastructure change needed
+      placeholder: We need to...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: What type of DevOps task is this?
+      options:
+        - CI/CD Workflow
+        - Database Migration
+        - Deployment
+        - Monitoring/Logging
+        - Security
+        - Performance
+        - Backup/Recovery
+        - Configuration
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: What needs to be completed for this task to be done?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation Details
+      description: Any technical details or approach for implementing this task
+      placeholder: |
+        - Step 1: ...
+        - Step 2: ...
+
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks/Considerations
+      description: Any risks, breaking changes, or special considerations
+      placeholder: |
+        - Risk 1: ...
+        - Mitigation: ...
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How urgent is this task?
+      options:
+        - High - Blocking or critical
+        - Medium - Should be done soon
+        - Low - Nice to have
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: List any dependencies or prerequisites
+      placeholder: |
+        - Depends on #123
+        - Requires: ...
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any other relevant information, links, or documentation

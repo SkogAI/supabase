@@ -383,13 +383,28 @@ See [DEVOPS.md](DEVOPS.md) for comprehensive troubleshooting.
 
 ## 🤝 Contributing
 
+### Development Workflow
+
 1. Create feature branch: `git checkout -b feature/my-feature`
 2. Make changes and commit: `git commit -m "Add feature"`
 3. Push branch: `git push origin feature/my-feature`
-4. Open Pull Request
+4. Open Pull Request (use issue templates!)
 5. Wait for CI checks to pass
 6. Request review
 7. Merge to main → Auto-deploy!
+
+### Issue Management
+
+We use GitHub Issues with structured templates to track work:
+
+- **Bug Reports** - Report issues and unexpected behavior
+- **Feature Requests** - Suggest enhancements
+- **DevOps Tasks** - Infrastructure and CI/CD work
+- **Database Tasks** - Schema changes and migrations
+
+**Create an issue**: https://github.com/SkogAI/supabase/issues/new/choose
+
+**See [docs/ISSUE_MANAGEMENT.md](docs/ISSUE_MANAGEMENT.md) for complete guide.**
 
 ## 📝 License
 
