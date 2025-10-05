@@ -83,6 +83,7 @@ jobs:
       - name: Generate comprehensive schema analysis with Claude Code
         if: github.event_name == 'pull_request'
         uses: anthropics/claude-code-action@v1
+        continue-on-error: true
         with:
           github_token: ${{ github.token }}
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
