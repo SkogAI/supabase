@@ -89,16 +89,19 @@ This will:
 └── .env.example                 # Environment template
 ```
 
-## 🤖 OpenAI Integration
+## 🤖 AI Integration
 
-Integrate OpenAI with Supabase for AI-powered features:
+Integrate AI providers with Supabase for AI-powered features:
 
-- **Studio AI Features**: SQL generation, query assistance
-- **Edge Functions**: Custom AI endpoints
+- **Studio AI Features**: SQL generation, query assistance (OpenAI)
+- **Edge Functions**: Custom AI endpoints (OpenAI, OpenRouter, and more)
 
+**OpenRouter**: Access 100+ AI models (GPT-4, Claude, Gemini, Llama) through one API  
 **Quick Start**: See [QUICKSTART_OPENAI.md](QUICKSTART_OPENAI.md) for 5-minute setup  
 **Full Guide**: See [OPENAI_SETUP.md](OPENAI_SETUP.md) for complete documentation  
-**Example**: See [supabase/functions/openai-chat](supabase/functions/openai-chat) for working code
+**Examples**: 
+- [openai-chat](supabase/functions/openai-chat) - OpenAI direct integration
+- [openrouter-chat](supabase/functions/openrouter-chat) - OpenRouter for multiple models
 
 ## 💻 Development Workflow
 
