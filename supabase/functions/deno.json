@@ -1,0 +1,53 @@
+{
+  "compilerOptions": {
+    "lib": ["deno.window"],
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true
+  },
+  "lint": {
+    "files": {
+      "include": ["**/*.ts"],
+      "exclude": ["_shared/test-fixtures/**"]
+    },
+    "rules": {
+      "tags": ["recommended"],
+      "include": ["ban-untagged-todo"],
+      "exclude": ["no-unused-vars"]
+    }
+  },
+  "fmt": {
+    "files": {
+      "include": ["**/*.ts", "**/*.tsx", "**/*.js"],
+      "exclude": ["_shared/test-fixtures/**"]
+    },
+    "options": {
+      "useTabs": false,
+      "lineWidth": 100,
+      "indentWidth": 2,
+      "semiColons": true,
+      "singleQuote": false,
+      "proseWrap": "preserve"
+    }
+  },
+  "test": {
+    "files": {
+      "include": ["**/*test.ts", "**/test.ts"],
+      "exclude": ["_shared/test-fixtures/**"]
+    }
+  },
+  "tasks": {
+    "test": "deno test --allow-all --coverage=coverage",
+    "test:watch": "deno test --allow-all --watch",
+    "test:coverage": "deno test --allow-all --coverage=coverage && deno coverage coverage --lcov --output=coverage.lcov",
+    "lint": "deno lint",
+    "fmt": "deno fmt",
+    "fmt:check": "deno fmt --check",
+    "check": "deno check **/*.ts"
+  },
+  "imports": {
+    "@std/testing": "https://deno.land/std@0.224.0/testing/asserts.ts",
+    "@std/http": "https://deno.land/std@0.224.0/http/server.ts",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+  }
+}

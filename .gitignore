@@ -53,6 +53,8 @@ backups/
 # Testing
 coverage/
 .nyc_output/
+*.lcov
+supabase/functions/coverage/
 
 # Docker
 .dockerignore

@@ -73,9 +73,40 @@ jobs:
             cd supabase/functions
             # Run any test files found
             if compgen -G "**/test.ts" > /dev/null; then
-              deno test --allow-all
+              deno test --allow-all --coverage=coverage
             else
               echo "No test files found"
+            fi
+          fi
+
+      - name: Generate coverage report
+        if: always()
+        run: |
+          if [ -d "supabase/functions/coverage" ]; then
+            cd supabase/functions
+            deno coverage coverage --lcov --output=coverage.lcov
+            
+            # Calculate coverage percentage
+            LINES=$(grep -c "^DA:" coverage.lcov || echo "0")
+            HIT=$(grep "^DA:" coverage.lcov | grep -cv ",0$" || echo "0")
+            
+            if [ "$LINES" -gt 0 ]; then
+              COVERAGE=$(awk "BEGIN {printf \"%.2f\", ($HIT/$LINES)*100}")
+              echo "📊 Test Coverage: ${COVERAGE}%"
+              echo "coverage=${COVERAGE}" >> $GITHUB_OUTPUT
+              
+              # Add to summary
+              echo "## 📊 Test Coverage Report" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "- **Coverage**: ${COVERAGE}%" >> $GITHUB_STEP_SUMMARY
+              echo "- **Lines Hit**: ${HIT}/${LINES}" >> $GITHUB_STEP_SUMMARY
+              
+              # Check coverage threshold
+              if (( $(echo "$COVERAGE < 80" | bc -l) )); then
+                echo "⚠️ Coverage is below 80% threshold" >> $GITHUB_STEP_SUMMARY
+              else
+                echo "✅ Coverage meets 80% threshold" >> $GITHUB_STEP_SUMMARY
+              fi
             fi
           fi
 

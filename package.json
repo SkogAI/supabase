@@ -20,7 +20,11 @@
     "lint:sql": "sqlfluff lint supabase/migrations",
     "lint:functions": "cd supabase/functions && deno lint",
     "format:functions": "cd supabase/functions && deno fmt",
+    "format:functions:check": "cd supabase/functions && deno fmt --check",
     "test:functions": "cd supabase/functions && deno test --allow-all",
+    "test:functions:watch": "cd supabase/functions && deno test --allow-all --watch",
+    "test:functions:coverage": "cd supabase/functions && deno test --allow-all --coverage=coverage && deno coverage coverage --lcov --output=coverage.lcov",
+    "check:functions": "cd supabase/functions && deno check **/*.ts",
     "dev": "npm-run-all --parallel db:start functions:serve",
     "setup": "npm run db:start && npm run types:generate"
   },

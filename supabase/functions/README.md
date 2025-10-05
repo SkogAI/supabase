@@ -6,10 +6,18 @@ Edge Functions are server-side TypeScript functions that run on Deno, distribute
 
 ```
 functions/
-├── README.md
-└── hello-world/
-    ├── index.ts      # Main function code
-    └── test.ts       # Unit tests
+├── README.md                 # This file
+├── TESTING.md                # Comprehensive testing guide
+├── deno.json                 # Deno configuration
+├── _shared/                  # Shared utilities
+│   ├── README.md             # Shared utilities documentation
+│   ├── test-utils/           # Test helper functions
+│   │   └── test-helpers.ts
+│   └── test-fixtures/        # Mock data and fixtures
+│       └── mock-data.ts
+└── hello-world/              # Example function
+    ├── index.ts              # Function implementation
+    └── test.ts               # Function tests
 ```
 
 ## Development
@@ -38,14 +46,29 @@ supabase functions serve --port 54322
 ### Testing Functions
 
 ```bash
+# Run all tests
+cd supabase/functions
+deno test --allow-all
+
 # Run tests for a specific function
 cd supabase/functions/<function-name>
 deno test --allow-all test.ts
 
+# Run tests with coverage
+cd supabase/functions
+deno test --allow-all --coverage=coverage
+deno coverage coverage --lcov --output=coverage.lcov
+
 # Run tests with Supabase running
 supabase start
-deno test --allow-all test.ts
+cd supabase/functions
+deno test --allow-all
+
+# Run tests in watch mode
+deno test --allow-all --watch
 ```
+
+📖 **See [TESTING.md](./TESTING.md) for comprehensive testing guide**
 
 ### Testing with curl
 
