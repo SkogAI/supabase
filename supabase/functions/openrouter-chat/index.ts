@@ -46,7 +46,7 @@ serve(async (req: Request): Promise<Response> => {
         JSON.stringify({
           error: "OpenRouter API key is not configured. Please set OPENROUTER_API_KEY in your Supabase secrets.",
           hint: "Run: supabase secrets set OPENROUTER_API_KEY=sk-or-your_key_here",
-          documentation: "See OPENAI_SETUP.md for OpenRouter setup instructions",
+          documentation: "See OPENROUTER_SETUP.md for OpenRouter setup instructions",
         }),
         {
           headers: {
