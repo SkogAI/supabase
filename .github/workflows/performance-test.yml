@@ -70,6 +70,7 @@ jobs:
 
       - name: Generate performance report with Claude Code
         uses: anthropics/claude-code-action@v1
+        continue-on-error: true
         with:
           github_token: ${{ github.token }}
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -142,6 +143,7 @@ EOF
 
       - name: Generate benchmark summary with Claude Code
         uses: anthropics/claude-code-action@v1
+        continue-on-error: true
         with:
           github_token: ${{ github.token }}
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
