@@ -66,7 +66,7 @@ jobs:
       - name: Analyze backup and generate summary with Claude Code
         uses: anthropics/claude-code-action@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ github.token }}
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
             Analyze the database backup and generate a comprehensive summary to $GITHUB_STEP_SUMMARY:
