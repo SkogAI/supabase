@@ -408,12 +408,152 @@ supabase functions logs <name> --tail
 
 ---
 
+## Realtime Configuration
+
+### Overview
+
+Supabase Realtime enables WebSocket connections for live database updates, presence tracking, and broadcast messaging.
+
+### Enabling Realtime on Tables
+
+Realtime is enabled via the `supabase_realtime` publication:
+
+```sql
+-- Enable realtime for a table
+ALTER PUBLICATION supabase_realtime ADD TABLE your_table;
+
+-- Set replica identity to FULL (required for UPDATE/DELETE events)
+ALTER TABLE your_table REPLICA IDENTITY FULL;
+
+-- Verify realtime is enabled
+SELECT * FROM pg_publication_tables WHERE pubname = 'supabase_realtime';
+```
+
+### Currently Enabled Tables
+
+- ✅ `public.profiles`
+- ✅ `public.posts`
+
+### Configuration
+
+Realtime settings in `supabase/config.toml`:
+
+```toml
+[realtime]
+enabled = true
+max_connections = 100              # Max concurrent connections per client
+max_channels_per_client = 100      # Max channels per connection
+max_joins_per_second = 500         # Max joins per second per client
+max_messages_per_second = 1000     # Max messages per second per client
+max_events_per_second = 100        # Max events per second per channel
+```
+
+### Security Considerations
+
+1. **RLS Policies Required**: Users must have SELECT permission to receive realtime updates
+2. **Filter Server-Side**: Use filters to reduce data exposure
+3. **Rate Limiting**: Configure appropriate limits based on your use case
+4. **Connection Management**: Always clean up subscriptions when done
+
+### Testing Realtime
+
+```bash
+# Run the realtime test suite
+node examples/realtime/test-realtime.js
+
+# Test with individual examples
+node examples/realtime/basic-subscription.js
+node examples/realtime/table-changes.js
+node examples/realtime/filtered-subscription.js
+node examples/realtime/presence.js
+node examples/realtime/broadcast.js
+
+# Browser testing
+open examples/realtime/rate-limiting.html
+```
+
+### Monitoring
+
+```bash
+# Check realtime connections
+supabase logs realtime
+
+# Monitor in Supabase Dashboard
+# Dashboard → Database → Realtime
+```
+
+### Troubleshooting
+
+**Problem**: Not receiving realtime updates
+
+**Solutions**:
+1. Check table is in publication:
+   ```sql
+   SELECT * FROM pg_publication_tables 
+   WHERE pubname = 'supabase_realtime' AND tablename = 'your_table';
+   ```
+
+2. Verify RLS policies allow SELECT:
+   ```sql
+   SELECT * FROM pg_policies WHERE tablename = 'your_table';
+   ```
+
+3. Check replica identity:
+   ```sql
+   SELECT relname, relreplident 
+   FROM pg_class 
+   WHERE relname = 'your_table';
+   -- 'f' = FULL, 'd' = DEFAULT
+   ```
+
+4. Verify API keys are correct in client
+
+**Problem**: Too many connections
+
+**Solutions**:
+- Reduce number of active subscriptions
+- Share channels between components
+- Implement connection pooling
+- Adjust `max_connections` in config.toml
+
+**Problem**: Performance issues
+
+**Solutions**:
+- Use filters to reduce payload size
+- Implement client-side debouncing
+- Consider using broadcast for high-frequency updates
+- Check `max_events_per_second` setting
+
+### Production Recommendations
+
+1. **Set appropriate rate limits** based on expected load
+2. **Monitor connection count** and adjust limits as needed
+3. **Implement reconnection logic** with exponential backoff
+4. **Use filters** to minimize data transfer
+5. **Test under load** before going to production
+6. **Document realtime patterns** for your team
+
+### Migration Checklist
+
+When enabling realtime on a new table:
+
+- [ ] Add table to `supabase_realtime` publication
+- [ ] Set replica identity to FULL
+- [ ] Update RLS policies to allow SELECT
+- [ ] Test with example code
+- [ ] Document expected events for the table
+- [ ] Update client code to handle new events
+- [ ] Test rate limits under expected load
+
+---
+
 ## Additional Resources
 
 - [Supabase CLI Reference](https://supabase.com/docs/reference/cli)
 - [Edge Functions Guide](https://supabase.com/docs/guides/functions)
 - [Database Migrations](https://supabase.com/docs/guides/database/migrations)
 - [Row Level Security](https://supabase.com/docs/guides/database/postgres/row-level-security)
+- [Realtime Documentation](https://supabase.com/docs/guides/realtime)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 
 ---

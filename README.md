@@ -276,6 +276,171 @@ npm run db:reset
 npm run lint:sql
 ```
 
+## 🔴 Realtime
+
+Supabase Realtime allows you to listen to database changes in real-time using WebSockets.
+
+### Quick Start
+
+```javascript
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Listen to all changes on posts table
+const channel = supabase
+  .channel('posts-channel')
+  .on('postgres_changes', 
+    { event: '*', schema: 'public', table: 'posts' },
+    (payload) => console.log('Change:', payload)
+  )
+  .subscribe();
+
+// Cleanup when done
+await supabase.removeChannel(channel);
+```
+
+### Enabled Tables
+
+Realtime is enabled for:
+- ✅ `profiles` - User profile changes
+- ✅ `posts` - Content changes
+
+### Features
+
+1. **Database Changes** - Listen to INSERT, UPDATE, DELETE events
+2. **Presence** - Track online users and share state
+3. **Broadcast** - Send ephemeral messages between clients
+
+### Examples
+
+See comprehensive examples in `examples/realtime/`:
+
+```bash
+# Basic subscription
+node examples/realtime/basic-subscription.js
+
+# Table-specific changes
+node examples/realtime/table-changes.js
+
+# Filtered subscriptions
+node examples/realtime/filtered-subscription.js
+
+# Presence tracking
+node examples/realtime/presence.js
+
+# Broadcast messages
+node examples/realtime/broadcast.js
+
+# Test realtime functionality
+node examples/realtime/test-realtime.js
+
+# Browser example with rate limiting
+open examples/realtime/rate-limiting.html
+```
+
+### Common Patterns
+
+**Listen to specific events:**
+```javascript
+supabase
+  .channel('new-posts')
+  .on('postgres_changes',
+    { event: 'INSERT', schema: 'public', table: 'posts' },
+    (payload) => console.log('New post:', payload.new)
+  )
+  .subscribe();
+```
+
+**Filter by column value:**
+```javascript
+supabase
+  .channel('my-posts')
+  .on('postgres_changes',
+    { 
+      event: '*', 
+      schema: 'public', 
+      table: 'posts',
+      filter: 'user_id=eq.YOUR_USER_ID'
+    },
+    (payload) => console.log('Your post changed:', payload)
+  )
+  .subscribe();
+```
+
+**Track online users (Presence):**
+```javascript
+const channel = supabase.channel('online-users');
+await channel
+  .on('presence', { event: 'sync' }, () => {
+    const users = channel.presenceState();
+    console.log('Online users:', users);
+  })
+  .subscribe();
+
+await channel.track({ user_id: 'user-1', status: 'online' });
+```
+
+**Send broadcast messages:**
+```javascript
+const channel = supabase.channel('chat');
+await channel
+  .on('broadcast', { event: 'message' }, (payload) => {
+    console.log('Message:', payload);
+  })
+  .subscribe();
+
+await channel.send({
+  type: 'broadcast',
+  event: 'message',
+  payload: { text: 'Hello!' }
+});
+```
+
+### Rate Limits
+
+Default rate limits (configurable in `config.toml`):
+- 100 concurrent connections per client
+- 100 channels per connection
+- 500 joins per second
+- 1000 messages per second
+- 100 events per second per channel
+
+### Best Practices
+
+1. **Always clean up subscriptions**
+   ```javascript
+   await supabase.removeChannel(channel);
+   ```
+
+2. **Use specific channel names**
+   ```javascript
+   supabase.channel('unique-channel-name');
+   ```
+
+3. **Filter server-side when possible**
+   ```javascript
+   filter: 'user_id=eq.123'
+   ```
+
+4. **Debounce rapid updates** on the client side
+
+5. **Check RLS policies** - Users must have SELECT permission
+
+### Troubleshooting
+
+**Not receiving updates?**
+- Check RLS policies allow SELECT
+- Verify table is in `supabase_realtime` publication
+- Check replica identity is set to FULL
+
+**Connection issues?**
+- Verify API keys are correct
+- Check network connectivity
+- Review browser console for errors
+
+For more details, see `examples/realtime/README.md`
+
 ## 📚 Documentation
 
 - **[DEVOPS.md](DEVOPS.md)** - Complete DevOps guide with secrets, workflows, troubleshooting

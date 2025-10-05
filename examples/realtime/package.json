@@ -1,0 +1,25 @@
+{
+  "name": "supabase-realtime-examples",
+  "version": "1.0.0",
+  "description": "Examples for Supabase Realtime functionality",
+  "type": "module",
+  "scripts": {
+    "basic": "node basic-subscription.js",
+    "table-changes": "node table-changes.js",
+    "filtered": "node filtered-subscription.js",
+    "presence": "node presence.js",
+    "broadcast": "node broadcast.js",
+    "test": "node test-realtime.js"
+  },
+  "keywords": [
+    "supabase",
+    "realtime",
+    "websockets",
+    "examples"
+  ],
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "author": "",
+  "license": "MIT"
+}
