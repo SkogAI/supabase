@@ -13,8 +13,11 @@ functions/
 ├── hello-world/
 │   ├── index.ts      # Example: Basic function with auth & database
 │   └── test.ts       # Unit tests
-└── openai-chat/
-    ├── index.ts      # Example: OpenAI integration
+├── openai-chat/
+│   ├── index.ts      # Example: OpenAI direct integration
+│   └── test.ts       # Unit tests
+└── openrouter-chat/
+    ├── index.ts      # Example: OpenRouter (100+ AI models)
     └── test.ts       # Unit tests
 ```
 
@@ -257,14 +260,29 @@ const response = await fetch("https://api.example.com/data", {
 const result = await response.json();
 ```
 
-**Example: OpenAI Integration**
+**Example: AI Provider Integration**
 
-See the `openai-chat` function for a complete example of integrating OpenAI with Supabase Edge Functions. It demonstrates:
-- External API calls (OpenAI)
+We provide two AI integration examples:
+
+1. **openai-chat** - Direct OpenAI integration
+   - Uses OpenAI API directly
+   - Access to GPT models
+   - See function for implementation details
+
+2. **openrouter-chat** - OpenRouter integration
+   - Access to 100+ AI models (GPT-4, Claude, Gemini, Llama, etc.)
+   - Automatic fallbacks and cost optimization
+   - Single API for multiple providers
+   - See function for implementation details
+
+Both examples demonstrate:
+- External API calls
 - Environment variable handling
 - Error handling for API failures
-- User authentication
-- See [OPENAI_SETUP.md](../../OPENAI_SETUP.md) for setup instructions
+- User authentication with Supabase Auth
+- CORS configuration
+
+See [OPENAI_SETUP.md](../../OPENAI_SETUP.md) for complete setup instructions
 
 ### Scheduled Functions (via cron)
 

@@ -1,6 +1,8 @@
-# Quick Start: OpenAI Integration
+# Quick Start: AI Integration
 
-This is a quick reference guide to get OpenAI working with Supabase. For full details, see [OPENAI_SETUP.md](OPENAI_SETUP.md).
+This is a quick reference guide to get AI providers working with Supabase. For full details, see [OPENAI_SETUP.md](OPENAI_SETUP.md).
+
+> **Note**: You can use OpenAI directly or OpenRouter for access to 100+ models (GPT-4, Claude, Gemini, Llama, etc.)
 
 ## 🚀 For Supabase Studio AI Features (5 minutes)
 
@@ -31,7 +33,9 @@ Want AI-powered SQL generation and query assistance in the Supabase Studio? Foll
 
 ## 🔧 For Custom Edge Functions (10 minutes)
 
-Want to call OpenAI from your own Edge Functions? Follow these steps:
+Want to call AI from your own Edge Functions? You have two options:
+
+### Option A: OpenAI (Direct)
 
 1. **Check the example function**
    ```bash
@@ -49,21 +53,50 @@ Want to call OpenAI from your own Edge Functions? Follow these steps:
 
 3. **Test locally**
    ```bash
-   # Start Supabase
-   supabase start
-   
-   # Serve the function
    supabase functions serve openai-chat
-   
-   # In another terminal, test it
    curl http://localhost:54321/functions/v1/openai-chat \
      -H "Content-Type: application/json" \
      -d '{"message": "Hello!"}'
    ```
 
+### Option B: OpenRouter (100+ Models)
+
+1. **Get OpenRouter key** from https://openrouter.ai
+
+2. **Set the secret**
+   ```bash
+   # For local development
+   echo "OPENROUTER_API_KEY=sk-or-your-key" >> .env
+   
+   # For production
+   supabase secrets set OPENROUTER_API_KEY=sk-or-your-key
+   ```
+
+3. **Test with different models**
+   ```bash
+   supabase functions serve openrouter-chat
+   
+   # Try GPT-3.5
+   curl http://localhost:54321/functions/v1/openrouter-chat \
+     -H "Content-Type: application/json" \
+     -d '{"message": "Hello!"}'
+   
+   # Try Claude
+   curl http://localhost:54321/functions/v1/openrouter-chat \
+     -H "Content-Type: application/json" \
+     -d '{"message": "Hello!", "model": "anthropic/claude-3-sonnet"}'
+   
+   # Try Gemini
+   curl http://localhost:54321/functions/v1/openrouter-chat \
+     -H "Content-Type: application/json" \
+     -d '{"message": "Hello!", "model": "google/gemini-pro"}'
+   ```
+
 4. **Deploy**
    ```bash
    supabase functions deploy openai-chat
+   # or
+   supabase functions deploy openrouter-chat
    ```
 
 ## ❓ Troubleshooting
@@ -88,11 +121,21 @@ Want to call OpenAI from your own Edge Functions? Follow these steps:
 | Use Case | Variable Name | Where to Set |
 |----------|--------------|--------------|
 | Studio AI | `SUPABASE_OPENAI_API_KEY` | `.env` file |
-| Edge Functions | `OPENAI_API_KEY` | Supabase secrets |
+| Edge Functions (OpenAI) | `OPENAI_API_KEY` | Supabase secrets |
+| Edge Functions (OpenRouter) | `OPENROUTER_API_KEY` | Supabase secrets |
+
+**Why OpenRouter?**
+- Access 100+ models (GPT-4, Claude, Gemini, Llama, etc.)
+- Automatic fallbacks if one model is down
+- Cost optimization across providers
+- One API key for all models
 
 ## 🔗 More Information
 
 - **Full Guide**: [OPENAI_SETUP.md](OPENAI_SETUP.md)
-- **Example Function**: [supabase/functions/openai-chat/](supabase/functions/openai-chat/)
+- **Example Functions**: 
+  - [openai-chat](supabase/functions/openai-chat/) - OpenAI direct
+  - [openrouter-chat](supabase/functions/openrouter-chat/) - OpenRouter (100+ models)
 - **OpenAI Docs**: https://platform.openai.com/docs
+- **OpenRouter Docs**: https://openrouter.ai/docs
 - **Supabase Docs**: https://supabase.com/docs/guides/functions

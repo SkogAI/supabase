@@ -1,13 +1,19 @@
-# OpenAI Integration with Supabase
+# AI Integration with Supabase
 
-This guide explains how to integrate OpenAI with your Supabase project for AI-powered features.
+This guide explains how to integrate AI providers (OpenAI, OpenRouter, etc.) with your Supabase project for AI-powered features.
 
 ## Overview
 
-Supabase supports OpenAI integration in two ways:
+Supabase supports AI integration in two ways:
 
 1. **Supabase Studio AI Features** - OpenAI integration within the Supabase Studio UI
-2. **Edge Functions** - Custom OpenAI integration in your serverless functions
+2. **Edge Functions** - Custom AI integration in your serverless functions (supports OpenAI, OpenRouter, and other providers)
+
+### AI Provider Options
+
+For Edge Functions, you can use:
+- **OpenAI**: Direct access to GPT models - https://platform.openai.com
+- **OpenRouter**: Unified API for 100+ AI models with automatic fallbacks - https://openrouter.ai
 
 ---
 
@@ -212,18 +218,168 @@ supabase secrets set OPENAI_API_KEY=sk-your-key
 
 ---
 
+## 3. Using OpenRouter (Alternative to OpenAI)
+
+[OpenRouter](https://openrouter.ai) provides a unified API to access 100+ AI models from different providers through a single endpoint. It offers automatic fallbacks, cost optimization, and supports models from OpenAI, Anthropic, Google, Meta, and more.
+
+### Why Use OpenRouter?
+
+- **Access to Multiple Models**: Use GPT-4, Claude, Gemini, Llama, and 100+ other models
+- **Cost Optimization**: Automatically routes to the most cost-effective model
+- **Automatic Fallbacks**: If one model is down, it automatically tries alternatives
+- **Single API Key**: One key for all models
+- **Simple Migration**: Compatible with OpenAI SDK format
+
+### Setup
+
+1. **Get an OpenRouter API key**
+   - Visit [OpenRouter](https://openrouter.ai)
+   - Sign up and get your API key from the dashboard
+   - API keys start with `sk-or-`
+
+2. **Set OpenRouter API key as a secret**
+   
+   For local development:
+   ```bash
+   OPENROUTER_API_KEY=sk-or-your-openrouter-api-key-here
+   ```
+
+   For production:
+   ```bash
+   supabase secrets set OPENROUTER_API_KEY=sk-or-your-key
+   ```
+
+3. **Use in Edge Functions**
+
+The OpenRouter API is compatible with OpenAI's format, so you can easily switch:
+
+```typescript
+// Get OpenRouter API key from environment
+const openrouterApiKey = Deno.env.get("OPENROUTER_API_KEY");
+
+// Call OpenRouter API (OpenAI-compatible format)
+const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer ${openrouterApiKey}`,
+    "HTTP-Referer": `${Deno.env.get("SUPABASE_URL")}`, // Optional, for rankings
+    "X-Title": "My Supabase App", // Optional, for rankings
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "openai/gpt-3.5-turbo", // Or any other model
+    messages: [
+      { role: "user", content: "Hello!" }
+    ]
+  })
+});
+```
+
+### Available Models
+
+OpenRouter provides access to many models. Some popular options:
+
+| Model | Provider | Use Case |
+|-------|----------|----------|
+| `openai/gpt-4-turbo` | OpenAI | Advanced reasoning |
+| `openai/gpt-3.5-turbo` | OpenAI | Fast, cost-effective |
+| `anthropic/claude-3-opus` | Anthropic | Complex tasks |
+| `anthropic/claude-3-sonnet` | Anthropic | Balanced performance |
+| `google/gemini-pro` | Google | Multimodal tasks |
+| `meta-llama/llama-3-70b` | Meta | Open source, powerful |
+| `mistralai/mistral-medium` | Mistral AI | European alternative |
+
+See [OpenRouter Models](https://openrouter.ai/models) for the complete list.
+
+### Example: Modified openai-chat Function for OpenRouter
+
+You can modify the `openai-chat` function to use OpenRouter:
+
+```typescript
+// Get API key - support both OpenAI and OpenRouter
+const apiKey = Deno.env.get("OPENROUTER_API_KEY") || Deno.env.get("OPENAI_API_KEY");
+const apiUrl = Deno.env.get("OPENROUTER_API_KEY") 
+  ? "https://openrouter.ai/api/v1/chat/completions"
+  : "https://api.openai.com/v1/chat/completions";
+
+// Call the API
+const response = await fetch(apiUrl, {
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer ${apiKey}`,
+    "Content-Type": "application/json",
+    // OpenRouter-specific headers (optional)
+    ...(Deno.env.get("OPENROUTER_API_KEY") && {
+      "HTTP-Referer": Deno.env.get("SUPABASE_URL") || "",
+      "X-Title": "Supabase AI App"
+    })
+  },
+  body: JSON.stringify({
+    model: model, // e.g., "openai/gpt-3.5-turbo" for OpenRouter
+    messages: [{ role: "user", content: message }]
+  })
+});
+```
+
+### Benefits of OpenRouter
+
+1. **Cost Savings**: Automatically routes to cheaper alternatives when available
+2. **Reliability**: Built-in fallbacks ensure uptime
+3. **Flexibility**: Easy to switch between models
+4. **Unified Billing**: Single bill for all AI providers
+5. **No Vendor Lock-in**: Can use any model without changing code much
+
+### Troubleshooting
+
+**Issue**: "OPENROUTER_API_KEY is not set" error  
+**Solution**: 
+```bash
+# For local development
+echo "OPENROUTER_API_KEY=sk-or-your-key" >> .env
+
+# For production
+supabase secrets set OPENROUTER_API_KEY=sk-or-your-key
+```
+
+**Issue**: Model not found  
+**Solution**: 
+- Check the model name format: `provider/model-name`
+- See [OpenRouter Models](https://openrouter.ai/models) for valid model names
+- Example: `openai/gpt-3.5-turbo`, `anthropic/claude-3-sonnet`
+
+**Issue**: Rate limits  
+**Solution**: 
+- OpenRouter has different rate limits per model
+- Check your usage at https://openrouter.ai/activity
+- Implement exponential backoff for retries
+
+### Migration from OpenAI to OpenRouter
+
+To migrate from OpenAI to OpenRouter:
+
+1. Change the base URL from `api.openai.com` to `openrouter.ai/api/v1`
+2. Update model names to include provider prefix (e.g., `openai/gpt-3.5-turbo`)
+3. Add optional OpenRouter headers for app attribution
+4. Update your API key environment variable
+
+The request and response format remains the same!
+
+---
+
 ## Common Variable Names
 
-To avoid confusion, here are the different OpenAI-related variable names used:
+To avoid confusion, here are the different AI-related variable names used:
 
 | Variable Name | Purpose | Where Used |
 |--------------|---------|------------|
 | `SUPABASE_OPENAI_API_KEY` | Studio AI features | `.env` file, read by `config.toml` |
-| `OPENAI_API_KEY` | Edge Functions | Function secrets |
+| `OPENAI_API_KEY` | OpenAI in Edge Functions | Function secrets |
+| `OPENROUTER_API_KEY` | OpenRouter in Edge Functions | Function secrets |
 
 **Important**: These are **different variables** for different purposes:
-- `SUPABASE_OPENAI_API_KEY` → For Supabase Studio UI
-- `OPENAI_API_KEY` → For your custom Edge Functions
+- `SUPABASE_OPENAI_API_KEY` → For Supabase Studio UI (OpenAI only)
+- `OPENAI_API_KEY` → For your custom Edge Functions (OpenAI direct)
+- `OPENROUTER_API_KEY` → For your custom Edge Functions (OpenRouter for multiple models)
 
 ---
 
