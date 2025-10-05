@@ -418,6 +418,7 @@ supabase functions logs <name> --tail
 
 ## Support
 
+- **Maintainers**: Contact @Skogix or @Ic0n for assistance
 - **Issues**: Open a GitHub issue
 - **Supabase Support**: https://supabase.com/support
 - **Community**: https://github.com/supabase/supabase/discussions
@@ -425,4 +426,4 @@ supabase functions logs <name> --tail
 ---
 
 **Last Updated**: 2025-10-05
-**Maintained By**: DevOps Team
+**Maintained By**: @Skogix and @Ic0n

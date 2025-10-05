@@ -316,6 +316,7 @@ MIT
 
 ## 🆘 Support
 
+- **Maintainers**: Contact @Skogix or @Ic0n for assistance
 - **Issues**: [GitHub Issues](../../issues)
 - **Discussions**: [GitHub Discussions](../../discussions)
 - **Supabase**: [supabase.com/support](https://supabase.com/support)
