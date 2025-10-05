@@ -263,6 +263,9 @@ CREATE POLICY "Users see own drafts"
 # Test edge functions
 npm run test:functions
 
+# Test RLS policies
+npm run test:rls
+
 # Validate migrations locally
 npm run db:reset
 
