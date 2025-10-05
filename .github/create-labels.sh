@@ -66,6 +66,8 @@ create_label "blocked" "d73a4a" "Cannot proceed due to dependencies"
 create_label "needs-review" "0075ca" "Awaiting code review"
 create_label "help-wanted" "008672" "Extra attention is needed"
 create_label "good-first-issue" "7057ff" "Good for newcomers"
+create_label "duplicate" "cfd3d7" "Issue already exists elsewhere"
+create_label "wontfix" "ffffff" "Will not be implemented"
 echo ""
 
 echo "Creating Component Labels..."
