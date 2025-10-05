@@ -36,11 +36,17 @@ create_label() {
     local description="$3"
     
     echo "Creating label: $name"
-    gh label create "$name" \
-        --repo "$REPO" \
-        --color "$color" \
-        --description "$description" \
-        --force 2>/dev/null || echo "  (label already exists, updated)"
+    if gh label list --repo "$REPO" | grep -wq "$name"; then
+        gh label edit "$name" \
+            --repo "$REPO" \
+            --color "$color" \
+            --description "$description"
+    else
+        gh label create "$name" \
+            --repo "$REPO" \
+            --color "$color" \
+            --description "$description"
+    fi
 }
 
 echo "Creating Priority Labels..."
