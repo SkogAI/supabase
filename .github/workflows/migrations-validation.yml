@@ -1,0 +1,71 @@
+name: Validate Database Migrations
+
+on:
+  pull_request:
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/config.toml'
+  push:
+    branches:
+      - master
+      - main
+    paths:
+      - 'supabase/migrations/**'
+
+jobs:
+  validate-migrations:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase local
+        run: supabase start
+
+      - name: Verify database is up
+        run: supabase status
+
+      - name: Run migration tests
+        run: |
+          # Test that migrations can be applied cleanly
+          supabase db reset --debug
+
+      - name: Check for migration conflicts
+        run: |
+          # Ensure no duplicate timestamps
+          cd supabase/migrations
+          if [ -d "$(pwd)" ]; then
+            duplicates=$(ls -1 *.sql 2>/dev/null | cut -d'_' -f1 | sort | uniq -d)
+            if [ -n "$duplicates" ]; then
+              echo "Error: Duplicate migration timestamps found:"
+              echo "$duplicates"
+              exit 1
+            fi
+          fi
+
+      - name: Generate migration report
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "## Migration Validation Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ All migrations applied successfully" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Migration Files" >> $GITHUB_STEP_SUMMARY
+          cd supabase/migrations
+          if [ -d "$(pwd)" ] && [ -n "$(ls -A *.sql 2>/dev/null)" ]; then
+            ls -1 *.sql | while read file; do
+              echo "- \`$file\`" >> $GITHUB_STEP_SUMMARY
+            done
+          else
+            echo "- No migration files found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Stop Supabase
+        if: always()
+        run: supabase stop --no-backup

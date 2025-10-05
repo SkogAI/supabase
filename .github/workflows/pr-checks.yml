@@ -1,0 +1,82 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pr-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check PR title
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          echo "PR Title: $PR_TITLE"
+
+          # Check for conventional commit format (optional)
+          if [[ ! "$PR_TITLE" =~ ^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?\!?:\ .+ ]]; then
+            echo "⚠️  PR title doesn't follow conventional commit format"
+            echo "Consider using: feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert: description"
+          fi
+
+      - name: Check for migration changes
+        id: migration-check
+        run: |
+          MIGRATION_CHANGES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep "supabase/migrations/" || true)
+
+          if [ -n "$MIGRATION_CHANGES" ]; then
+            echo "has_migrations=true" >> $GITHUB_OUTPUT
+            echo "Migration files changed:"
+            echo "$MIGRATION_CHANGES"
+          else
+            echo "has_migrations=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check for config changes
+        id: config-check
+        run: |
+          CONFIG_CHANGES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep "supabase/config.toml" || true)
+
+          if [ -n "$CONFIG_CHANGES" ]; then
+            echo "has_config_changes=true" >> $GITHUB_OUTPUT
+            echo "⚠️  Configuration file changed - review carefully!"
+          else
+            echo "has_config_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check for secrets in code
+        run: |
+          echo "Scanning for potential secrets..."
+
+          # Check for common secret patterns
+          if git diff ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep -E "(password|secret|api[_-]?key|token|private[_-]?key)" | grep -v "env(" | grep -v ".example"; then
+            echo "⚠️  WARNING: Potential secrets detected in changes!"
+            echo "Please ensure sensitive data uses environment variables"
+            exit 1
+          fi
+
+      - name: Generate PR summary
+        run: |
+          echo "## Pull Request Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Changes Overview" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.migration-check.outputs.has_migrations }}" == "true" ]; then
+            echo "- 🗃️  Database migrations modified" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ "${{ steps.config-check.outputs.has_config_changes }}" == "true" ]; then
+            echo "- ⚙️  Configuration changes detected" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Files Changed" >> $GITHUB_STEP_SUMMARY
+          git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | while read file; do
+            echo "- \`$file\`" >> $GITHUB_STEP_SUMMARY
+          done

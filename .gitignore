@@ -1,0 +1,33 @@
+# Supabase
+.env
+.env.local
+.env*.local
+supabase/.branches
+supabase/.temp
+.vscode/
+*.log
+
+# API Keys and Secrets
+*.key
+*.pem
+signing_keys.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# Node (if using)
+node_modules/
+dist/
+.next/
+out/
+
+# Docker
+.dockerignore
+docker-compose.override.yml
