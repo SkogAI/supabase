@@ -11,8 +11,8 @@ const supabaseUrl = process.env.SUPABASE_URL || 'http://localhost:8000';
 const supabaseKey = process.env.SUPABASE_ANON_KEY || 'your-anon-key';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Example user ID (replace with actual user ID from auth)
-const userId = 'YOUR_USER_ID_HERE';
+// User ID to filter by. Set TEST_USER_ID in your environment, or use a valid example user ID.
+const userId = process.env.TEST_USER_ID || '00000000-0000-0000-0000-000000000000';
 
 // Listen only to posts created by a specific user
 const userPostsChannel = supabase
