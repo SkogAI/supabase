@@ -230,8 +230,9 @@ Current schema includes:
 - **`posts`** - User-generated content
 - **Automatic triggers** - `updated_at` timestamp management
 - **Auto profile creation** - On user signup via Auth
+- **Custom types** - Enums and composite types for better data modeling
 
-See `supabase/migrations/` for full schema.
+See `supabase/migrations/` for full schema and **[SCHEMA_ORGANIZATION.md](SCHEMA_ORGANIZATION.md)** for detailed documentation on schema organization and custom types.
 
 ### Example: Using RLS Policies
 
