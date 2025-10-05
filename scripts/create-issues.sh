@@ -36,11 +36,21 @@ create_issue() {
     local labels="$3"
     
     echo "Creating issue: $title"
+    # Split labels on commas and build --label arguments
+    local label_args=()
+    IFS=',' read -ra label_array <<< "$labels"
+    for label in "${label_array[@]}"; do
+        # Trim whitespace from label
+        label="$(echo "$label" | xargs)"
+        if [[ -n "$label" ]]; then
+            label_args+=(--label "$label")
+        fi
+    done
     gh issue create \
         --repo "$REPO" \
         --title "$title" \
         --body "$body" \
-        --label "$labels" || echo "⚠️  Failed to create issue: $title"
+        "${label_args[@]}" || echo "⚠️  Failed to create issue: $title"
     echo ""
 }
 
