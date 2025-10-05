@@ -108,6 +108,37 @@ npm run db:status
 npm run db:diff
 ```
 
+### Seed Data
+
+The `supabase/seed.sql` file contains test data for local development:
+
+```bash
+# Seed data is automatically loaded during database reset
+npm run db:reset
+
+# What gets seeded:
+# - 3 test users with auth credentials
+# - User profiles (auto-created via trigger)
+# - Sample posts (published and drafts)
+```
+
+**Test User Credentials** (local development only):
+- `alice@example.com` / `password123`
+- `bob@example.com` / `password123`
+- `charlie@example.com` / `password123`
+
+**Testing RLS Policies:**
+```sql
+-- Set auth context as a specific user
+SET request.jwt.claim.sub = '00000000-0000-0000-0000-000000000001'; -- Alice
+
+-- Test queries with RLS policies
+SELECT * FROM posts; -- Should see published posts + own drafts
+UPDATE posts SET title = 'New' WHERE user_id = auth.uid(); -- Should work
+```
+
+⚠️ **Warning:** Seed data is for local development only. Never use test credentials in production!
+
 ### Edge Functions
 
 ```bash
@@ -231,7 +262,7 @@ Current schema includes:
 - **Automatic triggers** - `updated_at` timestamp management
 - **Auto profile creation** - On user signup via Auth
 
-See `supabase/migrations/` for full schema.
+See `supabase/migrations/` for full schema and `supabase/seed.sql` for test data.
 
 ### Example: Using RLS Policies
 
@@ -251,11 +282,15 @@ CREATE POLICY "Users see own drafts"
 # Test edge functions
 npm run test:functions
 
-# Validate migrations locally
+# Validate migrations and seed data locally
 npm run db:reset
 
 # Check for SQL issues
 npm run lint:sql
+
+# Test with seed data users
+# Login with alice@example.com / password123 in your app
+# or use Supabase Studio at http://localhost:8000
 ```
 
 ## 📚 Documentation

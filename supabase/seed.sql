@@ -1,7 +1,37 @@
--- Seed data for local development and testing
+-- ============================================================================
+-- SEED DATA FOR LOCAL DEVELOPMENT AND TESTING
+-- ============================================================================
 -- This file is automatically loaded when running `supabase db reset`
--- DO NOT use this for production data!
-
+-- Referenced in: supabase/config.toml -> [db.seed] section
+--
+-- ⚠️  WARNING: DO NOT USE THIS FOR PRODUCTION DATA!
+-- This file contains test credentials and mock data for development only.
+--
+-- ============================================================================
+-- WHAT THIS FILE DOES
+-- ============================================================================
+-- 1. Creates test users in auth.users with authentication credentials
+-- 2. Automatically triggers profile creation via handle_new_user() function
+-- 3. Seeds sample posts for each user to demonstrate RLS policies
+-- 4. Provides verification summary of seeded data
+--
+-- ============================================================================
+-- HOW TO USE TEST USERS
+-- ============================================================================
+-- Test users can log in with these credentials:
+--   alice@example.com    | password123
+--   bob@example.com      | password123
+--   charlie@example.com  | password123
+--
+-- For manual RLS testing in SQL, set the auth context:
+--   SET request.jwt.claim.sub = '00000000-0000-0000-0000-000000000001'; -- Alice
+--   SET request.jwt.claim.sub = '00000000-0000-0000-0000-000000000002'; -- Bob
+--   SET request.jwt.claim.sub = '00000000-0000-0000-0000-000000000003'; -- Charlie
+--
+-- Then run queries to test RLS policies:
+--   SELECT * FROM posts; -- Should only see published posts + own drafts
+--   UPDATE posts SET title = 'New Title' WHERE id = '...'; -- Should only work on own posts
+--
 -- ============================================================================
 -- SEED CONFIGURATION
 -- ============================================================================
@@ -13,39 +43,117 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 
 -- ============================================================================
--- TEST USERS
+-- TEST USERS WITH AUTHENTICATION
 -- ============================================================================
--- Note: In production, users are created via Supabase Auth
--- For local testing, we'll create profiles directly
+-- Creates test users in auth.users which automatically creates profiles via trigger
+-- These users can be used for testing authentication and RLS policies
+--
+-- TEST CREDENTIALS:
+-- Email: alice@example.com    | Password: password123
+-- Email: bob@example.com      | Password: password123  
+-- Email: charlie@example.com  | Password: password123
+--
+-- IMPORTANT: These are for LOCAL DEVELOPMENT ONLY!
+-- Never use these credentials in production.
+-- ============================================================================
 
--- Test user profiles
-INSERT INTO public.profiles (id, username, full_name, avatar_url, bio, created_at)
-VALUES
+-- Insert test users into auth.users
+-- The handle_new_user() trigger will automatically create their profiles
+INSERT INTO auth.users (
+    instance_id,
+    id,
+    aud,
+    role,
+    email,
+    encrypted_password,
+    email_confirmed_at,
+    recovery_sent_at,
+    last_sign_in_at,
+    raw_app_meta_data,
+    raw_user_meta_data,
+    created_at,
+    updated_at,
+    confirmation_token,
+    email_change,
+    email_change_token_new,
+    recovery_token
+) VALUES
     (
+        '00000000-0000-0000-0000-000000000000',
         '00000000-0000-0000-0000-000000000001',
-        'alice',
-        'Alice Johnson',
-        'https://api.dicebear.com/7.x/avataaars/svg?seed=Alice',
-        'Software engineer and open source enthusiast. Love building with Supabase!',
-        NOW() - INTERVAL '30 days'
+        'authenticated',
+        'authenticated',
+        'alice@example.com',
+        -- Password: password123 (hashed using crypt function)
+        crypt('password123', gen_salt('bf')),
+        NOW() - INTERVAL '30 days',
+        NOW() - INTERVAL '30 days',
+        NOW() - INTERVAL '1 day',
+        '{"provider":"email","providers":["email"]}',
+        '{"username":"alice","full_name":"Alice Johnson","avatar_url":"https://api.dicebear.com/7.x/avataaars/svg?seed=Alice"}',
+        NOW() - INTERVAL '30 days',
+        NOW() - INTERVAL '30 days',
+        '',
+        '',
+        '',
+        ''
     ),
     (
+        '00000000-0000-0000-0000-000000000000',
         '00000000-0000-0000-0000-000000000002',
-        'bob',
-        'Bob Smith',
-        'https://api.dicebear.com/7.x/avataaars/svg?seed=Bob',
-        'Full-stack developer passionate about web technologies.',
-        NOW() - INTERVAL '25 days'
+        'authenticated',
+        'authenticated',
+        'bob@example.com',
+        crypt('password123', gen_salt('bf')),
+        NOW() - INTERVAL '25 days',
+        NOW() - INTERVAL '25 days',
+        NOW() - INTERVAL '2 days',
+        '{"provider":"email","providers":["email"]}',
+        '{"username":"bob","full_name":"Bob Smith","avatar_url":"https://api.dicebear.com/7.x/avataaars/svg?seed=Bob"}',
+        NOW() - INTERVAL '25 days',
+        NOW() - INTERVAL '25 days',
+        '',
+        '',
+        '',
+        ''
     ),
     (
+        '00000000-0000-0000-0000-000000000000',
         '00000000-0000-0000-0000-000000000003',
-        'charlie',
-        'Charlie Davis',
-        'https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie',
-        'Designer and developer hybrid. Creating beautiful UX.',
-        NOW() - INTERVAL '20 days'
+        'authenticated',
+        'authenticated',
+        'charlie@example.com',
+        crypt('password123', gen_salt('bf')),
+        NOW() - INTERVAL '20 days',
+        NOW() - INTERVAL '20 days',
+        NOW() - INTERVAL '3 days',
+        '{"provider":"email","providers":["email"]}',
+        '{"username":"charlie","full_name":"Charlie Davis","avatar_url":"https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie"}',
+        NOW() - INTERVAL '20 days',
+        NOW() - INTERVAL '20 days',
+        '',
+        '',
+        '',
+        ''
     )
 ON CONFLICT (id) DO NOTHING;
+
+-- Update profiles with additional bio information
+-- The profiles should have been created by the trigger, but we'll update them with more details
+UPDATE public.profiles SET
+    bio = 'Software engineer and open source enthusiast. Love building with Supabase!',
+    updated_at = NOW() - INTERVAL '29 days'
+WHERE id = '00000000-0000-0000-0000-000000000001';
+
+UPDATE public.profiles SET
+    bio = 'Full-stack developer passionate about web technologies.',
+    updated_at = NOW() - INTERVAL '24 days'
+WHERE id = '00000000-0000-0000-0000-000000000002';
+
+UPDATE public.profiles SET
+    bio = 'Designer and developer hybrid. Creating beautiful UX.',
+    updated_at = NOW() - INTERVAL '19 days'
+WHERE id = '00000000-0000-0000-0000-000000000003';
 
 -- ============================================================================
 -- SAMPLE POSTS
@@ -119,29 +227,63 @@ ON CONFLICT DO NOTHING;
 -- ============================================================================
 -- VERIFY SEED DATA
 -- ============================================================================
+-- Displays a summary of seeded data and helpful testing information
 
 DO $$
 DECLARE
+    user_count INTEGER;
     profile_count INTEGER;
     post_count INTEGER;
+    published_count INTEGER;
+    draft_count INTEGER;
 BEGIN
+    SELECT COUNT(*) INTO user_count FROM auth.users WHERE id IN (
+        '00000000-0000-0000-0000-000000000001',
+        '00000000-0000-0000-0000-000000000002',
+        '00000000-0000-0000-0000-000000000003'
+    );
     SELECT COUNT(*) INTO profile_count FROM public.profiles;
     SELECT COUNT(*) INTO post_count FROM public.posts;
+    SELECT COUNT(*) INTO published_count FROM public.posts WHERE published = true;
+    SELECT COUNT(*) INTO draft_count FROM public.posts WHERE published = false;
 
     RAISE NOTICE '';
     RAISE NOTICE '================================================================================';
-    RAISE NOTICE 'Seed Data Summary';
+    RAISE NOTICE '🌱 SEED DATA LOADED SUCCESSFULLY';
     RAISE NOTICE '================================================================================';
-    RAISE NOTICE 'Profiles created: %', profile_count;
-    RAISE NOTICE 'Posts created: %', post_count;
     RAISE NOTICE '';
-    RAISE NOTICE 'Test Users:';
-    RAISE NOTICE '  - alice (ID: 00000000-0000-0000-0000-000000000001)';
-    RAISE NOTICE '  - bob (ID: 00000000-0000-0000-0000-000000000002)';
-    RAISE NOTICE '  - charlie (ID: 00000000-0000-0000-0000-000000000003)';
+    RAISE NOTICE '📊 Data Summary:';
+    RAISE NOTICE '  • Auth Users:      % (with authentication credentials)', user_count;
+    RAISE NOTICE '  • User Profiles:   % (auto-created via trigger)', profile_count;
+    RAISE NOTICE '  • Total Posts:     % (% published, % drafts)', post_count, published_count, draft_count;
     RAISE NOTICE '';
-    RAISE NOTICE 'You can use these user IDs for testing RLS policies.';
-    RAISE NOTICE 'Set auth context with: SET request.jwt.claim.sub = ''<user_id>'';';
+    RAISE NOTICE '👥 Test User Credentials (LOCAL DEVELOPMENT ONLY):';
+    RAISE NOTICE '  ┌─────────────────────────┬──────────────────────────────────────┐';
+    RAISE NOTICE '  │ Email                   │ Password                             │';
+    RAISE NOTICE '  ├─────────────────────────┼──────────────────────────────────────┤';
+    RAISE NOTICE '  │ alice@example.com       │ password123                          │';
+    RAISE NOTICE '  │ bob@example.com         │ password123                          │';
+    RAISE NOTICE '  │ charlie@example.com     │ password123                          │';
+    RAISE NOTICE '  └─────────────────────────┴──────────────────────────────────────┘';
+    RAISE NOTICE '';
+    RAISE NOTICE '🔐 User IDs for RLS Testing:';
+    RAISE NOTICE '  • Alice:   00000000-0000-0000-0000-000000000001';
+    RAISE NOTICE '  • Bob:     00000000-0000-0000-0000-000000000002';
+    RAISE NOTICE '  • Charlie: 00000000-0000-0000-0000-000000000003';
+    RAISE NOTICE '';
+    RAISE NOTICE '💡 Quick Testing Tips:';
+    RAISE NOTICE '  1. Login via Supabase Studio: http://localhost:8000';
+    RAISE NOTICE '  2. Test auth in your app using the credentials above';
+    RAISE NOTICE '  3. Test RLS policies with: SET request.jwt.claim.sub = ''<user_id>'';';
+    RAISE NOTICE '  4. View Studio tables to see seeded data';
+    RAISE NOTICE '';
+    RAISE NOTICE '📝 Example RLS Test:';
+    RAISE NOTICE '  -- Set context as Alice';
+    RAISE NOTICE '  SET request.jwt.claim.sub = ''00000000-0000-0000-0000-000000000001'';';
+    RAISE NOTICE '  -- Should see published posts + Alice''s drafts only';
+    RAISE NOTICE '  SELECT title, published, user_id FROM posts;';
+    RAISE NOTICE '';
+    RAISE NOTICE '⚠️  Remember: This is test data for LOCAL DEVELOPMENT ONLY!';
     RAISE NOTICE '================================================================================';
     RAISE NOTICE '';
 END $$;
