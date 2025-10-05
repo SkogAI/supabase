@@ -406,8 +406,130 @@ supabase functions logs <name> --tail
 
 ---
 
+## Quick Reference
+
+### Essential Commands
+
+```bash
+# Local Development
+supabase start                     # Start all services
+supabase stop                      # Stop all services
+supabase status                    # View service status
+supabase db reset                  # Reset database with migrations
+
+# Migrations
+supabase migration new <name>      # Create new migration
+supabase migration list            # List all migrations
+supabase db diff                   # Generate migration from changes
+supabase db push                   # Deploy migrations to remote
+
+# Edge Functions
+supabase functions new <name>      # Create new function
+supabase functions serve           # Serve functions locally
+supabase functions deploy <name>   # Deploy specific function
+supabase functions logs <name>     # View function logs
+
+# Types
+supabase gen types typescript --local > types/database.ts
+
+# Links and Projects
+supabase link --project-ref <ref>  # Link to remote project
+supabase projects list             # List all projects
+```
+
+### NPM Scripts
+
+```bash
+# Database
+npm run db:start          # Start Supabase
+npm run db:stop           # Stop Supabase
+npm run db:reset          # Reset with migrations + seed
+npm run db:status         # Check status
+npm run db:diff           # Show schema changes
+
+# Migrations
+npm run migration:new <name>  # Create new migration
+
+# Functions
+npm run functions:serve       # Start function server
+npm run functions:new <name>  # Create new function
+npm run functions:deploy      # Deploy all functions
+npm run lint:functions        # Lint functions
+npm run format:functions      # Format functions
+npm run test:functions        # Run function tests
+
+# Types
+npm run types:generate    # Generate TypeScript types
+npm run types:watch       # Watch and regenerate
+```
+
+### Helper Scripts
+
+```bash
+./scripts/setup.sh    # Initial environment setup
+./scripts/dev.sh      # Quick start development
+./scripts/reset.sh    # Reset database (interactive)
+```
+
+### Access URLs (Local)
+
+- **Studio UI**: http://localhost:8000
+- **API**: http://localhost:8000
+- **Database**: `postgresql://postgres:postgres@localhost:54322/postgres`
+- **Functions**: `http://localhost:54321/functions/v1/<function-name>`
+- **Email Testing**: http://localhost:9000
+
+### GitHub Actions Quick Commands
+
+```bash
+# Trigger workflows manually
+gh workflow run deploy.yml
+gh workflow run backup.yml
+
+# View workflow runs
+gh run list --workflow=deploy.yml --limit 5
+
+# View logs
+gh run view <run-id> --log
+
+# Manage secrets
+gh secret set SECRET_NAME
+gh secret list
+gh secret delete SECRET_NAME
+```
+
+### Common Troubleshooting
+
+```bash
+# Docker issues
+docker info                        # Check Docker status
+docker ps | grep supabase         # List Supabase containers
+docker logs <container-id>         # View container logs
+
+# Port conflicts
+lsof -i :8000                     # Check port 8000
+kill -9 $(lsof -ti:8000)          # Kill process on port
+
+# Reset everything
+supabase stop
+docker system prune -a            # Clean Docker (careful!)
+supabase start
+
+# Database connection
+supabase db push --dry-run        # Preview changes
+supabase db reset --debug         # Reset with debug info
+
+# Function deployment
+supabase functions deploy <name> --no-verify-jwt
+```
+
+---
+
 ## Additional Resources
 
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture overview
+- **[README.md](README.md)** - Quick start and workflows
 - [Supabase CLI Reference](https://supabase.com/docs/reference/cli)
 - [Edge Functions Guide](https://supabase.com/docs/guides/functions)
 - [Database Migrations](https://supabase.com/docs/guides/database/migrations)
@@ -424,5 +546,5 @@ supabase functions logs <name> --tail
 
 ---
 
-**Last Updated**: 2025-10-05
+**Last Updated**: 2025-01-15
 **Maintained By**: DevOps Team

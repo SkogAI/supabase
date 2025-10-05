@@ -88,6 +88,25 @@ This will:
 
 ## 💻 Development Workflow
 
+### Daily Development
+
+```bash
+# Start development environment
+./scripts/dev.sh
+# OR
+npm run db:start
+
+# Access services
+# Studio UI: http://localhost:8000
+# Database: postgresql://postgres:postgres@localhost:54322/postgres
+
+# Check status
+supabase status
+
+# Stop services
+supabase stop
+```
+
 ### Database Migrations
 
 ```bash
@@ -95,6 +114,8 @@ This will:
 npm run migration:new <migration_name>
 # OR
 supabase migration new <migration_name>
+
+# Edit the generated migration file in supabase/migrations/
 
 # Apply all migrations (resets database)
 npm run db:reset
@@ -106,18 +127,38 @@ npm run db:status
 
 # Generate SQL diff of current changes
 npm run db:diff
+
+# View migration history
+supabase migration list
 ```
+
+**Migration Best Practices**:
+- Always test migrations locally before committing
+- One logical change per migration
+- Include rollback instructions in comments
+- Enable RLS on all new tables
+- Add indexes for foreign keys and frequently queried columns
 
 ### Edge Functions
 
 ```bash
 # Create a new function
 npm run functions:new <function_name>
+# OR
+supabase functions new <function_name>
 
 # Serve functions locally (with hot reload)
 npm run functions:serve
+# Functions available at: http://localhost:54321/functions/v1/<function-name>
 
-# Test a function
+# Test a function with curl
+curl -i --location --request POST \
+  'http://localhost:54321/functions/v1/<function-name>' \
+  --header 'Authorization: Bearer YOUR_ANON_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{"key":"value"}'
+
+# Run function tests
 cd supabase/functions/<function-name>
 deno test --allow-all test.ts
 
@@ -127,12 +168,26 @@ npm run lint:functions
 # Format functions
 npm run format:functions
 
+# Type check functions
+cd supabase/functions/<function-name>
+deno check index.ts
+
 # Deploy specific function
 supabase functions deploy <function_name>
 
 # Deploy all functions
 npm run functions:deploy
+
+# View function logs
+supabase functions logs <function-name> --tail
 ```
+
+**Function Development Tips**:
+- Use TypeScript for type safety
+- Always handle CORS in responses
+- Add error handling for all operations
+- Test with both authenticated and anonymous requests
+- Keep functions focused and under 200 lines
 
 ### TypeScript Types
 
@@ -142,6 +197,90 @@ npm run types:generate
 
 # Watch for changes and auto-regenerate
 npm run types:watch
+
+# Verify types compile
+tsc --noEmit
+```
+
+**Using Generated Types**:
+```typescript
+import { Database } from './types/database';
+
+type Profile = Database['public']['Tables']['profiles']['Row'];
+type NewPost = Database['public']['Tables']['posts']['Insert'];
+```
+
+### Testing Changes
+
+```bash
+# Test database changes
+npm run db:reset           # Apply migrations
+# Verify in Studio: http://localhost:8000
+
+# Test edge functions
+npm run test:functions     # Run all function tests
+npm run lint:functions     # Check code quality
+
+# Manual testing
+npm run functions:serve    # Start function server
+# Test with curl or Postman
+```
+
+### Working with Seeds
+
+```bash
+# Edit seed data
+nano supabase/seed.sql
+
+# Apply seeds
+npm run db:reset           # Resets DB and applies seeds
+
+# Verify seed data in Studio
+open http://localhost:8000
+```
+
+### Common Workflows
+
+**Adding a New Table**:
+```bash
+1. supabase migration new add_table_name
+2. Edit migration file with CREATE TABLE
+3. Add RLS policies
+4. npm run db:reset (test locally)
+5. npm run types:generate (update types)
+6. Commit and push
+```
+
+**Modifying a Table**:
+```bash
+1. supabase migration new modify_table_name
+2. Edit migration with ALTER TABLE
+3. npm run db:reset (test locally)
+4. Verify data is preserved/migrated
+5. npm run types:generate
+6. Commit and push
+```
+
+**Creating a New Function**:
+```bash
+1. npm run functions:new my-function
+2. Edit supabase/functions/my-function/index.ts
+3. Add tests in test.ts
+4. npm run functions:serve (test locally)
+5. curl test the endpoint
+6. npm run test:functions (run tests)
+7. Commit and push
+```
+
+**Fixing a Bug**:
+```bash
+1. git checkout -b fix/bug-description
+2. Make code changes
+3. Test locally (db:reset, functions:serve)
+4. npm run lint:functions
+5. git commit -m "fix: description"
+6. git push origin fix/bug-description
+7. Open PR and wait for CI checks
 ```
 
 ## 🚢 Deployment
@@ -260,8 +399,16 @@ npm run lint:sql
 
 ## 📚 Documentation
 
+### Project Documentation
+
+- **[README.md](README.md)** - This file: Quick start and development workflows
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contributing guidelines and coding standards
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture and design decisions
 - **[DEVOPS.md](DEVOPS.md)** - Complete DevOps guide with secrets, workflows, troubleshooting
-- **[supabase/functions/README.md](supabase/functions/README.md)** - Edge functions guide
+- **[supabase/functions/README.md](supabase/functions/README.md)** - Edge functions development guide
+
+### External Resources
+
 - [Supabase CLI Reference](https://supabase.com/docs/reference/cli)
 - [Local Development Guide](https://supabase.com/docs/guides/local-development)
 - [Edge Functions Guide](https://supabase.com/docs/guides/functions)
@@ -269,24 +416,39 @@ npm run lint:sql
 
 ## 🐛 Troubleshooting
 
+### Common Issues and Solutions
+
 **Docker not running**
 ```bash
 # Make sure Docker Desktop is running
 docker info
+
+# If Docker daemon is not running
+# Start Docker Desktop application
 ```
 
 **Port conflicts**
 ```bash
 # Stop Supabase and check ports
 supabase stop
-lsof -i :8000
-lsof -i :54322
+lsof -i :8000    # Studio/API port
+lsof -i :54322   # Database port
+lsof -i :54321   # Functions port
+
+# Kill process using the port (if needed)
+kill -9 $(lsof -ti:8000)
 ```
 
 **Migration errors**
 ```bash
 # Reset and reapply migrations
 supabase db reset --debug
+
+# Check migration status
+supabase migration list
+
+# Manually repair migration (if needed)
+supabase db push --dry-run
 ```
 
 **Function deployment fails**
@@ -296,19 +458,114 @@ supabase functions logs <function-name>
 
 # Test locally first
 supabase functions serve <function-name>
+
+# Check for syntax errors
+cd supabase/functions/<function-name>
+deno check index.ts
+```
+
+**Supabase CLI not found**
+```bash
+# Install Supabase CLI
+# macOS/Linux
+brew install supabase/tap/supabase
+
+# Windows
+scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+scoop install supabase
+
+# npm (alternative)
+npm install -g supabase
+```
+
+**Permission denied on scripts**
+```bash
+# Make scripts executable
+chmod +x scripts/setup.sh
+chmod +x scripts/dev.sh
+chmod +x scripts/reset.sh
+```
+
+**Database connection refused**
+```bash
+# Ensure Supabase is running
+supabase status
+
+# Restart Supabase
+supabase stop
+supabase start
+
+# Check Docker containers
+docker ps | grep supabase
+```
+
+**TypeScript types not generating**
+```bash
+# Make sure database is running
+supabase status
+
+# Generate manually
+npm run types:generate
+
+# Or use CLI directly
+supabase gen types typescript --local > types/database.ts
+```
+
+**Node modules issues**
+```bash
+# Clear and reinstall
+rm -rf node_modules package-lock.json
+npm install
+
+# Or use npm ci for clean install
+npm ci
+```
+
+**Environment variables not loading**
+```bash
+# Ensure .env file exists
+ls -la .env
+
+# Copy from example if missing
+cp .env.example .env
+
+# Check file contents
+cat .env
 ```
 
 See [DEVOPS.md](DEVOPS.md) for comprehensive troubleshooting.
 
 ## 🤝 Contributing
 
-1. Create feature branch: `git checkout -b feature/my-feature`
-2. Make changes and commit: `git commit -m "Add feature"`
-3. Push branch: `git push origin feature/my-feature`
-4. Open Pull Request
-5. Wait for CI checks to pass
-6. Request review
-7. Merge to main → Auto-deploy!
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Quick Contribution Workflow
+
+1. **Fork and clone** the repository
+2. **Create feature branch**: `git checkout -b feature/my-feature`
+3. **Make changes** and test locally
+4. **Commit changes**: `git commit -m "feat: add feature"`
+5. **Push branch**: `git push origin feature/my-feature`
+6. **Open Pull Request** on GitHub
+7. **Wait for CI checks** to pass
+8. **Request review** from maintainers
+9. **Merge to main** → Auto-deploy! 🚀
+
+### Before Contributing
+
+- Read [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines
+- Check [ARCHITECTURE.md](ARCHITECTURE.md) to understand the system
+- Review open issues and PRs to avoid duplicates
+- Test your changes locally: `npm run db:reset && npm run test:functions`
+
+### What to Contribute
+
+- 🐛 Bug fixes
+- ✨ New features
+- 📝 Documentation improvements
+- 🧪 Tests
+- 🎨 UI/UX enhancements
+- ⚡ Performance improvements
 
 ## 📝 License
 
