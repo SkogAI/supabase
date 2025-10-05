@@ -63,15 +63,20 @@ jobs:
           path: backups/*.sql
           retention-days: 30
 
-      - name: Generate backup summary
-        run: |
-          echo "## Database Backup Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Backup completed successfully" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Backup Date:** $(date)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Retention:** 30 days" >> $GITHUB_STEP_SUMMARY
+      - name: Analyze backup and generate summary with Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          prompt: |
+            Analyze the database backup and generate a comprehensive summary to $GITHUB_STEP_SUMMARY:
+            1. Review the backup file in backups/
+            2. Analyze backup contents:
+               - Database size and statistics
+               - Tables included
+               - Data volume per table
+            3. Verify backup integrity
+            4. Document restoration procedures
+            5. Calculate retention and storage recommendations
+            6. Provide backup best practices checklist
 
       - name: Notify on failure
         if: failure()

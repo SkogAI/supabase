@@ -71,14 +71,26 @@ jobs:
             echo "Review for potential SQL injection risks"
           fi
 
-      - name: Generate security report
+      - name: Generate comprehensive security analysis with Claude Code
         if: always()
-        run: |
-          echo "## Security Scan Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Security scans completed" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Scans Performed" >> $GITHUB_STEP_SUMMARY
-          echo "- Secret scanning (TruffleHog)" >> $GITHUB_STEP_SUMMARY
-          echo "- Dependency scanning (Trivy)" >> $GITHUB_STEP_SUMMARY
-          echo "- SQL injection pattern check" >> $GITHUB_STEP_SUMMARY
+        uses: anthropics/claude-code-action@v1
+        with:
+          prompt: |
+            Perform comprehensive security analysis and generate report to $GITHUB_STEP_SUMMARY:
+
+            Available security scan results:
+            - TruffleHog secret scanning results
+            - Trivy vulnerability scan (trivy-results.sarif)
+            - SQL injection pattern checks
+
+            Tasks:
+            1. Analyze all security scan results
+            2. Prioritize findings by severity
+            3. Review SQL code for injection vulnerabilities
+            4. Check authentication/authorization patterns
+            5. Analyze RLS policies for gaps
+            6. Review API endpoint security
+            7. Check for exposed secrets or credentials
+            8. Provide remediation steps for each finding
+            9. Generate security score and recommendations
+            10. Create actionable security improvement checklist

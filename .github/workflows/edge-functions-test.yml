@@ -102,21 +102,22 @@ jobs:
 
           kill $SERVE_PID || true
 
-      - name: Generate test report
+      - name: Generate comprehensive test report with Claude Code
         if: github.event_name == 'pull_request'
-        run: |
-          echo "## Edge Functions Test Report" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          if [ -d "supabase/functions" ] && [ -n "$(ls -A supabase/functions 2>/dev/null)" ]; then
-            echo "### Functions Tested" >> $GITHUB_STEP_SUMMARY
-            cd supabase/functions
-            for dir in */; do
-              echo "- ✅ \`${dir%/}\`" >> $GITHUB_STEP_SUMMARY
-            done
-          else
-            echo "No edge functions found" >> $GITHUB_STEP_SUMMARY
-          fi
+        uses: anthropics/claude-code-action@v1
+        with:
+          prompt: |
+            Analyze the edge functions and generate a comprehensive test report to $GITHUB_STEP_SUMMARY:
+            1. Review all functions in supabase/functions/
+            2. Analyze test coverage and quality
+            3. Review each function's:
+               - Code quality and structure
+               - Error handling
+               - Security considerations
+               - Performance characteristics
+            4. Identify missing tests or edge cases
+            5. Provide recommendations for improvements
+            6. Check for common Deno/edge function anti-patterns
 
       - name: Stop Supabase
         if: always()

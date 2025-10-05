@@ -80,20 +80,28 @@ jobs:
             echo "⚠️  Warning: SELECT * found in migrations (consider explicit column names)"
           fi
 
-      - name: Generate lint report
+      - name: Generate comprehensive schema analysis with Claude Code
         if: github.event_name == 'pull_request'
-        run: |
-          echo "## Database Schema Lint Report" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+        uses: anthropics/claude-code-action@v1
+        with:
+          prompt: |
+            Perform comprehensive database schema analysis and write to $GITHUB_STEP_SUMMARY:
 
-          if [ "${{ steps.schema-diff.outputs.has_diff }}" == "true" ]; then
-            echo "### Schema Changes Detected" >> $GITHUB_STEP_SUMMARY
-            echo '```sql' >> $GITHUB_STEP_SUMMARY
-            cat schema-diff.txt >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-          else
-            echo "✅ No schema differences detected" >> $GITHUB_STEP_SUMMARY
-          fi
+            Context:
+            - Schema diff available: ${{ steps.schema-diff.outputs.has_diff }}
+            - Schema diff file: schema-diff.txt (if exists)
+
+            Tasks:
+            1. Analyze schema changes in detail
+            2. Review RLS policies for security
+            3. Check indexing strategy
+            4. Validate foreign key relationships
+            5. Identify potential N+1 query issues
+            6. Check for SQL anti-patterns
+            7. Suggest performance optimizations
+            8. Verify naming conventions
+            9. Check for missing constraints
+            10. Generate migration risk assessment
 
       - name: Stop Supabase
         if: always()
