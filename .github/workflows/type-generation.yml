@@ -58,6 +58,8 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: anthropics/claude-code-action@v1
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
             Analyze the generated TypeScript types file at types/database.ts and:
             1. Review the type definitions for any issues or improvements
@@ -72,6 +74,8 @@ jobs:
       - name: Generate comprehensive type summary with Claude Code
         uses: anthropics/claude-code-action@v1
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
             Generate a comprehensive TypeScript type generation summary to $GITHUB_STEP_SUMMARY:
             1. Analyze types/database.ts and list all generated types

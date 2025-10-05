@@ -75,6 +75,8 @@ jobs:
         if: always()
         uses: anthropics/claude-code-action@v1
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
             Perform comprehensive security analysis and generate report to $GITHUB_STEP_SUMMARY:
 

@@ -25,6 +25,8 @@ jobs:
       - name: Generate update report with Claude Code
         uses: anthropics/claude-code-action@v1
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
             Generate a Supabase CLI update report and write to $GITHUB_STEP_SUMMARY:
             - Latest version: ${{ steps.check-cli.outputs.latest_version }}
@@ -55,6 +57,8 @@ jobs:
       - name: Generate Deno update report with Claude Code
         uses: anthropics/claude-code-action@v1
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
             Generate a Deno version update report and write to $GITHUB_STEP_SUMMARY:
             - Current version: ${{ steps.current-deno.outputs.current_version }}
@@ -72,6 +76,8 @@ jobs:
       - name: Analyze GitHub Actions with Claude Code
         uses: anthropics/claude-code-action@v1
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
             Analyze all GitHub Actions used in .github/workflows/ and write a report to $GITHUB_STEP_SUMMARY:
             - List all actions currently in use with their versions

@@ -106,6 +106,8 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: anthropics/claude-code-action@v1
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
             Analyze the edge functions and generate a comprehensive test report to $GITHUB_STEP_SUMMARY:
             1. Review all functions in supabase/functions/
