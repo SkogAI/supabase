@@ -256,11 +256,35 @@ npm run db:reset
 
 # Check for SQL issues
 npm run lint:sql
+
+# Run performance tests
+supabase db execute --file supabase/performance_tests/01_monitoring_baseline.sql
 ```
+
+## 📊 Performance Monitoring
+
+Track and optimize database performance:
+
+```bash
+# Run complete performance baseline
+supabase db execute --file supabase/performance_tests/01_monitoring_baseline.sql
+
+# Check slow queries
+supabase db execute "SELECT * FROM public.get_slow_queries(1000, 20)"
+
+# Monitor cache hit ratio (target: > 99%)
+supabase db execute "SELECT * FROM public.get_cache_hit_ratio()"
+
+# Verify index usage
+supabase db execute --file supabase/performance_tests/03_index_verification.sql
+```
+
+**See [docs/PERFORMANCE.md](docs/PERFORMANCE.md) for comprehensive performance guide.**
 
 ## 📚 Documentation
 
 - **[DEVOPS.md](DEVOPS.md)** - Complete DevOps guide with secrets, workflows, troubleshooting
+- **[docs/PERFORMANCE.md](docs/PERFORMANCE.md)** - Database performance monitoring and optimization
 - **[supabase/functions/README.md](supabase/functions/README.md)** - Edge functions guide
 - [Supabase CLI Reference](https://supabase.com/docs/reference/cli)
 - [Local Development Guide](https://supabase.com/docs/guides/local-development)

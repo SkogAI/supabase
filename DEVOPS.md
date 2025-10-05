@@ -383,6 +383,51 @@ gh run view <run-id> --log | grep -i error
 - Use connection pooling for high traffic
 - Monitor database size and plan upgrades
 
+**See [docs/PERFORMANCE.md](docs/PERFORMANCE.md) for comprehensive performance monitoring guide.**
+
+### Performance Monitoring Utilities
+
+This project includes built-in performance monitoring functions:
+
+```sql
+-- Check slow queries
+SELECT * FROM public.get_slow_queries(1000, 20);
+
+-- Monitor table sizes and statistics
+SELECT * FROM public.get_table_stats();
+
+-- Check index usage
+SELECT * FROM public.get_index_stats();
+
+-- Identify missing indexes
+SELECT * FROM public.get_missing_indexes();
+
+-- Check cache hit ratio (target: > 99%)
+SELECT * FROM public.get_cache_hit_ratio();
+
+-- Quick performance overview
+SELECT * FROM public.performance_overview;
+```
+
+### Running Performance Tests
+
+```bash
+# Run complete baseline analysis
+supabase db execute --file supabase/performance_tests/01_monitoring_baseline.sql
+
+# Test query performance with EXPLAIN ANALYZE
+supabase db execute --file supabase/performance_tests/02_query_performance.sql
+
+# Verify index usage
+supabase db execute --file supabase/performance_tests/03_index_verification.sql
+
+# Check for slow queries
+supabase db execute --file supabase/performance_tests/04_slow_query_check.sql
+
+# Analyze cache hit ratios
+supabase db execute --file supabase/performance_tests/05_cache_and_stats.sql
+```
+
 ### Edge Functions
 
 - Minimize cold start time (keep functions small)
