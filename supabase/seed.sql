@@ -16,7 +16,7 @@ SET client_min_messages = warning;
 -- TEST USERS
 -- ============================================================================
 -- Note: In production, users are created via Supabase Auth
--- For local testing, we'll create auth users first, then profiles
+-- For local testing, we'll create auth users first (changed from profiles-only approach), then profiles
 
 -- Create auth users (required for foreign key constraint)
 INSERT INTO auth.users (
