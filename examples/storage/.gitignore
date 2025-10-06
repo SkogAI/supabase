@@ -1,0 +1,18 @@
+# Environment variables
+.env
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Test files (don't commit test uploads)
+test-uploads/
+*.jpg
+*.png
+*.pdf
+*.doc
+*.docx
+*.zip
+
+# Keep example files
+!example-usage.png
