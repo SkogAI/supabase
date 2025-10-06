@@ -8,8 +8,6 @@ Edge Functions are server-side TypeScript functions that run on Deno, distribute
 functions/
 ├── README.md
 ├── deno.json         # Deno configuration and import maps
-└── hello-world/
-    ├── index.ts      # Main function code
 ├── hello-world/
 │   ├── index.ts      # Example: Basic function with auth & database
 │   └── test.ts       # Unit tests
@@ -18,9 +16,6 @@ functions/
 │   └── test.ts       # Unit tests
 └── openrouter-chat/
     ├── index.ts      # Example: OpenRouter (100+ AI models)
-├── deno.json         # Deno configuration and import maps
-└── hello-world/
-    ├── index.ts      # Main function code
     └── test.ts       # Unit tests
 ```
 
@@ -29,6 +24,7 @@ functions/
 ### Configuration
 
 The `deno.json` file provides:
+
 - **Import Maps**: Centralized dependency management with shorthand imports
 - **Compiler Options**: TypeScript configuration for strict type checking
 - **Linting Rules**: Consistent code quality standards
@@ -128,13 +124,10 @@ serve(async (req: Request) => {
     });
   } catch (error) {
     console.error("Function error:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        headers: { "Content-Type": "application/json" },
-        status: 500,
-      }
-    );
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { "Content-Type": "application/json" },
+      status: 500,
+    });
   }
 });
 ```
@@ -146,7 +139,8 @@ Always include CORS headers for browser requests:
 ```typescript
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 // Handle OPTIONS requests
@@ -169,10 +163,12 @@ const supabaseClient = createClient(
     global: {
       headers: { Authorization: req.headers.get("Authorization")! },
     },
-  }
+  },
 );
 
-const { data: { user } } = await supabaseClient.auth.getUser();
+const {
+  data: { user },
+} = await supabaseClient.auth.getUser();
 ```
 
 ### 4. **Environment Variables**
@@ -239,7 +235,7 @@ supabase functions logs <function-name> --tail
 ```typescript
 const supabaseClient = createClient(
   Deno.env.get("SUPABASE_URL") ?? "",
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
 );
 
 const { data, error } = await supabaseClient
@@ -255,7 +251,7 @@ const response = await fetch("https://api.example.com/data", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
-    "Authorization": `Bearer ${apiKey}`,
+    Authorization: `Bearer ${apiKey}`,
   },
   body: JSON.stringify({ data: "example" }),
 });
@@ -279,6 +275,7 @@ We provide two AI integration examples:
    - See function for implementation details
 
 Both examples demonstrate:
+
 - External API calls
 - Environment variable handling
 - Error handling for API failures
@@ -316,15 +313,19 @@ supabase functions serve --inspect-brk
 ### Common Issues
 
 **Issue**: Function not found
+
 - **Solution**: Ensure function is deployed and name matches exactly
 
 **Issue**: CORS errors
+
 - **Solution**: Add proper CORS headers to all responses
 
 **Issue**: Authentication fails
+
 - **Solution**: Verify JWT is being passed correctly in Authorization header
 
 **Issue**: Environment variables undefined
+
 - **Solution**: Set secrets via `supabase secrets set` or in Dashboard
 
 ## Security
@@ -346,6 +347,7 @@ supabase functions serve --inspect-brk
 ## CI/CD
 
 All edge functions are automatically:
+
 - **Linted** on PR (via `deno lint`)
 - **Type-checked** on PR (via `deno check`)
 - **Tested** on PR (via `deno test`)
