@@ -262,6 +262,17 @@ All tables have comprehensive RLS policies:
 
 See **[docs/RLS_POLICIES.md](docs/RLS_POLICIES.md)** for complete policy documentation and patterns.
 
+### Row Level Security (RLS)
+
+All tables have comprehensive RLS policies:
+
+- ✅ **Service Role**: Full admin access for backend operations
+- ✅ **Authenticated Users**: Can view all public data, manage own resources
+- ✅ **Anonymous Users**: Read-only access to published content
+- ✅ **Security**: Users cannot access or modify other users' private data
+
+See **[docs/RLS_POLICIES.md](docs/RLS_POLICIES.md)** for complete policy documentation and patterns.
+
 ### Example: Using RLS Policies
 
 ```sql
