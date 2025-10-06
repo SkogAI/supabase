@@ -60,9 +60,8 @@ coverage/
 docker-compose.override.yml
 
 # Misc
-.github/.claude/data/sessions
+.claude/data/sessions
 *.pid
 *.seed
 *.pid.lock
-.claude/data/sessions
 tmp
