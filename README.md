@@ -339,12 +339,88 @@ npm run test:functions
 # Test RLS policies
 npm run test:rls
 
+# Test storage policies
+supabase db execute --file tests/storage_test_suite.sql
+
 # Validate migrations locally
 npm run db:reset
 
 # Check for SQL issues
 npm run lint:sql
 ```
+
+## 💾 Storage
+
+Supabase Storage provides secure file uploads with three pre-configured buckets:
+
+### Buckets
+
+| Bucket | Visibility | Size Limit | Purpose |
+|--------|-----------|------------|---------|
+| `avatars` | Public | 5MB | User profile pictures (images only) |
+| `public-assets` | Public | 10MB | General public files (images, PDFs, etc.) |
+| `user-files` | Private | 50MB | User documents and private uploads |
+
+### Quick Start
+
+```javascript
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Upload avatar
+const userId = supabase.auth.user().id;
+const { data, error } = await supabase.storage
+  .from('avatars')
+  .upload(`${userId}/avatar.jpg`, file);
+
+// Get public URL
+const { data: { publicUrl } } = supabase.storage
+  .from('avatars')
+  .getPublicUrl(`${userId}/avatar.jpg`);
+
+// Upload private file
+await supabase.storage
+  .from('user-files')
+  .upload(`${userId}/document.pdf`, file);
+
+// Download private file
+const { data } = await supabase.storage
+  .from('user-files')
+  .download(`${userId}/document.pdf`);
+```
+
+### Features
+
+✅ **Row Level Security** - User-based access control on all buckets  
+✅ **File Size Limits** - Enforced at bucket level  
+✅ **MIME Type Restrictions** - Only allowed file types accepted  
+✅ **Public/Private Buckets** - Appropriate visibility for each use case  
+✅ **User-scoped Paths** - Files organized by user ID  
+
+### File Organization
+
+All files must be organized in user-specific folders:
+
+```
+avatars/
+  {user_id}/
+    avatar.jpg
+
+user-files/
+  {user_id}/
+    document.pdf
+    report.xlsx
+```
+
+### Security
+
+- Users can only upload/modify their own files
+- Private buckets require authentication
+- MIME types validated on upload
+- File size limits enforced automatically
+
+**See [docs/STORAGE.md](docs/STORAGE.md) for complete documentation, examples, and best practices.**
 
 ## 🔴 Realtime
 
@@ -519,6 +595,8 @@ For more details, see `examples/realtime/README.md`
 - **[OPENAI_SETUP.md](OPENAI_SETUP.md)** - OpenAI integration guide for Studio AI features and Edge Functions
 - **[docs/RLS_POLICIES.md](docs/RLS_POLICIES.md)** - Complete RLS policy guide with patterns and best practices
 - **[docs/RLS_TESTING.md](docs/RLS_TESTING.md)** - RLS testing guidelines for local and CI/CD
+- **[docs/STORAGE.md](docs/STORAGE.md)** - Storage buckets guide with usage examples and security patterns
+- **[SCHEMA_ORGANIZATION.md](SCHEMA_ORGANIZATION.md)** - Schema organization and custom types documentation
 
 ### MCP Server Infrastructure (AI Agents)
 - **[docs/MCP_SERVER_ARCHITECTURE.md](docs/MCP_SERVER_ARCHITECTURE.md)** - MCP server architecture and design patterns for AI agents
