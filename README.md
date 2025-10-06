@@ -243,13 +243,24 @@ gh secret set SUPABASE_DB_PASSWORD
 
 Current schema includes:
 
-- **`profiles`** - User profiles with RLS policies
-- **`posts`** - User-generated content
+- **`profiles`** - User profiles with comprehensive RLS policies
+- **`posts`** - User-generated content with role-based access
 - **Automatic triggers** - `updated_at` timestamp management
 - **Auto profile creation** - On user signup via Auth
 - **Custom types** - Enums and composite types for better data modeling
 
 See `supabase/migrations/` for full schema and **[SCHEMA_ORGANIZATION.md](SCHEMA_ORGANIZATION.md)** for detailed documentation on schema organization and custom types.
+
+### Row Level Security (RLS)
+
+All tables have comprehensive RLS policies:
+
+- ✅ **Service Role**: Full admin access for backend operations
+- ✅ **Authenticated Users**: Can view all public data, manage own resources
+- ✅ **Anonymous Users**: Read-only access to published content
+- ✅ **Security**: Users cannot access or modify other users' private data
+
+See **[docs/RLS_POLICIES.md](docs/RLS_POLICIES.md)** for complete policy documentation and patterns.
 
 ### Example: Using RLS Policies
 
@@ -260,14 +271,73 @@ ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
 -- Policy: Users can only see their own drafts
 CREATE POLICY "Users see own drafts"
   ON posts FOR SELECT
+  TO authenticated
   USING (published = true OR auth.uid() = user_id);
 ```
+
+## 🤖 AI Agent Integration (MCP)
+
+This project includes comprehensive infrastructure for AI agents to connect to and interact with the Supabase database using the Model Context Protocol (MCP).
+
+### Supported Agent Types
+
+- **Persistent Agents** - Long-running AI assistants with direct IPv6 connections
+- **Serverless Agents** - AWS Lambda, Google Cloud Functions with transaction pooling
+- **Edge Agents** - Cloudflare Workers, Vercel Edge with optimized latency
+- **High-Performance Agents** - Dedicated poolers for intensive workloads
+
+### Connection Methods
+
+| Method | Use Case | Port | Best For |
+|--------|----------|------|----------|
+| Direct IPv6 | Persistent agents | 5432 | Full PostgreSQL features, lowest latency |
+| Supavisor Session | IPv4 persistent agents | 5432 | Connection persistence, IPv4 compatibility |
+| Supavisor Transaction | Serverless/Edge agents | 6543 | Auto cleanup, efficient resources |
+| Dedicated Pooler | High-performance | Custom | Maximum throughput, isolated resources |
+
+### Quick Start for AI Agents
+
+```typescript
+// Node.js example - Serverless agent
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+// Query with automatic connection management
+const { data, error } = await supabase
+  .from('documents')
+  .select('*')
+  .limit(10);
+```
+
+```python
+# Python example - Persistent agent
+import asyncpg
+import os
+
+pool = await asyncpg.create_pool(
+    os.getenv('DATABASE_URL'),
+    min_size=5,
+    max_size=20
+)
+
+async with pool.acquire() as conn:
+    rows = await conn.fetch('SELECT * FROM users LIMIT 10')
+```
+
+**See [docs/MCP_SERVER_ARCHITECTURE.md](docs/MCP_SERVER_ARCHITECTURE.md) for complete documentation.**
 
 ## 🧪 Testing
 
 ```bash
 # Test edge functions
 npm run test:functions
+
+# Test RLS policies
+npm run test:rls
 
 # Validate migrations locally
 npm run db:reset
@@ -443,9 +513,19 @@ For more details, see `examples/realtime/README.md`
 
 ## 📚 Documentation
 
+### Core Documentation
 - **[DEVOPS.md](DEVOPS.md)** - Complete DevOps guide with secrets, workflows, troubleshooting
 - **[QUICKSTART_OPENAI.md](QUICKSTART_OPENAI.md)** - 5-minute OpenAI setup guide ⚡
 - **[OPENAI_SETUP.md](OPENAI_SETUP.md)** - OpenAI integration guide for Studio AI features and Edge Functions
+- **[docs/RLS_POLICIES.md](docs/RLS_POLICIES.md)** - Complete RLS policy guide with patterns and best practices
+- **[docs/RLS_TESTING.md](docs/RLS_TESTING.md)** - RLS testing guidelines for local and CI/CD
+
+### MCP Server Infrastructure (AI Agents)
+- **[docs/MCP_SERVER_ARCHITECTURE.md](docs/MCP_SERVER_ARCHITECTURE.md)** - MCP server architecture and design patterns for AI agents
+- **[docs/MCP_SERVER_CONFIGURATION.md](docs/MCP_SERVER_CONFIGURATION.md)** - Configuration templates for all agent types and environments
+- **[docs/MCP_AUTHENTICATION.md](docs/MCP_AUTHENTICATION.md)** - Authentication strategies and security best practices
+- **[docs/MCP_CONNECTION_EXAMPLES.md](docs/MCP_CONNECTION_EXAMPLES.md)** - Code examples in Node.js, Python, Deno, and more
+- **[docs/MCP_IMPLEMENTATION_SUMMARY.md](docs/MCP_IMPLEMENTATION_SUMMARY.md)** - Complete MCP implementation overview
 - **[supabase/functions/README.md](supabase/functions/README.md)** - Edge functions guide
 - [Supabase CLI Reference](https://supabase.com/docs/reference/cli)
 - [Local Development Guide](https://supabase.com/docs/guides/local-development)

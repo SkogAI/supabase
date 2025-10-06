@@ -23,6 +23,7 @@
     "test:functions": "cd supabase/functions && deno test --allow-all",
     "test:realtime": "cd examples/realtime && npm install && npm run test",
     "examples:realtime": "cd examples/realtime && npm install",
+    "test:rls": "supabase db execute --file tests/rls_test_suite.sql",
     "dev": "npm-run-all --parallel db:start functions:serve",
     "setup": "npm run db:start && npm run types:generate"
   },

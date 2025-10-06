@@ -10,6 +10,7 @@ Complete configuration guide for CI/CD, secrets management, and deployment workf
 - [Local Development](#local-development)
 - [Deployment Process](#deployment-process)
 - [Monitoring & Maintenance](#monitoring--maintenance)
+- [AI Agent Integration (MCP)](#ai-agent-integration-mcp)
 
 ---
 
@@ -544,6 +545,79 @@ When enabling realtime on a new table:
 - [ ] Document expected events for the table
 - [ ] Update client code to handle new events
 - [ ] Test rate limits under expected load
+## AI Agent Integration (MCP)
+
+### Model Context Protocol (MCP) Server Infrastructure
+
+This project includes comprehensive infrastructure for AI agents to connect to Supabase databases using the Model Context Protocol.
+
+#### Documentation
+
+Complete MCP documentation is available in the `docs/` directory:
+
+- **[MCP_SERVER_ARCHITECTURE.md](docs/MCP_SERVER_ARCHITECTURE.md)** - Architecture overview and design patterns
+- **[MCP_SERVER_CONFIGURATION.md](docs/MCP_SERVER_CONFIGURATION.md)** - Configuration templates for all agent types
+- **[MCP_AUTHENTICATION.md](docs/MCP_AUTHENTICATION.md)** - Authentication strategies and security
+- **[MCP_CONNECTION_EXAMPLES.md](docs/MCP_CONNECTION_EXAMPLES.md)** - Code examples in multiple languages
+- **[MCP_IMPLEMENTATION_SUMMARY.md](docs/MCP_IMPLEMENTATION_SUMMARY.md)** - Implementation overview
+
+#### Quick Reference
+
+**Supported Agent Types:**
+- Persistent Agents (Direct IPv6 connection)
+- Serverless Agents (Transaction pooling)
+- Edge Agents (Optimized for low latency)
+- High-Performance Agents (Dedicated pooler)
+
+**Connection Methods:**
+- Direct Connection (IPv6/IPv4)
+- Supavisor Session Mode (port 5432)
+- Supavisor Transaction Mode (port 6543)
+- Dedicated Pooler (custom configuration)
+
+**Authentication Methods:**
+- Service Role Key (full access)
+- Database User Credentials (limited permissions)
+- JWT Token (RLS-aware)
+- API Key (rate-limited)
+- OAuth 2.0 (delegated access)
+
+#### Connection String Examples
+
+```bash
+# Direct IPv6 connection
+DATABASE_URL=postgresql://postgres.project-ref:[password]@db.project-ref.supabase.co:5432/postgres
+
+# Supavisor Session Mode
+DATABASE_URL=postgresql://postgres.project-ref:[password]@aws-0-us-east-1.pooler.supabase.com:5432/postgres
+
+# Supavisor Transaction Mode (Serverless)
+DATABASE_URL=postgresql://postgres.project-ref:[password]@aws-0-us-east-1.pooler.supabase.com:6543/postgres
+```
+
+#### Environment Variables for MCP
+
+Add these to your `.env` file for AI agent connections:
+
+```bash
+# MCP Server Configuration
+MCP_SERVER_NAME=supabase-mcp-server
+MCP_SERVER_PORT=3000
+
+# Database Connection
+DATABASE_URL=postgresql://user:password@host:5432/database
+DB_CONNECTION_TYPE=supavisor_transaction
+
+# Authentication
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+JWT_SECRET=your-jwt-secret
+
+# Monitoring
+ENABLE_MCP_MONITORING=true
+LOG_LEVEL=info
+```
+
+For complete implementation guides, examples, and best practices, see the [MCP Implementation Summary](docs/MCP_IMPLEMENTATION_SUMMARY.md).
 
 ---
 
@@ -555,6 +629,8 @@ When enabling realtime on a new table:
 - [Row Level Security](https://supabase.com/docs/guides/database/postgres/row-level-security)
 - [Realtime Documentation](https://supabase.com/docs/guides/realtime)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
+- [Model Context Protocol Specification](https://modelcontextprotocol.io/)
+- [Supavisor Documentation](https://supabase.com/docs/guides/database/supavisor)
 
 ---
 

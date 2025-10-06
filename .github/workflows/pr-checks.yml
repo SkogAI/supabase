@@ -16,6 +16,7 @@ jobs:
 
       - name: Analyze PR title with Claude Code
         uses: anthropics/claude-code-action@v1
+        continue-on-error: true
         with:
           github_token: ${{ github.token }}
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -64,6 +65,7 @@ jobs:
 
       - name: Generate comprehensive PR analysis with Claude Code
         uses: anthropics/claude-code-action@v1
+        continue-on-error: true
         with:
           github_token: ${{ github.token }}
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
