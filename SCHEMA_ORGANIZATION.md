@@ -308,6 +308,20 @@ ALTER TYPE public.user_role ADD VALUE 'super_admin';
 -- ❌ Bad: Renaming enum values (breaks existing data)
 -- Instead, create a new type and migrate data
 
+-- ✅ Example: Safely renaming enum values by migrating to a new type
+-- Step 1: Create the new enum type with desired values
+CREATE TYPE public.user_role_new AS ENUM ('user', 'admin', 'superadmin');
+
+-- Step 2: Alter affected tables to use the new type
+ALTER TABLE public.users
+  ALTER COLUMN role TYPE public.user_role_new
+  USING CASE
+    WHEN role = 'super_admin' THEN 'superadmin'::public.user_role_new
+    ELSE role::public.user_role_new
+  END;
+
+-- Step 3: Drop the old enum type (after verifying migration)
+DROP TYPE public.user_role;
 -- ✅ Good: Adding fields to composite types
 ALTER TYPE public.address_info ADD ATTRIBUTE apartment TEXT;
 

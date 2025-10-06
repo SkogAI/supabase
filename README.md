@@ -36,6 +36,7 @@ This will:
    ```bash
    cp .env.example .env
    # Edit .env and add your API keys (optional for local dev)
+   # For OpenAI integration, see OPENAI_SETUP.md
    ```
 
 4. **Start Supabase**
@@ -82,9 +83,25 @@ This will:
 │   ├── backup.yml
 │   └── dependency-updates.yml
 ├── DEVOPS.md                    # Complete DevOps guide
+├── QUICKSTART_OPENAI.md         # Quick OpenAI setup (5 min)
+├── OPENAI_SETUP.md              # Detailed OpenAI guide
 ├── package.json                 # npm scripts
 └── .env.example                 # Environment template
 ```
+
+## 🤖 AI Integration
+
+Integrate AI providers with Supabase for AI-powered features:
+
+- **Studio AI Features**: SQL generation, query assistance (OpenAI)
+- **Edge Functions**: Custom AI endpoints (OpenAI, OpenRouter, and more)
+
+**OpenRouter**: Access 100+ AI models (GPT-4, Claude, Gemini, Llama) through one API  
+**Quick Start**: See [QUICKSTART_OPENAI.md](QUICKSTART_OPENAI.md) for 5-minute setup  
+**Full Guide**: See [OPENAI_SETUP.md](OPENAI_SETUP.md) for complete documentation  
+**Examples**: 
+- [openai-chat](supabase/functions/openai-chat) - OpenAI direct integration
+- [openrouter-chat](supabase/functions/openrouter-chat) - OpenRouter for multiple models
 
 ## 💻 Development Workflow
 
@@ -329,10 +346,177 @@ npm run db:reset
 npm run lint:sql
 ```
 
+## 🔴 Realtime
+
+Supabase Realtime allows you to listen to database changes in real-time using WebSockets.
+
+### Quick Start
+
+```javascript
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Listen to all changes on posts table
+const channel = supabase
+  .channel('posts-channel')
+  .on('postgres_changes', 
+    { event: '*', schema: 'public', table: 'posts' },
+    (payload) => console.log('Change:', payload)
+  )
+  .subscribe();
+
+// Cleanup when done
+await supabase.removeChannel(channel);
+```
+
+### Enabled Tables
+
+Realtime is enabled for:
+- ✅ `profiles` - User profile changes
+- ✅ `posts` - Content changes
+
+### Features
+
+1. **Database Changes** - Listen to INSERT, UPDATE, DELETE events
+2. **Presence** - Track online users and share state
+3. **Broadcast** - Send ephemeral messages between clients
+
+### Examples
+
+See comprehensive examples in `examples/realtime/`:
+
+```bash
+# Basic subscription
+node examples/realtime/basic-subscription.js
+
+# Table-specific changes
+node examples/realtime/table-changes.js
+
+# Filtered subscriptions
+node examples/realtime/filtered-subscription.js
+
+# Presence tracking
+node examples/realtime/presence.js
+
+# Broadcast messages
+node examples/realtime/broadcast.js
+
+# Test realtime functionality
+node examples/realtime/test-realtime.js
+
+# Browser example with rate limiting
+open examples/realtime/rate-limiting.html
+```
+
+### Common Patterns
+
+**Listen to specific events:**
+```javascript
+supabase
+  .channel('new-posts')
+  .on('postgres_changes',
+    { event: 'INSERT', schema: 'public', table: 'posts' },
+    (payload) => console.log('New post:', payload.new)
+  )
+  .subscribe();
+```
+
+**Filter by column value:**
+```javascript
+supabase
+  .channel('my-posts')
+  .on('postgres_changes',
+    { 
+      event: '*', 
+      schema: 'public', 
+      table: 'posts',
+      filter: 'user_id=eq.YOUR_USER_ID'
+    },
+    (payload) => console.log('Your post changed:', payload)
+  )
+  .subscribe();
+```
+
+**Track online users (Presence):**
+```javascript
+const channel = supabase.channel('online-users');
+await channel
+  .on('presence', { event: 'sync' }, () => {
+    const users = channel.presenceState();
+    console.log('Online users:', users);
+  })
+  .subscribe();
+
+await channel.track({ user_id: 'user-1', status: 'online' });
+```
+
+**Send broadcast messages:**
+```javascript
+const channel = supabase.channel('chat');
+await channel
+  .on('broadcast', { event: 'message' }, (payload) => {
+    console.log('Message:', payload);
+  })
+  .subscribe();
+
+await channel.send({
+  type: 'broadcast',
+  event: 'message',
+  payload: { text: 'Hello!' }
+});
+```
+
+### Rate Limits
+
+Default rate limits (configurable in `config.toml`):
+- 100 concurrent connections per client
+- 100 channels per connection
+- 500 joins per second
+- 1000 messages per second
+- 100 events per second per channel
+
+### Best Practices
+
+1. **Always clean up subscriptions**
+   ```javascript
+   await supabase.removeChannel(channel);
+   ```
+
+2. **Use specific channel names**
+   ```javascript
+   supabase.channel('unique-channel-name');
+   ```
+
+3. **Filter server-side when possible**
+   ```javascript
+   filter: 'user_id=eq.123'
+   ```
+
+4. **Debounce rapid updates** on the client side
+
+5. **Check RLS policies** - Users must have SELECT permission
+
+### Troubleshooting
+
+**Not receiving updates?**
+- Check RLS policies allow SELECT
+- Verify table is in `supabase_realtime` publication
+- Check replica identity is set to FULL
+
+**Connection issues?**
+- Verify API keys are correct
+- Check network connectivity
+- Review browser console for errors
+
+For more details, see `examples/realtime/README.md`
+
 ## 📚 Documentation
 
 ### Core Documentation
 - **[DEVOPS.md](DEVOPS.md)** - Complete DevOps guide with secrets, workflows, troubleshooting
+- **[QUICKSTART_OPENAI.md](QUICKSTART_OPENAI.md)** - 5-minute OpenAI setup guide ⚡
+- **[OPENAI_SETUP.md](OPENAI_SETUP.md)** - OpenAI integration guide for Studio AI features and Edge Functions
 - **[docs/RLS_POLICIES.md](docs/RLS_POLICIES.md)** - Complete RLS policy guide with patterns and best practices
 - **[docs/RLS_TESTING.md](docs/RLS_TESTING.md)** - RLS testing guidelines for local and CI/CD
 
@@ -383,13 +567,28 @@ See [DEVOPS.md](DEVOPS.md) for comprehensive troubleshooting.
 
 ## 🤝 Contributing
 
+### Development Workflow
+
 1. Create feature branch: `git checkout -b feature/my-feature`
 2. Make changes and commit: `git commit -m "Add feature"`
 3. Push branch: `git push origin feature/my-feature`
-4. Open Pull Request
+4. Open Pull Request (use issue templates!)
 5. Wait for CI checks to pass
 6. Request review
 7. Merge to main → Auto-deploy!
+
+### Issue Management
+
+We use GitHub Issues with structured templates to track work:
+
+- **Bug Reports** - Report issues and unexpected behavior
+- **Feature Requests** - Suggest enhancements
+- **DevOps Tasks** - Infrastructure and CI/CD work
+- **Database Tasks** - Schema changes and migrations
+
+**Create an issue**: https://github.com/SkogAI/supabase/issues/new/choose
+
+**See [docs/ISSUE_MANAGEMENT.md](docs/ISSUE_MANAGEMENT.md) for complete guide.**
 
 ## 📝 License
 
