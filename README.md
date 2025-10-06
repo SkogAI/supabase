@@ -262,17 +262,6 @@ All tables have comprehensive RLS policies:
 
 See **[docs/RLS_POLICIES.md](docs/RLS_POLICIES.md)** for complete policy documentation and patterns.
 
-### Row Level Security (RLS)
-
-All tables have comprehensive RLS policies:
-
-- ✅ **Service Role**: Full admin access for backend operations
-- ✅ **Authenticated Users**: Can view all public data, manage own resources
-- ✅ **Anonymous Users**: Read-only access to published content
-- ✅ **Security**: Users cannot access or modify other users' private data
-
-See **[docs/RLS_POLICIES.md](docs/RLS_POLICIES.md)** for complete policy documentation and patterns.
-
 ### Example: Using RLS Policies
 
 ```sql
@@ -578,13 +567,28 @@ See [DEVOPS.md](DEVOPS.md) for comprehensive troubleshooting.
 
 ## 🤝 Contributing
 
+### Development Workflow
+
 1. Create feature branch: `git checkout -b feature/my-feature`
 2. Make changes and commit: `git commit -m "Add feature"`
 3. Push branch: `git push origin feature/my-feature`
-4. Open Pull Request
+4. Open Pull Request (use issue templates!)
 5. Wait for CI checks to pass
 6. Request review
 7. Merge to main → Auto-deploy!
+
+### Issue Management
+
+We use GitHub Issues with structured templates to track work:
+
+- **Bug Reports** - Report issues and unexpected behavior
+- **Feature Requests** - Suggest enhancements
+- **DevOps Tasks** - Infrastructure and CI/CD work
+- **Database Tasks** - Schema changes and migrations
+
+**Create an issue**: https://github.com/SkogAI/supabase/issues/new/choose
+
+**See [docs/ISSUE_MANAGEMENT.md](docs/ISSUE_MANAGEMENT.md) for complete guide.**
 
 ## 📝 License
 
