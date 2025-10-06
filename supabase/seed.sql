@@ -1,6 +1,8 @@
 -- Seed data for local development and testing
 -- This file is automatically loaded when running `supabase db reset`
 -- DO NOT use this for production data!
+--
+-- For complete documentation, see: supabase/README.md (Seed Data section)
 
 -- ============================================================================
 -- SEED CONFIGURATION
@@ -185,6 +187,46 @@ VALUES
 ON CONFLICT DO NOTHING;
 
 -- ============================================================================
+-- POST-CATEGORY RELATIONSHIPS
+-- ============================================================================
+-- Note: Categories are seeded in the migration file (20251005070000_example_add_categories.sql)
+-- Here we just link posts to categories
+
+-- Link Alice's posts to Technology category
+INSERT INTO public.post_categories (post_id, category_id)
+SELECT 
+    p.id,
+    c.id
+FROM public.posts p
+CROSS JOIN public.categories c
+WHERE p.user_id = '00000000-0000-0000-0000-000000000001'
+  AND p.title IN ('Getting Started with Supabase', 'Building Secure APIs with RLS')
+  AND c.slug = 'technology'
+ON CONFLICT DO NOTHING;
+
+-- Link Bob's posts to Technology and Business categories
+INSERT INTO public.post_categories (post_id, category_id)
+SELECT 
+    p.id,
+    c.id
+FROM public.posts p
+CROSS JOIN public.categories c
+WHERE p.user_id = '00000000-0000-0000-0000-000000000002'
+  AND c.slug IN ('technology', 'business')
+ON CONFLICT DO NOTHING;
+
+-- Link Charlie's posts to Lifestyle category
+INSERT INTO public.post_categories (post_id, category_id)
+SELECT 
+    p.id,
+    c.id
+FROM public.posts p
+CROSS JOIN public.categories c
+WHERE p.user_id = '00000000-0000-0000-0000-000000000003'
+  AND c.slug = 'lifestyle'
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
 -- VERIFY SEED DATA
 -- ============================================================================
 
@@ -192,9 +234,13 @@ DO $$
 DECLARE
     profile_count INTEGER;
     post_count INTEGER;
+    category_count INTEGER;
+    post_category_count INTEGER;
 BEGIN
     SELECT COUNT(*) INTO profile_count FROM public.profiles;
     SELECT COUNT(*) INTO post_count FROM public.posts;
+    SELECT COUNT(*) INTO category_count FROM public.categories;
+    SELECT COUNT(*) INTO post_category_count FROM public.post_categories;
 
     RAISE NOTICE '';
     RAISE NOTICE '================================================================================';
@@ -202,14 +248,27 @@ BEGIN
     RAISE NOTICE '================================================================================';
     RAISE NOTICE 'Profiles created: %', profile_count;
     RAISE NOTICE 'Posts created: %', post_count;
+    RAISE NOTICE 'Categories: %', category_count;
+    RAISE NOTICE 'Post-Category links: %', post_category_count;
     RAISE NOTICE '';
-    RAISE NOTICE 'Test Users:';
-    RAISE NOTICE '  - alice (ID: 00000000-0000-0000-0000-000000000001)';
-    RAISE NOTICE '  - bob (ID: 00000000-0000-0000-0000-000000000002)';
-    RAISE NOTICE '  - charlie (ID: 00000000-0000-0000-0000-000000000003)';
+    RAISE NOTICE 'Test Users (username / email / password):';
+    RAISE NOTICE '  - alice / alice@example.com / password123';
+    RAISE NOTICE '    ID: 00000000-0000-0000-0000-000000000001';
+    RAISE NOTICE '  - bob / bob@example.com / password123';
+    RAISE NOTICE '    ID: 00000000-0000-0000-0000-000000000002';
+    RAISE NOTICE '  - charlie / charlie@example.com / password123';
+    RAISE NOTICE '    ID: 00000000-0000-0000-0000-000000000003';
     RAISE NOTICE '';
-    RAISE NOTICE 'You can use these user IDs for testing RLS policies.';
-    RAISE NOTICE 'Set auth context with: SET request.jwt.claim.sub = ''<user_id>'';';
+    RAISE NOTICE 'Test Categories:';
+    RAISE NOTICE '  - Technology (slug: technology)';
+    RAISE NOTICE '  - Lifestyle (slug: lifestyle)';
+    RAISE NOTICE '  - Business (slug: business)';
+    RAISE NOTICE '';
+    RAISE NOTICE 'RLS Testing:';
+    RAISE NOTICE '  Set auth context: SET request.jwt.claim.sub = ''<user_id>'';';
+    RAISE NOTICE '  Run test suite: npm run test:rls';
+    RAISE NOTICE '';
+    RAISE NOTICE 'See supabase/README.md for complete seed data documentation';
     RAISE NOTICE '================================================================================';
     RAISE NOTICE '';
 END $$;

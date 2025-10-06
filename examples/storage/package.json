@@ -1,0 +1,16 @@
+{
+  "name": "supabase-storage-examples",
+  "version": "1.0.0",
+  "description": "Examples for Supabase Storage buckets",
+  "type": "module",
+  "scripts": {
+    "avatar": "node avatar-upload.js",
+    "upload": "node file-upload.js",
+    "public": "node public-assets.js",
+    "list": "node list-files.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "dotenv": "^16.3.1"
+  }
+}
