@@ -16,7 +16,7 @@ Your production-ready Supabase environment is now fully configured with best-in-
 - ✅ Row Level Security (RLS) policies configured
 - ✅ Automatic `updated_at` timestamp triggers
 - ✅ Auto profile creation on user signup
-- ✅ Comprehensive seed data with test users
+- ✅ Comprehensive seed data with test users (see `supabase/README.md`)
 - ✅ Custom PostgreSQL types (enums and composite types)
 - ✅ Schema organization and type permissions configured
 

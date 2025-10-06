@@ -56,6 +56,7 @@ This will:
 ```
 .
 ├── supabase/
+│   ├── README.md                # Supabase directory documentation
 │   ├── config.toml              # Supabase configuration
 │   ├── migrations/              # Database migrations (timestamped SQL)
 │   │   └── 20251005065505_initial_schema.sql
@@ -64,7 +65,7 @@ This will:
 │   │   └── hello-world/
 │   │       ├── index.ts         # Function code
 │   │       └── test.ts          # Function tests
-│   └── seed.sql                 # Development seed data
+│   └── seed.sql                 # Development seed data (see supabase/README.md)
 ├── types/
 │   └── database.ts              # Auto-generated TypeScript types
 ├── scripts/
@@ -113,7 +114,7 @@ npm run migration:new <migration_name>
 # OR
 supabase migration new <migration_name>
 
-# Apply all migrations (resets database)
+# Apply all migrations (resets database with seed data)
 npm run db:reset
 # OR
 ./scripts/reset.sh
@@ -124,6 +125,11 @@ npm run db:status
 # Generate SQL diff of current changes
 npm run db:diff
 ```
+
+**📖 Documentation:**
+- **Migrations**: See `supabase/migrations/README.md`
+- **Seed Data**: See `supabase/README.md` (includes test users, credentials, and sample data)
+- **Types**: Run `npm run types:generate` after schema changes
 
 ### Edge Functions
 
