@@ -56,6 +56,7 @@ create_label "low-priority" "0e8a16" "Nice to have improvements"
 echo ""
 
 echo "Creating Type Labels..."
+create_label "bug" "d73a4a" "Something isn't working"
 create_label "enhancement" "a2eeef" "New feature or request"
 create_label "documentation" "0075ca" "Documentation improvements"
 create_label "security" "d73a4a" "Security-related issues"
