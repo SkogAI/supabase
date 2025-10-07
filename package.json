@@ -28,6 +28,9 @@
     "test:realtime": "cd examples/realtime && npm install && npm run test",
     "examples:realtime": "cd examples/realtime && npm install",
     "test:rls": "supabase db execute --file tests/rls_test_suite.sql",
+    "test:saml": "./scripts/test_saml.sh",
+    "test:saml:endpoints": "./scripts/test_saml_endpoints.sh",
+    "test:saml:logs": "./scripts/check_saml_logs.sh",
     "dev": "npm-run-all --parallel db:start functions:serve",
     "setup": "npm run db:start && npm run types:generate"
   },
