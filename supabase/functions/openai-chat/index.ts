@@ -7,8 +7,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // CORS headers for browser requests
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 // Types for our request/response
@@ -37,12 +36,13 @@ serve(async (req: Request): Promise<Response> => {
   try {
     // Get OpenAI API key from environment
     const openaiApiKey = Deno.env.get("OPENAI_API_KEY");
-    
+
     if (!openaiApiKey) {
       console.error("OPENAI_API_KEY is not set in environment variables");
       return new Response(
         JSON.stringify({
-          error: "OpenAI API key is not configured. Please set OPENAI_API_KEY in your Supabase secrets.",
+          error:
+            "OpenAI API key is not configured. Please set OPENAI_API_KEY in your Supabase secrets.",
           hint: "Run: supabase secrets set OPENAI_API_KEY=your_key_here",
         }),
         {
@@ -123,7 +123,7 @@ serve(async (req: Request): Promise<Response> => {
     if (!openaiResponse.ok) {
       const errorData = await openaiResponse.json();
       console.error("OpenAI API error:", errorData);
-      
+
       return new Response(
         JSON.stringify({
           error: "OpenAI API request failed",

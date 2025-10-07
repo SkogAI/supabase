@@ -4,7 +4,8 @@
 import { assertEquals, assertExists } from "https://deno.land/std@0.168.0/testing/asserts.ts";
 
 // Test configuration
-const FUNCTION_URL = Deno.env.get("FUNCTION_URL") || "http://localhost:54321/functions/v1/hello-world";
+const FUNCTION_URL = Deno.env.get("FUNCTION_URL") ||
+  "http://localhost:54321/functions/v1/hello-world";
 
 Deno.test("hello-world: Basic request returns 200", async () => {
   const response = await fetch(FUNCTION_URL, {

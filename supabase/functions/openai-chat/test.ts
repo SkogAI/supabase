@@ -6,8 +6,8 @@ import {
   assertExists,
   assertStringIncludes,
 } from "https://deno.land/std@0.168.0/testing/asserts.ts";
-import { testMessages, testHeaders, testUrls } from "../_shared/testing/fixtures.ts";
-import { MockFetch, mockOpenAIResponse, mockOpenAIError } from "../_shared/testing/mocks.ts";
+import { testHeaders, testMessages, testUrls } from "../_shared/testing/fixtures.ts";
+import { MockFetch, mockOpenAIError, mockOpenAIResponse } from "../_shared/testing/mocks.ts";
 
 // Test configuration
 const FUNCTION_URL = testUrls.getFunctionUrl("openai-chat");
@@ -125,7 +125,7 @@ Deno.test("openai-chat: mock - successful API response", () => {
 
   mockFetch.addJsonMock(
     "https://api.openai.com/v1/chat/completions",
-    mockResponse
+    mockResponse,
   );
 
   // Verify mock is set up correctly
@@ -139,7 +139,7 @@ Deno.test("openai-chat: mock - API error response", () => {
   mockFetch.addErrorMock(
     "https://api.openai.com/v1/chat/completions",
     401,
-    JSON.stringify(mockError)
+    JSON.stringify(mockError),
   );
 
   // Verify mock error is set up correctly

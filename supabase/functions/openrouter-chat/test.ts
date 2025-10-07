@@ -6,7 +6,7 @@ import {
   assertExists,
   assertStringIncludes,
 } from "https://deno.land/std@0.168.0/testing/asserts.ts";
-import { testMessages, testHeaders, testUrls } from "../_shared/testing/fixtures.ts";
+import { testHeaders, testMessages, testUrls } from "../_shared/testing/fixtures.ts";
 import { MockFetch, mockOpenRouterResponse } from "../_shared/testing/mocks.ts";
 
 // Test configuration
@@ -165,12 +165,12 @@ Deno.test("openrouter-chat: mock - successful API response", () => {
   const mockFetch = new MockFetch();
   const mockResponse = mockOpenRouterResponse(
     "Hello from OpenRouter!",
-    testModels.openai
+    testModels.openai,
   );
 
   mockFetch.addJsonMock(
     "https://openrouter.ai/api/v1/chat/completions",
-    mockResponse
+    mockResponse,
   );
 
   // Verify mock is set up correctly

@@ -10,33 +10,33 @@ import {
 
 // Import fixtures
 import {
-  testUsers,
-  testMessages,
-  testHeaders,
-  testUrls,
   generateTestJWT,
   retry,
+  testHeaders,
+  testMessages,
+  testUrls,
+  testUsers,
   waitFor,
 } from "./fixtures.ts";
 
 // Import mocks
 import {
+  createMockResponse,
   MockFetch,
   mockOpenAIResponse,
   mockOpenRouterResponse,
   MockSupabaseClient,
-  createMockResponse,
 } from "./mocks.ts";
 
 // Import helpers
 import {
-  testFetch,
-  testCORS,
+  assertJsonStructure,
+  assertResponse,
+  generateTestData,
   measureResponseTime,
   testConcurrent,
-  assertJsonStructure,
-  generateTestData,
-  assertResponse,
+  testCORS,
+  testFetch,
   testPatterns,
   waitForCondition,
 } from "./helpers.ts";
@@ -60,7 +60,7 @@ Deno.test("example: mock fetch response", async () => {
   mockFetch.addJsonMock(
     "https://api.example.com/data",
     { message: "success", data: [1, 2, 3] },
-    200
+    200,
   );
 
   // Use the mock
@@ -206,13 +206,17 @@ Deno.test({
 Deno.test("example: retry mechanism", async () => {
   let attempts = 0;
 
-  const result = await retry(async () => {
-    attempts++;
-    if (attempts < 2) {
-      throw new Error("Simulated failure");
-    }
-    return "success";
-  }, 3, 10);
+  const result = await retry(
+    async () => {
+      attempts++;
+      if (attempts < 2) {
+        throw new Error("Simulated failure");
+      }
+      return "success";
+    },
+    3,
+    10,
+  );
 
   assertEquals(result, "success");
   assertEquals(attempts, 2);
@@ -287,7 +291,7 @@ Deno.test({
   async fn() {
     const { hasError, errorMessage } = await testPatterns.errorHandling(
       "hello-world",
-      { invalid: "data" }
+      { invalid: "data" },
     );
 
     // Verify error is handled gracefully
@@ -323,7 +327,7 @@ Deno.test("example: create custom mock response", () => {
   const mockResponse = createMockResponse(
     { custom: "data" },
     201,
-    { "X-Custom-Header": "value" }
+    { "X-Custom-Header": "value" },
   );
 
   assertEquals(mockResponse.status, 201);

@@ -8,8 +8,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // CORS headers for browser requests
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 // Types for our request/response
@@ -39,12 +38,13 @@ serve(async (req: Request): Promise<Response> => {
   try {
     // Get OpenRouter API key from environment
     const openrouterApiKey = Deno.env.get("OPENROUTER_API_KEY");
-    
+
     if (!openrouterApiKey) {
       console.error("OPENROUTER_API_KEY is not set in environment variables");
       return new Response(
         JSON.stringify({
-          error: "OpenRouter API key is not configured. Please set OPENROUTER_API_KEY in your Supabase secrets.",
+          error:
+            "OpenRouter API key is not configured. Please set OPENROUTER_API_KEY in your Supabase secrets.",
           hint: "Run: supabase secrets set OPENROUTER_API_KEY=sk-or-your_key_here",
           documentation: "See OPENROUTER_SETUP.md for OpenRouter setup instructions",
         }),
@@ -129,12 +129,13 @@ serve(async (req: Request): Promise<Response> => {
     if (!openrouterResponse.ok) {
       const errorData = await openrouterResponse.json();
       console.error("OpenRouter API error:", errorData);
-      
+
       return new Response(
         JSON.stringify({
           error: "OpenRouter API request failed",
           details: errorData,
-          hint: "Check your API key and model name. Model format should be 'provider/model-name' (e.g., 'openai/gpt-3.5-turbo')",
+          hint:
+            "Check your API key and model name. Model format should be 'provider/model-name' (e.g., 'openai/gpt-3.5-turbo')",
         }),
         {
           headers: {
