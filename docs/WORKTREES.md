@@ -11,7 +11,11 @@ This project uses Git worktrees to manage parallel development of features, bugf
 # List all worktrees
 .github/scripts/list-worktrees.sh
 
-# Remove a worktree
+# Check merge status and cleanup
+.github/scripts/cleanup-worktrees.sh --status
+.github/scripts/cleanup-worktrees.sh --auto
+
+# Remove a specific worktree manually
 .github/scripts/remove-worktree.sh <worktree-name> [--delete-branch]
 ```
 
@@ -108,6 +112,7 @@ gh pr create --base develop --title "Add user profiles" --body "Closes #42"
 ### 4. Clean up after merge
 
 ```bash
+# Option 1: Manual cleanup
 # Return to main repo
 cd /home/skogix/dev/supabase
 
@@ -116,6 +121,15 @@ cd /home/skogix/dev/supabase
 
 # Delete remote branch (if not auto-deleted by GitHub)
 git push origin --delete feature/add-user-profiles-42
+```
+
+```bash
+# Option 2: Automated cleanup (recommended)
+# Check which worktrees are merged
+.github/scripts/cleanup-worktrees.sh --status
+
+# Auto-cleanup all merged worktrees
+.github/scripts/cleanup-worktrees.sh --auto
 ```
 
 ## Advanced Usage
@@ -161,13 +175,38 @@ cd ../..
 git worktree remove .dev/worktree/pr-review-42
 ```
 
+### Automated worktree cleanup
+
+The cleanup script helps maintain a clean development environment by automatically detecting and removing worktrees for merged PRs:
+
+```bash
+# Weekly cleanup routine
+.github/scripts/cleanup-worktrees.sh --status   # Check what's merged
+.github/scripts/cleanup-worktrees.sh --auto     # Clean up merged worktrees
+
+# Or use dry-run first to preview
+.github/scripts/cleanup-worktrees.sh --dry-run
+.github/scripts/cleanup-worktrees.sh --auto
+```
+
+**What gets cleaned up:**
+- ✅ Worktrees with branches merged to develop/master
+- ✅ Orphaned worktree references
+- ✅ Local branches for merged PRs
+
+**What's preserved:**
+- ❌ Unmerged branches (active development)
+- ❌ Worktrees with uncommitted changes (requires confirmation)
+- ❌ Remote branches (manual deletion recommended)
+
 ## Best Practices
 
 1. **Always create worktrees in `.dev/worktree/`** - Keeps them organized and ignored by git
 2. **Use meaningful names** - Scripts auto-generate from issue titles
-3. **Clean up merged branches** - Remove worktrees after PR is merged
+3. **Clean up merged branches** - Use `cleanup-worktrees.sh --auto` for automated cleanup
 4. **One worktree per issue** - Keeps changes isolated and reviewable
 5. **Sync regularly** - `git fetch origin` before creating new worktrees
+6. **Regular maintenance** - Run `cleanup-worktrees.sh --status` periodically to check for merged PRs
 
 ## Troubleshooting
 
@@ -248,6 +287,46 @@ Removes a worktree and optionally its branch.
 Lists all active worktrees.
 
 **Usage**: `.github/scripts/list-worktrees.sh`
+
+### cleanup-worktrees.sh
+
+Automated cleanup of merged worktrees.
+
+**Usage**: `.github/scripts/cleanup-worktrees.sh [OPTIONS]`
+
+**Options**:
+- `--status` - Show status of all worktrees (merged/unmerged)
+- `--dry-run` - Preview what would be cleaned without making changes
+- `--auto` - Auto-cleanup merged worktrees with confirmation
+- `--force` - Skip confirmation prompts (use with --auto)
+- `--help` - Show help message
+
+**Features**:
+- Detects merged branches automatically
+- Checks merge status against appropriate base branch (develop/master)
+- Identifies worktrees with uncommitted changes
+- Safe cleanup with confirmation prompts
+- Handles orphaned worktree references
+- Logs all cleanup actions
+
+**Examples**:
+
+```bash
+# Check merge status of all worktrees
+.github/scripts/cleanup-worktrees.sh --status
+
+# Preview what would be cleaned
+.github/scripts/cleanup-worktrees.sh --dry-run
+
+# Interactive cleanup (asks for each worktree)
+.github/scripts/cleanup-worktrees.sh
+
+# Auto-cleanup with confirmation
+.github/scripts/cleanup-worktrees.sh --auto
+
+# Auto-cleanup without prompts
+.github/scripts/cleanup-worktrees.sh --auto --force
+```
 
 ## GitHub CLI Integration
 
