@@ -633,6 +633,10 @@ For complete implementation guides, examples, and best practices, see the [MCP I
 - [Supavisor Documentation](https://supabase.com/docs/guides/database/supavisor)
 
 ### Project-Specific Documentation
+- [Contributing Guide](CONTRIBUTING.md) - Complete contributor guide with code guidelines and PR process
+- [Development Workflows](WORKFLOWS.md) - Detailed development workflows and common procedures
+- [Troubleshooting Guide](TROUBLESHOOTING.md) - Comprehensive troubleshooting guide for all common issues
+- [Architecture Overview](ARCHITECTURE.md) - System architecture and design decisions
 - [ZITADEL SAML IdP Setup](docs/ZITADEL_SAML_IDP_SETUP.md) - Complete guide for SAML SSO with ZITADEL
 
 ### External Resources
