@@ -209,12 +209,12 @@ Deno.test("example: retry mechanism", async () => {
   let attempts = 0;
 
   const result = await retry(
-    async () => {
+    () => {
       attempts++;
       if (attempts < 2) {
         throw new Error("Simulated failure");
       }
-      return "success";
+      return Promise.resolve("success");
     },
     3,
     10,

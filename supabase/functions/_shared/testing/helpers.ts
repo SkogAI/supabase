@@ -5,7 +5,7 @@ import { testHeaders, testUrls } from "./fixtures.ts";
 /**
  * Make a test request to a function
  */
-export async function testFetch(
+export function testFetch(
   functionName: string,
   options: {
     method?: string;
