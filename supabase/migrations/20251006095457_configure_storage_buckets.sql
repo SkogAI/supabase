@@ -81,12 +81,12 @@ ON CONFLICT (id) DO UPDATE SET
 -- ----------------------------------------------------------------------------
 
 -- Anyone can view avatars (public bucket)
-CREATE POLICY IF NOT EXISTS "Avatars are publicly accessible"
+CREATE POLICY "Avatars are publicly accessible"
 ON storage.objects FOR SELECT
 USING (bucket_id = 'avatars');
 
 -- Authenticated users can upload their own avatar
-CREATE POLICY IF NOT EXISTS "Users can upload their own avatar"
+CREATE POLICY "Users can upload their own avatar"
 ON storage.objects FOR INSERT
 WITH CHECK (
     bucket_id = 'avatars' 
@@ -94,7 +94,7 @@ WITH CHECK (
 );
 
 -- Users can update their own avatar
-CREATE POLICY IF NOT EXISTS "Users can update their own avatar"
+CREATE POLICY "Users can update their own avatar"
 ON storage.objects FOR UPDATE
 USING (
     bucket_id = 'avatars' 
@@ -106,7 +106,7 @@ WITH CHECK (
 );
 
 -- Users can delete their own avatar
-CREATE POLICY IF NOT EXISTS "Users can delete their own avatar"
+CREATE POLICY "Users can delete their own avatar"
 ON storage.objects FOR DELETE
 USING (
     bucket_id = 'avatars' 
@@ -118,12 +118,12 @@ USING (
 -- ----------------------------------------------------------------------------
 
 -- Anyone can view public assets
-CREATE POLICY IF NOT EXISTS "Public assets are viewable by everyone"
+CREATE POLICY "Public assets are viewable by everyone"
 ON storage.objects FOR SELECT
 USING (bucket_id = 'public-assets');
 
 -- Authenticated users can upload to public assets
-CREATE POLICY IF NOT EXISTS "Authenticated users can upload public assets"
+CREATE POLICY "Authenticated users can upload public assets"
 ON storage.objects FOR INSERT
 WITH CHECK (
     bucket_id = 'public-assets' 
@@ -131,7 +131,7 @@ WITH CHECK (
 );
 
 -- Users can update their own public assets
-CREATE POLICY IF NOT EXISTS "Users can update their own public assets"
+CREATE POLICY "Users can update their own public assets"
 ON storage.objects FOR UPDATE
 USING (
     bucket_id = 'public-assets' 
@@ -143,7 +143,7 @@ WITH CHECK (
 );
 
 -- Users can delete their own public assets
-CREATE POLICY IF NOT EXISTS "Users can delete their own public assets"
+CREATE POLICY "Users can delete their own public assets"
 ON storage.objects FOR DELETE
 USING (
     bucket_id = 'public-assets' 
@@ -155,7 +155,7 @@ USING (
 -- ----------------------------------------------------------------------------
 
 -- Users can only view their own files
-CREATE POLICY IF NOT EXISTS "Users can view their own files"
+CREATE POLICY "Users can view their own files"
 ON storage.objects FOR SELECT
 USING (
     bucket_id = 'user-files' 
@@ -163,7 +163,7 @@ USING (
 );
 
 -- Users can upload their own files
-CREATE POLICY IF NOT EXISTS "Users can upload their own files"
+CREATE POLICY "Users can upload their own files"
 ON storage.objects FOR INSERT
 WITH CHECK (
     bucket_id = 'user-files' 
@@ -171,7 +171,7 @@ WITH CHECK (
 );
 
 -- Users can update their own files
-CREATE POLICY IF NOT EXISTS "Users can update their own files"
+CREATE POLICY "Users can update their own files"
 ON storage.objects FOR UPDATE
 USING (
     bucket_id = 'user-files' 
@@ -183,7 +183,7 @@ WITH CHECK (
 );
 
 -- Users can delete their own files
-CREATE POLICY IF NOT EXISTS "Users can delete their own files"
+CREATE POLICY "Users can delete their own files"
 ON storage.objects FOR DELETE
 USING (
     bucket_id = 'user-files' 
@@ -191,11 +191,8 @@ USING (
 );
 
 -- ============================================================================
--- COMMENTS
+-- COMPLETION LOG
 -- ============================================================================
-
-COMMENT ON TABLE storage.buckets IS 'Storage buckets for organizing uploaded files';
-COMMENT ON TABLE storage.objects IS 'Metadata for files stored in buckets';
 
 -- Log migration completion
 DO $$
