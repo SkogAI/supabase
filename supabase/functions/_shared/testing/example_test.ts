@@ -96,7 +96,7 @@ Deno.test("example: mock Supabase client", async () => {
     .from("profiles")
     .select("*")
     .eq("id", "1")
-    .single();
+    .single() as { data: { name: string } | null; error: unknown };
 
   assertEquals(error, null);
   assertEquals((data as { name: string }).name, "Alice");
