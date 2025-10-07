@@ -368,6 +368,67 @@ Automated cleanup of merged worktrees.
 .github/scripts/cleanup-worktrees.sh --auto --force
 ```
 
+### ci-worktree.sh
+
+Runs CI checks locally in a worktree before pushing.
+
+**Usage**: `.github/scripts/ci-worktree.sh [worktree-path]`
+
+**Arguments**:
+- `worktree-path` (optional): Path to worktree (defaults to current directory)
+
+**Features**:
+- TypeScript type checking
+- Database migration validation
+- Edge function linting and tests
+- RLS policy tests
+- SQL linting
+- Color-coded output with test summary
+
+**See also**: [CI_WORKTREE_INTEGRATION.md](CI_WORKTREE_INTEGRATION.md) for detailed documentation
+
+### install-hooks.sh
+
+Installs git hooks for automatic pre-push validation.
+
+**Usage**: `.github/scripts/install-hooks.sh`
+
+**Features**:
+- Installs pre-push hook
+- Prompts before overwriting existing hooks
+- Validates changes before pushing to remote
+
+## CI/CD Integration
+
+The worktree workflow integrates with CI/CD for comprehensive testing:
+
+### Local Validation
+
+Run CI checks before pushing:
+
+```bash
+.github/scripts/ci-worktree.sh
+```
+
+### Pre-Push Hook
+
+Install to automatically validate before every push:
+
+```bash
+.github/scripts/install-hooks.sh
+```
+
+### GitHub Actions
+
+Automatic testing for worktree branches:
+- Parallel test execution
+- Database migration testing
+- Edge function validation
+- Security scanning
+- Test result summaries in PRs
+
+**See**: [CI_WORKTREE_INTEGRATION.md](CI_WORKTREE_INTEGRATION.md) for complete guide
+
 ## GitHub CLI Integration
 
 Scripts use `gh` CLI for enhanced functionality:

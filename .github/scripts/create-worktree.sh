@@ -1,18 +1,28 @@
 #!/bin/bash
 # create-worktree.sh - Create worktrees for GitHub issues following Git Flow
 #
-# Usage: ./create-worktree.sh <issue-number> [type]
+# Usage: ./create-worktree.sh <issue-number> [type] [--preview]
 #   type: feature (default), bugfix, hotfix
+#   --preview: Create preview environment (requires Supabase CLI and credentials)
 
 set -e
 
 ISSUE_NUMBER="$1"
 TYPE="${2:-feature}"
 BASE_BRANCH="develop"
+CREATE_PREVIEW=false
+
+# Parse arguments
+for arg in "$@"; do
+    if [ "$arg" = "--preview" ]; then
+        CREATE_PREVIEW=true
+    fi
+done
 
 if [ -z "$ISSUE_NUMBER" ]; then
-    echo "Usage: $0 <issue-number> [type]"
+    echo "Usage: $0 <issue-number> [type] [--preview]"
     echo "  type: feature (default), bugfix, hotfix"
+    echo "  --preview: Create preview environment"
     exit 1
 fi
 
@@ -73,3 +83,27 @@ else
     echo "  git push -u origin $BRANCH_NAME"
     echo "  gh pr create --base $BASE_BRANCH"
 fi
+# Preview environment setup
+if [ "$CREATE_PREVIEW" = true ]; then
+    echo "Setting up preview environment..."
+    if command -v supabase &> /dev/null; then
+        echo "⚠ Preview environment creation requires Supabase project credentials"
+        echo "⚠ This feature is planned but not yet implemented"
+        echo "⚠ See docs/CI_WORKTREE_INTEGRATION.md for details"
+    else
+        echo "⚠ Supabase CLI not found - skipping preview environment"
+        echo "⚠ Install: https://supabase.com/docs/guides/cli"
+    fi
+    echo ""
+fi
+
+echo "Next steps:"
+echo "  cd $WORKTREE_PATH"
+echo "  # Make your changes"
+echo "  git add ."
+echo "  git commit -m \"Description of changes\""
+echo "  git push -u origin $BRANCH_NAME"
+echo "  gh pr create --base $BASE_BRANCH"
+echo ""
+echo "Optional: Run CI checks before pushing:"
+echo "  .github/scripts/ci-worktree.sh"
