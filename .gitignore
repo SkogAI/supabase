@@ -60,6 +60,8 @@ backups/
 # Testing
 coverage/
 .nyc_output/
+test_results/*.log
+test_results/SAML_TEST_RESULTS_*.md
 
 # Docker
 .dockerignore
