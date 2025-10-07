@@ -348,6 +348,9 @@ npm run test:rls
 # Test storage policies
 supabase db execute --file tests/storage_test_suite.sql
 
+# Test connection monitoring
+supabase db execute --file tests/connection_monitoring_test_suite.sql
+
 # Validate migrations locally
 npm run db:reset
 
@@ -690,7 +693,9 @@ For more details, see `examples/realtime/README.md`
 - **[docs/MCP_SERVER_CONFIGURATION.md](docs/MCP_SERVER_CONFIGURATION.md)** - Configuration templates for all agent types and environments
 - **[docs/MCP_AUTHENTICATION.md](docs/MCP_AUTHENTICATION.md)** - Authentication strategies and security best practices
 - **[docs/MCP_CONNECTION_EXAMPLES.md](docs/MCP_CONNECTION_EXAMPLES.md)** - Code examples in Node.js, Python, Deno, and more
+- **[docs/MCP_CONNECTION_MONITORING.md](docs/MCP_CONNECTION_MONITORING.md)** - Connection monitoring, health checks, and diagnostics
 - **[docs/MCP_IMPLEMENTATION_SUMMARY.md](docs/MCP_IMPLEMENTATION_SUMMARY.md)** - Complete MCP implementation overview
+- **[docs/CONNECTION_TROUBLESHOOTING.md](docs/CONNECTION_TROUBLESHOOTING.md)** - Quick reference for connection issues
 - **[supabase/functions/README.md](supabase/functions/README.md)** - Edge functions guide
 - [Supabase CLI Reference](https://supabase.com/docs/reference/cli)
 - [Local Development Guide](https://supabase.com/docs/guides/local-development)

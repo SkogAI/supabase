@@ -98,6 +98,31 @@ This document summarizes the Model Context Protocol (MCP) server infrastructure 
   - Context manager pattern
 - Deno examples (3 complete examples)
   - PostgreSQL client
+
+### 5. MCP Connection Monitoring (`MCP_CONNECTION_MONITORING.md`)
+
+**Size:** ~21KB  
+**Purpose:** Comprehensive connection monitoring, health checks, and diagnostics
+
+**Key Content:**
+- Health check functions and utilities
+- Real-time connection monitoring queries
+- AI agent connection tracking
+- Connection pool metrics and analysis
+- Dashboard integration (Supabase Studio, Grafana)
+- Alerting configuration and thresholds
+- Troubleshooting procedures
+- Best practices for production monitoring
+
+**Highlights:**
+- 7 production-ready SQL functions for monitoring
+- Real-time health check implementation
+- AI agent connection tracking by application_name
+- Connection limit alerting (70% warning, 90% critical)
+- Grafana dashboard templates
+- Complete troubleshooting guide
+- Connection pool optimization strategies
+- Edge Function health check example
   - Supabase Edge Function
   - Connection pooling
 - Edge Function examples (2 examples)
