@@ -1,0 +1,119 @@
+#!/bin/bash
+# install-hooks.sh - Install Git hooks for CI validation
+#
+# Usage: .github/scripts/install-hooks.sh
+#
+# This script copies Git hooks from .github/hooks/ to .git/hooks/
+# Run this after cloning the repository or creating a new worktree.
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+print_success() {
+    echo -e "${GREEN}✓${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}✗${NC} $1"
+}
+
+print_info() {
+    echo -e "${BLUE}ℹ${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}⚠${NC} $1"
+}
+
+print_header() {
+    echo ""
+    echo -e "${BLUE}======================================${NC}"
+    echo -e "${BLUE}$1${NC}"
+    echo -e "${BLUE}======================================${NC}"
+    echo ""
+}
+
+# Find git root
+GIT_ROOT=$(git rev-parse --show-toplevel)
+cd "$GIT_ROOT"
+
+print_header "Installing Git Hooks"
+
+# Check if hooks directory exists
+HOOKS_SOURCE=".github/hooks"
+HOOKS_DEST=".git/hooks"
+
+if [ ! -d "$HOOKS_SOURCE" ]; then
+    print_error "Hooks source directory not found: $HOOKS_SOURCE"
+    exit 1
+fi
+
+if [ ! -d "$HOOKS_DEST" ]; then
+    print_error "Git hooks directory not found: $HOOKS_DEST"
+    print_info "Are you in a git repository?"
+    exit 1
+fi
+
+# Install each hook
+HOOKS_INSTALLED=0
+HOOKS_SKIPPED=0
+
+for hook_file in "$HOOKS_SOURCE"/*; do
+    if [ -f "$hook_file" ]; then
+        hook_name=$(basename "$hook_file")
+        dest_file="$HOOKS_DEST/$hook_name"
+        
+        # Check if hook already exists
+        if [ -f "$dest_file" ]; then
+            # Check if it's the same file
+            if cmp -s "$hook_file" "$dest_file"; then
+                print_info "$hook_name already installed (up to date)"
+                ((HOOKS_SKIPPED++))
+                continue
+            else
+                # Backup existing hook
+                backup_file="${dest_file}.backup-$(date +%Y%m%d-%H%M%S)"
+                cp "$dest_file" "$backup_file"
+                print_warning "$hook_name exists - backed up to $(basename $backup_file)"
+            fi
+        fi
+        
+        # Copy and make executable
+        cp "$hook_file" "$dest_file"
+        chmod +x "$dest_file"
+        print_success "Installed $hook_name"
+        ((HOOKS_INSTALLED++))
+    fi
+done
+
+echo ""
+echo "Hooks Installed: $HOOKS_INSTALLED"
+echo "Hooks Skipped:   $HOOKS_SKIPPED"
+echo ""
+
+if [ $HOOKS_INSTALLED -gt 0 ]; then
+    print_success "Git hooks installed successfully!"
+    echo ""
+    print_info "The following hooks are now active:"
+    for hook_file in "$HOOKS_DEST"/*; do
+        if [ -f "$hook_file" ] && [ -x "$hook_file" ]; then
+            hook_name=$(basename "$hook_file")
+            # Skip sample hooks
+            if [[ ! "$hook_name" =~ \.sample$ ]]; then
+                echo "  - $hook_name"
+            fi
+        fi
+    done
+    echo ""
+    print_info "To bypass hooks during commit/push, use --no-verify flag"
+else
+    print_info "No new hooks to install"
+fi
+
+echo ""
