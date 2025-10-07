@@ -100,6 +100,21 @@ print_color "$BLUE" "Fetching latest changes from remote..."
 git fetch origin --prune 2>/dev/null || true
 git fetch origin "$DEFAULT_BASE_BRANCH" "$MASTER_BRANCH" 2>/dev/null || true
 
+# Check if base branches exist, fallback to main/master if needed
+if ! git rev-parse --verify "origin/$DEFAULT_BASE_BRANCH" &>/dev/null; then
+    if git rev-parse --verify "origin/main" &>/dev/null; then
+        DEFAULT_BASE_BRANCH="main"
+    elif git rev-parse --verify "origin/master" &>/dev/null; then
+        DEFAULT_BASE_BRANCH="master"
+    fi
+fi
+
+if ! git rev-parse --verify "origin/$MASTER_BRANCH" &>/dev/null; then
+    if git rev-parse --verify "origin/main" &>/dev/null; then
+        MASTER_BRANCH="main"
+    fi
+fi
+
 # Get list of all worktrees (excluding main)
 mapfile -t WORKTREES < <(git worktree list --porcelain | grep -E "^worktree " | cut -d' ' -f2 | grep "$WORKTREE_DIR" || true)
 
