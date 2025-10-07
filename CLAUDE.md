@@ -84,6 +84,42 @@ npm run test:realtime
 npm run lint:sql
 ```
 
+### SAML SSO Operations
+
+```bash
+# Automated SAML setup (generates certs, creates provider)
+./scripts/saml-setup.sh -d yourcompany.com -m https://instance.zitadel.cloud/saml/v2/metadata
+
+# Skip certificate generation if already have certs
+./scripts/saml-setup.sh -d yourcompany.com -m https://metadata-url -s
+
+# Manual certificate generation
+openssl genrsa -out saml_sp_private.key 2048
+openssl req -new -x509 -key saml_sp_private.key \
+  -out saml_sp_cert.pem -days 3650 \
+  -subj "/C=US/ST=State/L=City/O=Org/CN=domain.com"
+
+# Get SP metadata
+curl http://localhost:8000/auth/v1/sso/saml/metadata
+
+# Test SAML login
+curl "http://localhost:8000/auth/v1/sso?domain=yourcompany.com"
+
+# List SAML providers (requires SERVICE_ROLE_KEY)
+curl -X GET "http://localhost:8000/auth/v1/admin/sso/providers" \
+  -H "Authorization: Bearer ${SERVICE_ROLE_KEY}"
+
+# Check provider in database
+docker exec supabase-db psql -U postgres -d postgres \
+  -c "SELECT * FROM auth.saml_providers;"
+
+# View SAML authentication logs
+docker logs supabase-auth 2>&1 | grep -i saml | tail -50
+
+# Health check
+curl http://localhost:8000/auth/v1/sso/saml/metadata
+```
+
 ## Architecture
 
 ### Directory Structure
@@ -109,7 +145,21 @@ tests/
 scripts/
 ├── setup.sh                 # Automated project setup
 ├── dev.sh                   # Quick development start
-└── reset.sh                 # Database reset helper
+├── reset.sh                 # Database reset helper
+└── saml-setup.sh            # SAML SSO setup automation
+
+docs/
+├── AUTH_ZITADEL_SAML_SELF_HOSTED.md   # Complete SAML integration guide
+├── SAML_ADMIN_API.md                  # Admin API reference
+├── USER_GUIDE_SAML.md                 # End-user guide
+├── ZITADEL_SAML_IDP_SETUP.md          # ZITADEL configuration
+└── runbooks/
+    └── saml-troubleshooting-self-hosted.md  # Operations troubleshooting
+
+examples/
+└── saml-auth/               # SAML authentication examples
+    ├── frontend/            # React, Vue, vanilla JS
+    └── backend/             # Node.js, Python, Deno
 ```
 
 ### Database Schema Organization
@@ -337,6 +387,11 @@ Core documentation in repository:
 - `docs/RLS_POLICIES.md` - RLS patterns and best practices
 - `docs/STORAGE.md` - Storage bucket configuration and usage
 - `docs/MCP_*.md` - AI agent integration guides
+- `docs/AUTH_ZITADEL_SAML_SELF_HOSTED.md` - Complete SAML SSO integration guide
+- `docs/SAML_ADMIN_API.md` - SAML provider management API reference
+- `docs/USER_GUIDE_SAML.md` - End-user SAML authentication guide
+- `docs/ZITADEL_SAML_IDP_SETUP.md` - ZITADEL Identity Provider setup
+- `docs/runbooks/saml-troubleshooting-self-hosted.md` - SAML troubleshooting operations
 - `supabase/README.md` - Seed data and configuration details
 - `supabase/migrations/README.md` - Migration guidelines and naming conventions
 - `supabase/functions/README.md` - Edge function development guide

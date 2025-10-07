@@ -455,22 +455,40 @@ User → Supabase → ZITADEL (IdP) → Authentication → User Profile in Supab
 - ✅ Support for MFA and advanced authentication policies
 - ✅ Just-In-Time (JIT) user provisioning
 
-### Configuration Guide
+### Quick Start
 
-**Phase 1: ZITADEL Setup** ✅ Complete
+```bash
+# Automated setup (recommended)
+./scripts/saml-setup.sh -d yourcompany.com -m https://instance.zitadel.cloud/saml/v2/metadata
+
+# Manual setup - see full documentation
+```
+
+### Documentation
+
+**Complete Guides:**
+- 📘 [Main Integration Guide](docs/AUTH_ZITADEL_SAML_SELF_HOSTED.md) - Complete end-to-end setup
+- 🔧 [ZITADEL IdP Setup](docs/ZITADEL_SAML_IDP_SETUP.md) - Configure ZITADEL as Identity Provider
+- 📚 [Admin API Reference](docs/SAML_ADMIN_API.md) - Manage SAML providers programmatically
+- 👤 [User Guide](docs/USER_GUIDE_SAML.md) - End-user authentication guide
+- 🔍 [Troubleshooting Runbook](docs/runbooks/saml-troubleshooting-self-hosted.md) - Operations guide
+
+**Code Examples:**
+- [Frontend Examples](examples/saml-auth/frontend/) - React, Vue, vanilla JS
+- [Backend Examples](examples/saml-auth/backend/) - Node.js, Python, Deno
+
+### Configuration Steps
+
+**Phase 1: ZITADEL Setup**
 - Configure ZITADEL as SAML Identity Provider
-- Set up SAML application in ZITADEL
-- Configure attribute mapping (email, name, etc.)
-- Export SAML metadata
-- Create test users
+- Set up SAML application and attribute mapping
+- Export SAML metadata and create test users
 
-**Phase 2: Supabase Configuration** (Next)
-- Configure Supabase Auth with SAML provider
-- Import ZITADEL SAML metadata
-- Test SSO authentication flow
-- Deploy to production
-
-**📖 Complete Guide**: See [docs/ZITADEL_SAML_IDP_SETUP.md](docs/ZITADEL_SAML_IDP_SETUP.md) for step-by-step ZITADEL configuration instructions.
+**Phase 2: Supabase Configuration**
+- Generate certificates with OpenSSL
+- Configure environment variables and docker-compose
+- Register SAML provider via Admin API
+- Test and deploy to production
 
 ### Authentication Configuration
 
