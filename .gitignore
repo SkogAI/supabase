@@ -12,6 +12,12 @@ supabase/.temp
 *.pem
 signing_keys.json
 
+# SAML private keys - NEVER commit these!
+private_key.der
+private_key.base64
+private_key*.txt
+*.der
+
 # OS
 .DS_Store
 .DS_Store?
