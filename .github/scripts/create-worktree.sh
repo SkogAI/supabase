@@ -57,10 +57,19 @@ git worktree add "$WORKTREE_PATH" -b "$BRANCH_NAME" "origin/$BASE_BRANCH"
 echo ""
 echo "✓ Worktree created successfully!"
 echo ""
-echo "Next steps:"
-echo "  cd $WORKTREE_PATH"
-echo "  # Make your changes"
-echo "  git add ."
-echo "  git commit -m \"Description of changes\""
-echo "  git push -u origin $BRANCH_NAME"
-echo "  gh pr create --base $BASE_BRANCH"
+
+# Run template setup script if it exists
+TEMPLATE_SETUP=".dev/worktree-templates/${TYPE}/setup.sh"
+if [ -f "$TEMPLATE_SETUP" ]; then
+    echo "Running $TYPE template setup..."
+    echo ""
+    (cd "$WORKTREE_PATH" && bash "../../worktree-templates/${TYPE}/setup.sh")
+else
+    echo "Next steps:"
+    echo "  cd $WORKTREE_PATH"
+    echo "  # Make your changes"
+    echo "  git add ."
+    echo "  git commit -m \"Description of changes\""
+    echo "  git push -u origin $BRANCH_NAME"
+    echo "  gh pr create --base $BASE_BRANCH"
+fi
