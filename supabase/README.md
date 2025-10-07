@@ -9,7 +9,7 @@ supabase/
 ├── config.toml           # Supabase project configuration
 ├── migrations/           # Database schema migrations (timestamped SQL files)
 ├── functions/            # Edge Functions (Deno/TypeScript)
-├── seed.sql             # Development seed data (this file)
+├── seed.sql             # Development seed data
 └── README.md            # This file
 ```
 
