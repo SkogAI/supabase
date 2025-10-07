@@ -1,8 +1,11 @@
--- Seed data for local development and testing
+-- ============================================================================
+-- SEED DATA FOR LOCAL DEVELOPMENT AND TESTING
+-- ============================================================================
 -- This file is automatically loaded when running `supabase db reset`
 -- DO NOT use this for production data!
 --
 -- For complete documentation, see: supabase/README.md (Seed Data section)
+
 
 -- ============================================================================
 -- SEED CONFIGURATION
@@ -15,7 +18,18 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 
 -- ============================================================================
--- TEST USERS
+-- TEST USERS WITH AUTHENTICATION
+-- ============================================================================
+-- Creates test users in auth.users which automatically creates profiles via trigger
+-- These users can be used for testing authentication and RLS policies
+--
+-- TEST CREDENTIALS:
+-- Email: alice@example.com    | Password: password123
+-- Email: bob@example.com      | Password: password123  
+-- Email: charlie@example.com  | Password: password123
+--
+-- IMPORTANT: These are for LOCAL DEVELOPMENT ONLY!
+-- Never use these credentials in production.
 -- ============================================================================
 -- Note: In production, users are created via Supabase Auth
 -- For local testing, we create auth users with metadata in raw_user_meta_data.
@@ -23,68 +37,92 @@ SET client_min_messages = warning;
 -- corresponding profile entries when users are inserted into auth.users.
 
 -- Create auth users (profiles are auto-created by handle_new_user() trigger)
+
+-- Insert test users into auth.users
+-- The handle_new_user() trigger will automatically create their profiles
 INSERT INTO auth.users (
-    id,
     instance_id,
+    id,
     aud,
     role,
     email,
     encrypted_password,
     email_confirmed_at,
-    created_at,
-    updated_at,
+    recovery_sent_at,
+    last_sign_in_at,
     raw_app_meta_data,
     raw_user_meta_data,
-    is_super_admin,
+    created_at,
+    updated_at,
     confirmation_token,
+    email_change,
+    email_change_token_new,
     recovery_token
-)
-VALUES
+) VALUES
     (
-        '00000000-0000-0000-0000-000000000001',
         '00000000-0000-0000-0000-000000000000',
+        '00000000-0000-0000-0000-000000000001',
         'authenticated',
         'authenticated',
         'alice@example.com',
+        -- Password: password123 (hashed using crypt function)
         crypt('password123', gen_salt('bf')),
         NOW() - INTERVAL '30 days',
         NOW() - INTERVAL '30 days',
+        NOW() - INTERVAL '1 day',
+        '{"provider":"email","providers":["email"]}',
+        '{"username":"alice","full_name":"Alice Johnson","avatar_url":"https://api.dicebear.com/7.x/avataaars/svg?seed=Alice"}',
         NOW() - INTERVAL '30 days',
         '{"provider": "email", "providers": ["email"]}',
         '{"username": "alice", "full_name": "Alice Johnson", "avatar_url": "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice"}',
         false,
+        NOW() - INTERVAL '30 days',
+        '',
+        '',
         '',
         ''
     ),
     (
-        '00000000-0000-0000-0000-000000000002',
         '00000000-0000-0000-0000-000000000000',
+        '00000000-0000-0000-0000-000000000002',
         'authenticated',
         'authenticated',
         'bob@example.com',
         crypt('password123', gen_salt('bf')),
         NOW() - INTERVAL '25 days',
         NOW() - INTERVAL '25 days',
+        NOW() - INTERVAL '2 days',
+        '{"provider":"email","providers":["email"]}',
+        '{"username":"bob","full_name":"Bob Smith","avatar_url":"https://api.dicebear.com/7.x/avataaars/svg?seed=Bob"}',
         NOW() - INTERVAL '25 days',
         '{"provider": "email", "providers": ["email"]}',
         '{"username": "bob", "full_name": "Bob Smith", "avatar_url": "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob"}',
         false,
+        NOW() - INTERVAL '25 days',
+        '',
+        '',
         '',
         ''
     ),
     (
-        '00000000-0000-0000-0000-000000000003',
         '00000000-0000-0000-0000-000000000000',
+        '00000000-0000-0000-0000-000000000003',
         'authenticated',
         'authenticated',
         'charlie@example.com',
         crypt('password123', gen_salt('bf')),
         NOW() - INTERVAL '20 days',
         NOW() - INTERVAL '20 days',
+        NOW() - INTERVAL '3 days',
+        '{"provider":"email","providers":["email"]}',
+        '{"username":"charlie","full_name":"Charlie Davis","avatar_url":"https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie"}',
         NOW() - INTERVAL '20 days',
         '{"provider": "email", "providers": ["email"]}',
         '{"username": "charlie", "full_name": "Charlie Davis", "avatar_url": "https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie"}',
         false,
+        NOW() - INTERVAL '20 days',
+        '',
+        '',
         '',
         ''
     )
@@ -101,6 +139,21 @@ WHERE id = '00000000-0000-0000-0000-000000000002';
 
 UPDATE public.profiles 
 SET bio = 'Designer and developer hybrid. Creating beautiful UX.'
+-- Update profiles with additional bio information
+-- The profiles should have been created by the trigger, but we'll update them with more details
+UPDATE public.profiles SET
+    bio = 'Software engineer and open source enthusiast. Love building with Supabase!',
+    updated_at = NOW() - INTERVAL '29 days'
+WHERE id = '00000000-0000-0000-0000-000000000001';
+
+UPDATE public.profiles SET
+    bio = 'Full-stack developer passionate about web technologies.',
+    updated_at = NOW() - INTERVAL '24 days'
+WHERE id = '00000000-0000-0000-0000-000000000002';
+
+UPDATE public.profiles SET
+    bio = 'Designer and developer hybrid. Creating beautiful UX.',
+    updated_at = NOW() - INTERVAL '19 days'
 WHERE id = '00000000-0000-0000-0000-000000000003';
 
 -- ============================================================================
@@ -215,14 +268,21 @@ ON CONFLICT DO NOTHING;
 -- ============================================================================
 -- VERIFY SEED DATA
 -- ============================================================================
+-- Displays a summary of seeded data and helpful testing information
 
 DO $$
 DECLARE
+    user_count INTEGER;
     profile_count INTEGER;
     post_count INTEGER;
     category_count INTEGER;
     post_category_count INTEGER;
 BEGIN
+    SELECT COUNT(*) INTO user_count FROM auth.users WHERE id IN (
+        '00000000-0000-0000-0000-000000000001',
+        '00000000-0000-0000-0000-000000000002',
+        '00000000-0000-0000-0000-000000000003'
+    );
     SELECT COUNT(*) INTO profile_count FROM public.profiles;
     SELECT COUNT(*) INTO post_count FROM public.posts;
     SELECT COUNT(*) INTO category_count FROM public.categories;
@@ -230,7 +290,7 @@ BEGIN
 
     RAISE NOTICE '';
     RAISE NOTICE '================================================================================';
-    RAISE NOTICE 'Seed Data Summary';
+    RAISE NOTICE '🌱 SEED DATA LOADED SUCCESSFULLY';
     RAISE NOTICE '================================================================================';
     RAISE NOTICE 'Profiles created: %', profile_count;
     RAISE NOTICE 'Posts created: %', post_count;

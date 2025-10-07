@@ -342,6 +342,10 @@ npm run db:reset
 
 # Check for SQL issues
 npm run lint:sql
+
+# Test with seed data users
+# Login with alice@example.com / password123 in your app
+# or use Supabase Studio at http://localhost:8000
 ```
 
 ## 💾 Storage
