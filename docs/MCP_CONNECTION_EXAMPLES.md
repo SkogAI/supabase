@@ -126,7 +126,124 @@ export async function handler(event: any) {
 }
 ```
 
-### Example 3: Connection with Row Level Security
+### Example 3: Dedicated Pooler (High-Performance Agent - Paid Tier)
+
+```typescript
+// dedicated-pooler-agent.ts
+import pg from 'pg';
+const { Pool } = pg;
+
+// Dedicated pooler configuration for high-performance AI agents
+const pool = new Pool({
+  connectionString: process.env.SUPABASE_DEDICATED_POOLER,
+  ssl: {
+    rejectUnauthorized: true
+  },
+  // CRITICAL: Disable prepared statements for transaction mode
+  statement_cache_size: 0,
+  // Pool sizing for high-performance workloads
+  max: 50,
+  min: 10,
+  idleTimeoutMillis: 600000, // 10 minutes
+  connectionTimeoutMillis: 10000,
+  allowExitOnIdle: false
+});
+
+// Query execution with latency tracking
+async function executeQueryWithMetrics(sql: string, params: any[] = []) {
+  const startTime = Date.now();
+  const client = await pool.connect();
+  const acquireTime = Date.now() - startTime;
+  
+  try {
+    const queryStart = Date.now();
+    const result = await client.query(sql, params);
+    const queryTime = Date.now() - queryStart;
+    const totalTime = Date.now() - startTime;
+    
+    // Log performance metrics
+    console.log({
+      acquireMs: acquireTime,
+      queryMs: queryTime,
+      totalMs: totalTime,
+      rows: result.rowCount
+    });
+    
+    return result.rows;
+  } catch (error) {
+    console.error('Query failed:', error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+// Example: AI agent processing request
+async function processAIRequest(userId: string, prompt: string) {
+  // Get user context
+  const userContext = await executeQueryWithMetrics(
+    'SELECT * FROM profiles WHERE id = $1',
+    [userId]
+  );
+  
+  // Get relevant history
+  const history = await executeQueryWithMetrics(
+    'SELECT * FROM ai_interactions WHERE user_id = $1 ORDER BY created_at DESC LIMIT 10',
+    [userId]
+  );
+  
+  // Store new interaction
+  const interaction = await executeQueryWithMetrics(
+    'INSERT INTO ai_interactions (user_id, prompt, response) VALUES ($1, $2, $3) RETURNING *',
+    [userId, prompt, 'AI response here']
+  );
+  
+  return { userContext, history, interaction };
+}
+
+// Health check with pool monitoring
+async function healthCheck() {
+  return {
+    status: 'healthy',
+    pool: {
+      total: pool.totalCount,
+      idle: pool.idleCount,
+      waiting: pool.waitingCount,
+      utilization: ((pool.totalCount - pool.idleCount) / pool.totalCount * 100).toFixed(2) + '%'
+    },
+    timestamp: new Date().toISOString()
+  };
+}
+
+// Graceful shutdown
+process.on('SIGTERM', async () => {
+  console.log('Shutting down gracefully...');
+  await pool.end();
+  process.exit(0);
+});
+
+// Example usage
+(async () => {
+  try {
+    console.log('Health:', await healthCheck());
+    const result = await processAIRequest('user-123', 'Hello AI!');
+    console.log('Result:', result);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
+```
+
+**Key Points:**
+- Uses dedicated pooler connection string (port 6543)
+- Prepared statements disabled via `statement_cache_size: 0`
+- Higher pool size (50 max) for production workloads
+- Performance metrics tracking (connection + query time)
+- Pool health monitoring
+- Requires Pro/Enterprise plan with dedicated pooler enabled
+- See [MCP_DEDICATED_POOLER.md](./MCP_DEDICATED_POOLER.md) for complete guide
+
+### Example 4: Connection Pooling with PgBouncer
 
 ```typescript
 // rls-agent.ts
@@ -185,7 +302,7 @@ async function getUserDocuments(userId: string) {
 })();
 ```
 
-### Example 4: Connection Pooling with PgBouncer
+### Example 5: Connection Pooling with PgBouncer
 
 ```typescript
 // pooled-agent.ts
@@ -248,7 +365,7 @@ async function batchInsert(records: any[]) {
 }
 ```
 
-### Example 5: Retry Logic with Exponential Backoff
+### Example 6: Retry Logic with Exponential Backoff
 
 ```typescript
 // resilient-agent.ts

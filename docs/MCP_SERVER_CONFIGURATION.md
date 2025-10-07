@@ -590,6 +590,22 @@ DATABASE_URL=postgresql://postgres.project-ref:[password]@aws-0-us-east-1.pooler
 DATABASE_URL=postgresql://postgres.project-ref:[password]@aws-0-us-east-1.pooler.supabase.com:6543/postgres?statement_timeout=30000
 ```
 
+### Supabase Cloud (Dedicated Pooler - Paid Tier)
+
+```bash
+# Dedicated pooler co-located with database (port 6543)
+SUPABASE_DEDICATED_POOLER=postgresql://postgres.project-ref:[password]@db.project-ref.supabase.co:6543/postgres
+
+# With prepared statements disabled (required)
+SUPABASE_DEDICATED_POOLER=postgresql://postgres.project-ref:[password]@db.project-ref.supabase.co:6543/postgres?prepared_statements=false
+
+# With statement timeout
+SUPABASE_DEDICATED_POOLER=postgresql://postgres.project-ref:[password]@db.project-ref.supabase.co:6543/postgres?statement_timeout=30000
+
+# Note: Requires Pro/Enterprise plan with dedicated pooler enabled
+# See: docs/MCP_DEDICATED_POOLER.md for complete guide
+```
+
 ## Environment Variable Templates
 
 ### .env Template for MCP Server
@@ -649,8 +665,13 @@ MCP_SERVER_HOST=0.0.0.0
 # Get this from your Supabase project settings
 DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.project-ref.supabase.co:5432/postgres
 
-# Connection Type: direct_ipv6, direct_ipv4, supavisor_session, supavisor_transaction
+# Connection Type: direct_ipv6, direct_ipv4, supavisor_session, supavisor_transaction, dedicated_pooler
 DB_CONNECTION_TYPE=supavisor_transaction
+
+# Dedicated Pooler (Paid Tier Only - uncomment if using)
+# SUPABASE_DEDICATED_POOLER=postgresql://postgres.[project-ref]:[YOUR-PASSWORD]@db.[project-ref].supabase.co:6543/postgres
+# DB_CONNECTION_TYPE=dedicated_pooler
+# DISABLE_PREPARED_STATEMENTS=true
 
 # SSL Configuration
 DB_SSL_ENABLED=true
@@ -891,6 +912,7 @@ echo "!config/*.schema.json" >> .gitignore
 ## Related Documentation
 
 - [MCP Server Architecture](./MCP_SERVER_ARCHITECTURE.md)
+- [MCP Dedicated Pooler Guide](./MCP_DEDICATED_POOLER.md) - High-performance pooler for paid tiers
 - [MCP Authentication Strategies](./MCP_AUTHENTICATION.md)
 - [MCP Connection Examples](./MCP_CONNECTION_EXAMPLES.md)
 
