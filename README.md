@@ -675,6 +675,12 @@ For more details, see `examples/realtime/README.md`
 
 ## 📚 Documentation
 
+### Getting Started
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Complete guide for contributors (code, tests, PR process)
+- **[WORKFLOWS.md](WORKFLOWS.md)** - Detailed development workflows and common procedures
+- **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - Comprehensive troubleshooting guide
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture and design decisions
+
 ### Core Documentation
 - **[DEVOPS.md](DEVOPS.md)** - Complete DevOps guide with secrets, workflows, troubleshooting
 - **[QUICKSTART_OPENAI.md](QUICKSTART_OPENAI.md)** - 5-minute OpenAI setup guide ⚡
@@ -698,6 +704,8 @@ For more details, see `examples/realtime/README.md`
 - [Row Level Security](https://supabase.com/docs/guides/database/postgres/row-level-security)
 
 ## 🐛 Troubleshooting
+
+**Quick Fixes:**
 
 **Docker not running**
 ```bash
@@ -728,23 +736,29 @@ supabase functions logs <function-name>
 supabase functions serve <function-name>
 ```
 
-See [DEVOPS.md](DEVOPS.md) for comprehensive troubleshooting.
+**For comprehensive troubleshooting, see [TROUBLESHOOTING.md](TROUBLESHOOTING.md)**
 
 ## 🤝 Contributing
 
-### Development Workflow
+We welcome contributions! Please see our detailed guides:
 
-1. Create feature branch: `git checkout -b feature/my-feature`
-2. Make changes and commit: `git commit -m "Add feature"`
-3. Push branch: `git push origin feature/my-feature`
-4. Open Pull Request (use issue templates!)
-5. Wait for CI checks to pass
-6. Request review
-7. Merge to main → Auto-deploy!
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Complete contributor guide
+- **[WORKFLOWS.md](WORKFLOWS.md)** - Development workflows
+- **[docs/ISSUE_MANAGEMENT.md](docs/ISSUE_MANAGEMENT.md)** - Issue management guide
 
-### Issue Management
+### Quick Start
 
-We use GitHub Issues with structured templates to track work:
+1. Fork and clone the repository
+2. Run `./scripts/setup.sh` for automated setup
+3. Create feature branch: `git checkout -b feature/my-feature`
+4. Make changes and test: `npm run test:rls`
+5. Commit: `git commit -m "Add feature"`
+6. Push: `git push origin feature/my-feature`
+7. Open Pull Request with clear description
+8. Wait for CI checks and review
+9. Merge → Auto-deploy!
+
+### Issue Templates
 
 - **Bug Reports** - Report issues and unexpected behavior
 - **Feature Requests** - Suggest enhancements
@@ -752,8 +766,6 @@ We use GitHub Issues with structured templates to track work:
 - **Database Tasks** - Schema changes and migrations
 
 **Create an issue**: https://github.com/SkogAI/supabase/issues/new/choose
-
-**See [docs/ISSUE_MANAGEMENT.md](docs/ISSUE_MANAGEMENT.md) for complete guide.**
 
 ## 📝 License
 

@@ -333,6 +333,10 @@ Ensure Supabase is running: `npm run db:start` then `npm run types:generate`
 
 Core documentation in repository:
 - `README.md` - Quick start and feature overview
+- `CONTRIBUTING.md` - Complete contributor guide with code guidelines and PR process
+- `WORKFLOWS.md` - Detailed development workflows and common procedures
+- `TROUBLESHOOTING.md` - Comprehensive troubleshooting guide for all common issues
+- `ARCHITECTURE.md` - System architecture overview and design decisions
 - `DEVOPS.md` - Complete CI/CD and deployment guide
 - `docs/RLS_POLICIES.md` - RLS patterns and best practices
 - `docs/STORAGE.md` - Storage bucket configuration and usage
