@@ -12,110 +12,142 @@ import { MockFetch, mockOpenAIError, mockOpenAIResponse } from "../_shared/testi
 // Test configuration
 const FUNCTION_URL = testUrls.getFunctionUrl("openai-chat");
 
-Deno.test("openai-chat: CORS headers present", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "OPTIONS",
-  });
+Deno.test({
+  name: "openai-chat: CORS headers present",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const response = await fetch(FUNCTION_URL, {
+      method: "OPTIONS",
+    });
 
-  assertEquals(response.status, 200);
-  assertExists(response.headers.get("Access-Control-Allow-Origin"));
-  assertExists(response.headers.get("Access-Control-Allow-Headers"));
+    assertEquals(response.status, 200);
+    assertExists(response.headers.get("Access-Control-Allow-Origin"));
+    assertExists(response.headers.get("Access-Control-Allow-Headers"));
+  },
 });
 
-Deno.test("openai-chat: requires messages in request body", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: testHeaders.json,
-    body: JSON.stringify({}),
-  });
+Deno.test({
+  name: "openai-chat: requires messages in request body",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const response = await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: testHeaders.json,
+      body: JSON.stringify({}),
+    });
 
-  // Should return error for missing messages
-  const data = await response.json();
-  assertExists(data);
+    // Should return error for missing messages
+    const data = await response.json();
+    assertExists(data);
+  },
 });
 
-Deno.test("openai-chat: accepts valid message format", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: testHeaders.json,
-    body: JSON.stringify({
-      messages: testMessages.simple,
-    }),
-  });
+Deno.test({
+  name: "openai-chat: accepts valid message format",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const response = await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: testHeaders.json,
+      body: JSON.stringify({
+        messages: testMessages.simple,
+      }),
+    });
 
-  // May fail without API key, but should accept the format
-  assertExists(response);
-  const data = await response.json();
-  assertExists(data);
+    // May fail without API key, but should accept the format
+    assertExists(response);
+    const data = await response.json();
+    assertExists(data);
+  },
 });
 
-Deno.test("openai-chat: handles conversation history", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: testHeaders.json,
-    body: JSON.stringify({
-      messages: testMessages.conversation,
-    }),
-  });
+Deno.test({
+  name: "openai-chat: handles conversation history",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const response = await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: testHeaders.json,
+      body: JSON.stringify({
+        messages: testMessages.conversation,
+      }),
+    });
 
-  assertExists(response);
-  const data = await response.json();
-  assertExists(data);
+    assertExists(response);
+    const data = await response.json();
+    assertExists(data);
+  },
 });
 
-Deno.test("openai-chat: accepts optional model parameter", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: testHeaders.json,
-    body: JSON.stringify({
-      messages: testMessages.simple,
-      model: "gpt-4",
-    }),
-  });
+Deno.test({
+  name: "openai-chat: accepts optional model parameter",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const response = await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: testHeaders.json,
+      body: JSON.stringify({
+        messages: testMessages.simple,
+        model: "gpt-4",
+      }),
+    });
 
-  assertExists(response);
+    assertExists(response);
+  },
 });
 
-Deno.test("openai-chat: accepts optional temperature parameter", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: testHeaders.json,
-    body: JSON.stringify({
-      messages: testMessages.simple,
-      temperature: 0.7,
-    }),
-  });
+Deno.test({
+  name: "openai-chat: accepts optional temperature parameter",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const response = await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: testHeaders.json,
+      body: JSON.stringify({
+        messages: testMessages.simple,
+        temperature: 0.7,
+      }),
+    });
 
-  assertExists(response);
+    assertExists(response);
+  },
 });
 
-Deno.test("openai-chat: handles invalid JSON gracefully", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: testHeaders.json,
-    body: "invalid json",
-  });
+Deno.test({
+  name: "openai-chat: handles invalid JSON gracefully",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const response = await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: testHeaders.json,
+      body: "invalid json",
+    });
 
-  // Should handle error gracefully
-  assertExists(response);
+    // Should handle error gracefully
+    assertExists(response);
+  },
 });
 
-Deno.test("openai-chat: response time is reasonable", async () => {
-  const start = performance.now();
+Deno.test({
+  name: "openai-chat: response time is reasonable",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const start = performance.now();
 
-  await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: testHeaders.json,
-    body: JSON.stringify({
-      messages: testMessages.simple,
-    }),
-  });
+    await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: testHeaders.json,
+      body: JSON.stringify({
+        messages: testMessages.simple,
+      }),
+    });
 
-  const duration = performance.now() - start;
+    const duration = performance.now() - start;
 
-  // Initial request setup should be fast (actual API call may take longer)
-  // We're just testing the function responds, not the full OpenAI call
-  assertEquals(duration < 5000, true, `Response took ${duration}ms`);
+    // Initial request setup should be fast (actual API call may take longer)
+    // We're just testing the function responds, not the full OpenAI call
+    assertEquals(duration < 5000, true, `Response took ${duration}ms`);
+  },
 });
 
 // Unit tests with mocks
@@ -146,20 +178,24 @@ Deno.test("openai-chat: mock - API error response", () => {
   assertExists(mockError);
 });
 
-Deno.test("openai-chat: validates message structure", async () => {
-  const invalidMessages = [
-    { role: "invalid", content: "test" }, // Invalid role
-  ];
+Deno.test({
+  name: "openai-chat: validates message structure",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const invalidMessages = [
+      { role: "invalid", content: "test" }, // Invalid role
+    ];
 
-  const response = await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: testHeaders.json,
-    body: JSON.stringify({
-      messages: invalidMessages,
-    }),
-  });
+    const response = await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: testHeaders.json,
+      body: JSON.stringify({
+        messages: invalidMessages,
+      }),
+    });
 
-  assertExists(response);
+    assertExists(response);
+  },
 });
 
 // Integration test (only runs when RUN_INTEGRATION_TESTS is set)

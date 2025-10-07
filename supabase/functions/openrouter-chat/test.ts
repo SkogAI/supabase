@@ -20,144 +20,184 @@ const testModels = {
   meta: "meta-llama/llama-3-70b",
 };
 
-Deno.test("openrouter-chat: CORS headers present", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "OPTIONS",
-  });
+Deno.test({
+  name: "openrouter-chat: CORS headers present",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const response = await fetch(FUNCTION_URL, {
+      method: "OPTIONS",
+    });
 
-  assertEquals(response.status, 200);
-  assertExists(response.headers.get("Access-Control-Allow-Origin"));
-  assertExists(response.headers.get("Access-Control-Allow-Headers"));
+    assertEquals(response.status, 200);
+    assertExists(response.headers.get("Access-Control-Allow-Origin"));
+    assertExists(response.headers.get("Access-Control-Allow-Headers"));
+  },
 });
 
-Deno.test("openrouter-chat: requires messages in request body", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: testHeaders.json,
-    body: JSON.stringify({}),
-  });
+Deno.test({
+  name: "openrouter-chat: requires messages in request body",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const response = await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: testHeaders.json,
+      body: JSON.stringify({}),
+    });
 
-  // Should return error for missing messages
-  const data = await response.json();
-  assertExists(data);
+    // Should return error for missing messages
+    const data = await response.json();
+    assertExists(data);
+  },
 });
 
-Deno.test("openrouter-chat: requires model parameter", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: testHeaders.json,
-    body: JSON.stringify({
-      messages: testMessages.simple,
-      // model is missing
-    }),
-  });
-
-  const data = await response.json();
-  assertExists(data);
-});
-
-Deno.test("openrouter-chat: accepts valid request format", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: testHeaders.json,
-    body: JSON.stringify({
-      messages: testMessages.simple,
-      model: testModels.openai,
-    }),
-  });
-
-  // May fail without API key, but should accept the format
-  assertExists(response);
-  const data = await response.json();
-  assertExists(data);
-});
-
-Deno.test("openrouter-chat: handles conversation history", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: testHeaders.json,
-    body: JSON.stringify({
-      messages: testMessages.conversation,
-      model: testModels.openai,
-    }),
-  });
-
-  assertExists(response);
-  const data = await response.json();
-  assertExists(data);
-});
-
-Deno.test("openrouter-chat: accepts different model providers", async () => {
-  // Test with different model formats
-  for (const [provider, model] of Object.entries(testModels)) {
+Deno.test({
+  name: "openrouter-chat: requires model parameter",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
     const response = await fetch(FUNCTION_URL, {
       method: "POST",
       headers: testHeaders.json,
       body: JSON.stringify({
         messages: testMessages.simple,
-        model: model,
+        // model is missing
       }),
     });
 
-    assertExists(response, `Failed for provider: ${provider}`);
-  }
+    const data = await response.json();
+    assertExists(data);
+  },
 });
 
-Deno.test("openrouter-chat: accepts optional temperature parameter", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: testHeaders.json,
-    body: JSON.stringify({
-      messages: testMessages.simple,
-      model: testModels.openai,
-      temperature: 0.7,
-    }),
-  });
+Deno.test({
+  name: "openrouter-chat: accepts valid request format",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const response = await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: testHeaders.json,
+      body: JSON.stringify({
+        messages: testMessages.simple,
+        model: testModels.openai,
+      }),
+    });
 
-  assertExists(response);
+    // May fail without API key, but should accept the format
+    assertExists(response);
+    const data = await response.json();
+    assertExists(data);
+  },
 });
 
-Deno.test("openrouter-chat: accepts optional max_tokens parameter", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: testHeaders.json,
-    body: JSON.stringify({
-      messages: testMessages.simple,
-      model: testModels.openai,
-      max_tokens: 100,
-    }),
-  });
+Deno.test({
+  name: "openrouter-chat: handles conversation history",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const response = await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: testHeaders.json,
+      body: JSON.stringify({
+        messages: testMessages.conversation,
+        model: testModels.openai,
+      }),
+    });
 
-  assertExists(response);
+    assertExists(response);
+    const data = await response.json();
+    assertExists(data);
+  },
 });
 
-Deno.test("openrouter-chat: handles invalid JSON gracefully", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: testHeaders.json,
-    body: "invalid json",
-  });
+Deno.test({
+  name: "openrouter-chat: accepts different model providers",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    // Test with different model formats
+    for (const [provider, model] of Object.entries(testModels)) {
+      const response = await fetch(FUNCTION_URL, {
+        method: "POST",
+        headers: testHeaders.json,
+        body: JSON.stringify({
+          messages: testMessages.simple,
+          model: model,
+        }),
+      });
 
-  // Should handle error gracefully
-  assertExists(response);
+      assertExists(response, `Failed for provider: ${provider}`);
+    }
+  },
 });
 
-Deno.test("openrouter-chat: response time is reasonable", async () => {
-  const start = performance.now();
+Deno.test({
+  name: "openrouter-chat: accepts optional temperature parameter",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const response = await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: testHeaders.json,
+      body: JSON.stringify({
+        messages: testMessages.simple,
+        model: testModels.openai,
+        temperature: 0.7,
+      }),
+    });
 
-  await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: testHeaders.json,
-    body: JSON.stringify({
-      messages: testMessages.simple,
-      model: testModels.openai,
-    }),
-  });
+    assertExists(response);
+  },
+});
 
-  const duration = performance.now() - start;
+Deno.test({
+  name: "openrouter-chat: accepts optional max_tokens parameter",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const response = await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: testHeaders.json,
+      body: JSON.stringify({
+        messages: testMessages.simple,
+        model: testModels.openai,
+        max_tokens: 100,
+      }),
+    });
 
-  // Initial request setup should be fast
-  assertEquals(duration < 5000, true, `Response took ${duration}ms`);
+    assertExists(response);
+  },
+});
+
+Deno.test({
+  name: "openrouter-chat: handles invalid JSON gracefully",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const response = await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: testHeaders.json,
+      body: "invalid json",
+    });
+
+    // Should handle error gracefully
+    assertExists(response);
+  },
+});
+
+Deno.test({
+  name: "openrouter-chat: response time is reasonable",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const start = performance.now();
+
+    await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: testHeaders.json,
+      body: JSON.stringify({
+        messages: testMessages.simple,
+        model: testModels.openai,
+      }),
+    });
+
+    const duration = performance.now() - start;
+
+    // Initial request setup should be fast
+    assertEquals(duration < 5000, true, `Response took ${duration}ms`);
+  },
 });
 
 // Unit tests with mocks
@@ -177,66 +217,82 @@ Deno.test("openrouter-chat: mock - successful API response", () => {
   assertEquals(mockFetch.wasCalledWith("https://openrouter.ai/api/v1/chat/completions"), false);
 });
 
-Deno.test("openrouter-chat: validates model format", async () => {
-  const invalidModels = [
-    "", // Empty string
-    "invalid", // Missing provider prefix
-    "provider/", // Missing model name
-  ];
+Deno.test({
+  name: "openrouter-chat: validates model format",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const invalidModels = [
+      "", // Empty string
+      "invalid", // Missing provider prefix
+      "provider/", // Missing model name
+    ];
 
-  for (const model of invalidModels) {
+    for (const model of invalidModels) {
+      const response = await fetch(FUNCTION_URL, {
+        method: "POST",
+        headers: testHeaders.json,
+        body: JSON.stringify({
+          messages: testMessages.simple,
+          model: model,
+        }),
+      });
+
+      assertExists(response);
+    }
+  },
+});
+
+Deno.test({
+  name: "openrouter-chat: handles system messages",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
     const response = await fetch(FUNCTION_URL, {
       method: "POST",
       headers: testHeaders.json,
       body: JSON.stringify({
-        messages: testMessages.simple,
-        model: model,
+        messages: testMessages.withSystem,
+        model: testModels.openai,
       }),
     });
 
     assertExists(response);
-  }
+  },
 });
 
-Deno.test("openrouter-chat: handles system messages", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: testHeaders.json,
-    body: JSON.stringify({
-      messages: testMessages.withSystem,
-      model: testModels.openai,
-    }),
-  });
+Deno.test({
+  name: "openrouter-chat: handles empty message content",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const response = await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: testHeaders.json,
+      body: JSON.stringify({
+        messages: [{ role: "user", content: "" }],
+        model: testModels.openai,
+      }),
+    });
 
-  assertExists(response);
+    assertExists(response);
+  },
 });
 
-Deno.test("openrouter-chat: handles empty message content", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: testHeaders.json,
-    body: JSON.stringify({
-      messages: [{ role: "user", content: "" }],
-      model: testModels.openai,
-    }),
-  });
+Deno.test({
+  name: "openrouter-chat: handles very long messages",
+  ignore: !Deno.env.get("RUN_INTEGRATION_TESTS"),
+  async fn() {
+    const longMessage = "test ".repeat(1000); // ~5000 characters
 
-  assertExists(response);
-});
+    const response = await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: testHeaders.json,
+      body: JSON.stringify({
+        messages: [{ role: "user", content: longMessage }],
+        model: testModels.openai,
+      }),
+    });
 
-Deno.test("openrouter-chat: handles very long messages", async () => {
-  const longMessage = "test ".repeat(1000); // ~5000 characters
-
-  const response = await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: testHeaders.json,
-    body: JSON.stringify({
-      messages: [{ role: "user", content: longMessage }],
-      model: testModels.openai,
-    }),
-  });
-
-  assertExists(response);
+    assertExists(response);
+  },
 });
 
 // Integration test (only runs when RUN_INTEGRATION_TESTS is set)
