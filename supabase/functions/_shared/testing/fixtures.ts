@@ -199,7 +199,7 @@ export const testUrls = {
 /**
  * Wait helper for async operations
  */
-export async function waitFor(ms: number): Promise<void> {
+export function waitFor(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 

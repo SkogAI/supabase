@@ -329,7 +329,7 @@ export function createMockRequest(
 /**
  * Simulate network delay
  */
-export async function simulateDelay(ms: number): Promise<void> {
+export function simulateDelay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
