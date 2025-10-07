@@ -623,14 +623,22 @@ For complete implementation guides, examples, and best practices, see the [MCP I
 
 ## Additional Resources
 
+### Supabase Documentation
 - [Supabase CLI Reference](https://supabase.com/docs/reference/cli)
 - [Edge Functions Guide](https://supabase.com/docs/guides/functions)
 - [Database Migrations](https://supabase.com/docs/guides/database/migrations)
 - [Row Level Security](https://supabase.com/docs/guides/database/postgres/row-level-security)
 - [Realtime Documentation](https://supabase.com/docs/guides/realtime)
+- [Auth & SSO](https://supabase.com/docs/guides/auth/sso/auth-sso-saml)
+- [Supavisor Documentation](https://supabase.com/docs/guides/database/supavisor)
+
+### Project-Specific Documentation
+- [ZITADEL SAML IdP Setup](docs/ZITADEL_SAML_IDP_SETUP.md) - Complete guide for SAML SSO with ZITADEL
+
+### External Resources
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Model Context Protocol Specification](https://modelcontextprotocol.io/)
-- [Supavisor Documentation](https://supabase.com/docs/guides/database/supavisor)
+- [ZITADEL Documentation](https://zitadel.com/docs)
 
 ---
 

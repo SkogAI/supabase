@@ -428,6 +428,86 @@ user-files/
 
 **See [docs/STORAGE.md](docs/STORAGE.md) for complete documentation, examples, and best practices.**
 
+## 🔐 Authentication & SSO
+
+Supabase Auth provides multiple authentication methods for your application, including email/password, OAuth providers, and enterprise SSO.
+
+### Supported Methods
+
+- **Email/Password** - Traditional email and password authentication
+- **Magic Links** - Passwordless login via email
+- **OAuth Providers** - Social login (Google, GitHub, etc.)
+- **Phone/SMS** - SMS-based authentication with OTP
+- **SAML 2.0 SSO** - Enterprise Single Sign-On for self-hosted instances
+
+### SAML SSO with ZITADEL
+
+For **self-hosted Supabase** instances, you can configure SAML 2.0 authentication with ZITADEL as the Identity Provider:
+
+```
+User → Supabase → ZITADEL (IdP) → Authentication → User Profile in Supabase
+```
+
+**Key Benefits:**
+- ✅ Centralized user management in ZITADEL
+- ✅ Single Sign-On across multiple applications
+- ✅ Enterprise-grade security and compliance
+- ✅ Support for MFA and advanced authentication policies
+- ✅ Just-In-Time (JIT) user provisioning
+
+### Configuration Guide
+
+**Phase 1: ZITADEL Setup** ✅ Complete
+- Configure ZITADEL as SAML Identity Provider
+- Set up SAML application in ZITADEL
+- Configure attribute mapping (email, name, etc.)
+- Export SAML metadata
+- Create test users
+
+**Phase 2: Supabase Configuration** (Next)
+- Configure Supabase Auth with SAML provider
+- Import ZITADEL SAML metadata
+- Test SSO authentication flow
+- Deploy to production
+
+**📖 Complete Guide**: See [docs/ZITADEL_SAML_IDP_SETUP.md](docs/ZITADEL_SAML_IDP_SETUP.md) for step-by-step ZITADEL configuration instructions.
+
+### Authentication Configuration
+
+Configure authentication settings in `supabase/config.toml`:
+
+```toml
+[auth]
+enabled = true
+site_url = "http://localhost:8000"
+enable_signup = true
+jwt_expiry = 3600
+
+# Email authentication
+[auth.email]
+enable_signup = false
+enable_confirmations = false
+
+# Multi-factor authentication
+[auth.mfa]
+max_enrolled_factors = 10
+```
+
+### Row Level Security with Auth
+
+Use `auth.uid()` in RLS policies to secure data based on authenticated user:
+
+```sql
+-- Users can only see their own posts
+CREATE POLICY "Users manage own posts"
+  ON posts FOR ALL
+  TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+```
+
+**See [docs/RLS_POLICIES.md](docs/RLS_POLICIES.md)** for authentication-based RLS patterns.
+
 ## 🔴 Realtime
 
 Supabase Realtime allows you to listen to database changes in real-time using WebSockets.
@@ -599,6 +679,7 @@ For more details, see `examples/realtime/README.md`
 - **[DEVOPS.md](DEVOPS.md)** - Complete DevOps guide with secrets, workflows, troubleshooting
 - **[QUICKSTART_OPENAI.md](QUICKSTART_OPENAI.md)** - 5-minute OpenAI setup guide ⚡
 - **[OPENAI_SETUP.md](OPENAI_SETUP.md)** - OpenAI integration guide for Studio AI features and Edge Functions
+- **[docs/ZITADEL_SAML_IDP_SETUP.md](docs/ZITADEL_SAML_IDP_SETUP.md)** - Complete guide for configuring ZITADEL as SAML Identity Provider for SSO
 - **[docs/RLS_POLICIES.md](docs/RLS_POLICIES.md)** - Complete RLS policy guide with patterns and best practices
 - **[docs/RLS_TESTING.md](docs/RLS_TESTING.md)** - RLS testing guidelines for local and CI/CD
 - **[docs/STORAGE.md](docs/STORAGE.md)** - Storage buckets guide with usage examples and security patterns
