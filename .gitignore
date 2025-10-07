@@ -65,3 +65,4 @@ docker-compose.override.yml
 *.seed
 *.pid.lock
 tmp
+.dev/worktree
