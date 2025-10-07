@@ -1,0 +1,83 @@
+# Example Kong configuration for SAML endpoints
+# Add these routes to your kong.yml services section
+# See: docs/SUPABASE_SAML_SP_CONFIGURATION.md
+
+# ================================
+# Kong SAML Routes Configuration
+# ================================
+# These routes must be PUBLIC (no API key required) for SAML flow to work
+# Add to the "services" section of your kong.yml
+
+services:
+  # ================================
+  # SAML Assertion Consumer Service (ACS)
+  # ================================
+  # This endpoint receives SAML responses from the Identity Provider
+  - name: auth-v1-open-sso-acs
+    url: "http://auth:9999/sso/saml/acs"
+    routes:
+      - name: auth-v1-open-sso-acs
+        strip_path: true
+        paths:
+          - /auth/v1/sso/saml/acs
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - OPTIONS
+          headers:
+            - Accept
+            - Authorization
+            - Content-Type
+          credentials: true
+          max_age: 3600
+
+  # ================================
+  # SAML Service Provider Metadata
+  # ================================
+  # This endpoint provides SP configuration to the Identity Provider
+  - name: auth-v1-open-sso-metadata
+    url: "http://auth:9999/sso/saml/metadata"
+    routes:
+      - name: auth-v1-open-sso-metadata
+        strip_path: true
+        paths:
+          - /auth/v1/sso/saml/metadata
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - OPTIONS
+          headers:
+            - Accept
+            - Content-Type
+          credentials: true
+          max_age: 3600
+
+# ================================
+# Usage Instructions
+# ================================
+# 1. Add these services to your kong.yml file
+# 2. Ensure they are NOT behind authentication (no key-auth plugin)
+# 3. Restart Kong: docker-compose restart kong
+# 4. Verify endpoints:
+#    curl http://localhost:8000/auth/v1/sso/saml/metadata
+#
+# For complete setup instructions, see:
+#   docs/SUPABASE_SAML_SP_CONFIGURATION.md
+#
+# ================================
+# Important Notes
+# ================================
+# - These routes MUST be public for SAML to work
+# - The ACS endpoint receives POST requests from the IdP
+# - The metadata endpoint is accessed by the IdP to configure trust
+# - CORS is configured to allow cross-origin requests
+# - In production, consider restricting CORS origins to your domains

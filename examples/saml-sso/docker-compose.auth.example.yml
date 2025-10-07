@@ -1,0 +1,68 @@
+# Example auth service configuration with SAML support
+# Add these environment variables to your docker-compose.yml auth service
+# See: docs/SUPABASE_SAML_SP_CONFIGURATION.md
+
+services:
+  auth:
+    image: supabase/gotrue:v2.143.0
+    container_name: supabase-auth
+    depends_on:
+      - db
+    restart: unless-stopped
+    environment:
+      # ================================
+      # Database Configuration
+      # ================================
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@db:5432/postgres?search_path=auth
+      
+      # ================================
+      # API Configuration
+      # ================================
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: 9999
+      GOTRUE_SITE_URL: ${SITE_URL:-http://localhost:8000}
+      GOTRUE_URI_ALLOW_LIST: ${REDIRECT_URLS:-http://localhost:3000,http://localhost:8000}
+      
+      # ================================
+      # JWT Configuration
+      # ================================
+      GOTRUE_JWT_SECRET: ${JWT_SECRET}
+      GOTRUE_JWT_EXP: 3600
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+      
+      # ================================
+      # Security Configuration
+      # ================================
+      GOTRUE_DISABLE_SIGNUP: false
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: true
+      GOTRUE_MAILER_AUTOCONFIRM: false
+      
+      # ================================
+      # SAML SSO Configuration
+      # ⚠️ ADD THESE VARIABLES FOR SAML SUPPORT
+      # ================================
+      GOTRUE_SAML_ENABLED: ${GOTRUE_SAML_ENABLED:-false}
+      GOTRUE_SAML_PRIVATE_KEY: ${GOTRUE_SAML_PRIVATE_KEY}
+      
+      # ================================
+      # Logging Configuration
+      # ================================
+      GOTRUE_LOG_LEVEL: ${LOG_LEVEL:-info}
+      
+    ports:
+      - "9999:9999"
+
+# ================================
+# Usage Instructions
+# ================================
+# 1. Copy the SAML environment variables section to your docker-compose.yml
+# 2. Set GOTRUE_SAML_ENABLED and GOTRUE_SAML_PRIVATE_KEY in your .env file
+# 3. Restart the auth service: docker-compose restart auth
+#
+# Example .env entries:
+#   GOTRUE_SAML_ENABLED=true
+#   GOTRUE_SAML_PRIVATE_KEY=MIIEvQIBADANBgkqhkiG9w0BAQ...
+#
+# For complete setup instructions, see:
+#   docs/SUPABASE_SAML_SP_CONFIGURATION.md
