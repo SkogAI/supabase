@@ -867,9 +867,11 @@ echo "!config/*.schema.json" >> .gitignore
    - Enable connection monitoring
 
 3. **"SSL connection error"**
-   - Set `ssl.rejectUnauthorized: false` for testing only
-   - Verify SSL certificate path
-   - Check SSL mode in connection string
+   - **Production**: Always use `ssl.rejectUnauthorized: true` with valid certificate
+   - Verify SSL certificate path (use absolute path)
+   - Download certificate from Supabase Dashboard → Settings → Database
+   - See [SSL/TLS Security Guide](./MCP_SSL_TLS_SECURITY.md) for complete troubleshooting
+   - For testing only: Set `ssl.rejectUnauthorized: false` (never in production)
 
 ### Performance Issues
 
@@ -893,6 +895,7 @@ echo "!config/*.schema.json" >> .gitignore
 - [MCP Server Architecture](./MCP_SERVER_ARCHITECTURE.md)
 - [MCP Authentication Strategies](./MCP_AUTHENTICATION.md)
 - [MCP Connection Examples](./MCP_CONNECTION_EXAMPLES.md)
+- [SSL/TLS Security Guide](./MCP_SSL_TLS_SECURITY.md) - **Critical for Production**
 
 ---
 

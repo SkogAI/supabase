@@ -552,6 +552,7 @@ See [MCP_SERVER_CONFIGURATION.md](./MCP_SERVER_CONFIGURATION.md) for detailed co
 - [MCP Server Configuration Templates](./MCP_SERVER_CONFIGURATION.md)
 - [MCP Authentication Strategies](./MCP_AUTHENTICATION.md)
 - [MCP Connection Examples](./MCP_CONNECTION_EXAMPLES.md)
+- [SSL/TLS Security Guide](./MCP_SSL_TLS_SECURITY.md) - **Critical for Production**
 - [Row Level Security Policies](./RLS_POLICIES.md)
 - [Database Security Best Practices](./RLS_TESTING.md)
 

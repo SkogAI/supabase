@@ -12,6 +12,20 @@ supabase/.temp
 *.pem
 signing_keys.json
 
+# SSL/TLS Certificates
+certs/*.crt
+certs/*.pem
+certs/*.key
+certs/*.cer
+certs/*.der
+certs/*.p7b
+certs/*.p12
+certs/*.pfx
+certs/backup/
+# Allow certificate documentation
+!certs/README.md
+!certs/.gitignore
+
 # OS
 .DS_Store
 .DS_Store?
