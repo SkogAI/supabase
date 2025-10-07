@@ -17,6 +17,9 @@ This project uses Git worktrees to manage parallel development of features, bugf
 
 # Remove a specific worktree manually
 .github/scripts/remove-worktree.sh <worktree-name> [--delete-branch]
+
+# Run CI checks in worktree (recommended before pushing)
+npm run ci:worktree
 ```
 
 ## What are Git Worktrees?
@@ -117,10 +120,14 @@ npm run migration:new add_user_profiles
 npm run db:reset
 npm run test:rls
 
+# Run CI checks before committing (recommended)
+npm run ci:worktree
+
 # Commit and push
 git add .
 git commit -m "Add user profiles table with RLS policies"
 git push -u origin feature/add-user-profiles-42
+# Note: pre-push hook will run CI checks automatically
 ```
 
 ### 3. Create PR
@@ -445,3 +452,48 @@ gh auth login
 # - Create PRs with proper linking
 # - Check issue status
 ```
+
+## CI/CD Integration
+
+Worktrees integrate with CI/CD for automatic validation:
+
+### Local CI Checks
+
+```bash
+# Run full CI suite in current worktree
+npm run ci:worktree
+
+# Checks include:
+# - TypeScript type checking
+# - SQL linting
+# - Migration validation
+# - Edge function linting & tests
+# - RLS policy tests
+# - Storage policy tests
+```
+
+### Pre-Push Hooks
+
+Automatic validation before pushing:
+
+```bash
+# Install hooks (one-time setup)
+npm run hooks:install
+
+# Now git push will automatically run CI checks
+git push -u origin feature/my-feature
+
+# To bypass (not recommended):
+git push --no-verify
+```
+
+### GitHub Actions
+
+Parallel testing for worktree branches:
+
+- Push to `feature/**`, `bugfix/**`, `hotfix/**` triggers CI
+- Tests run in parallel (lint, typecheck, unit tests, migrations, RLS)
+- Results appear in PR checks
+- Prevents merge if tests fail
+
+See [CI_WORKTREE.md](./CI_WORKTREE.md) for complete CI/CD integration guide.

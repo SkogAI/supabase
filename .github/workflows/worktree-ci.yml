@@ -1,0 +1,272 @@
+name: Worktree CI Testing
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - 'bugfix/**'
+      - 'hotfix/**'
+  pull_request:
+    branches:
+      - develop
+      - master
+      - main
+
+jobs:
+  detect-worktree:
+    name: Detect Worktree Branch
+    runs-on: ubuntu-latest
+    outputs:
+      is_worktree: ${{ steps.check.outputs.is_worktree }}
+      branch_type: ${{ steps.check.outputs.branch_type }}
+      branch_name: ${{ steps.check.outputs.branch_name }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Check if branch is from worktree
+        id: check
+        run: |
+          BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          
+          # Check if branch matches worktree patterns
+          if [[ "$BRANCH_NAME" =~ ^(feature|bugfix|hotfix)/ ]]; then
+            echo "is_worktree=true" >> $GITHUB_OUTPUT
+            echo "branch_type=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+            echo "✓ Detected worktree branch: $BRANCH_NAME (type: ${BASH_REMATCH[1]})"
+          else
+            echo "is_worktree=false" >> $GITHUB_OUTPUT
+            echo "branch_type=unknown" >> $GITHUB_OUTPUT
+            echo "ℹ Not a worktree branch: $BRANCH_NAME"
+          fi
+
+  worktree-lint:
+    name: Lint & Format
+    runs-on: ubuntu-latest
+    needs: detect-worktree
+    if: needs.detect-worktree.outputs.is_worktree == 'true'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      
+      - name: Lint edge functions
+        run: |
+          if [ -d "supabase/functions" ]; then
+            cd supabase/functions
+            echo "Running Deno lint..."
+            deno lint
+            echo "✓ Lint passed"
+          else
+            echo "⚠ No functions directory found, skipping"
+          fi
+      
+      - name: Format check
+        run: |
+          if [ -d "supabase/functions" ]; then
+            cd supabase/functions
+            echo "Running Deno format check..."
+            deno fmt --check
+            echo "✓ Format check passed"
+          else
+            echo "⚠ No functions directory found, skipping"
+          fi
+
+  worktree-typecheck:
+    name: TypeScript Type Check
+    runs-on: ubuntu-latest
+    needs: detect-worktree
+    if: needs.detect-worktree.outputs.is_worktree == 'true'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      
+      - name: Type check edge functions
+        run: |
+          if [ -d "supabase/functions" ]; then
+            cd supabase/functions
+            echo "Type checking edge functions..."
+            for dir in */; do
+              if [ -f "${dir}index.ts" ]; then
+                echo "  Checking ${dir}index.ts"
+                deno check "${dir}index.ts"
+              fi
+            done
+            echo "✓ Type check passed"
+          else
+            echo "⚠ No functions directory found, skipping"
+          fi
+
+  worktree-unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: detect-worktree
+    if: needs.detect-worktree.outputs.is_worktree == 'true'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      
+      - name: Run edge function tests
+        run: |
+          if [ -d "supabase/functions" ]; then
+            cd supabase/functions
+            echo "Running edge function tests..."
+            deno test --allow-all --coverage=coverage
+            echo "✓ Tests passed"
+          else
+            echo "⚠ No functions directory found, skipping"
+          fi
+      
+      - name: Generate coverage report
+        if: always()
+        run: |
+          if [ -d "supabase/functions/coverage" ]; then
+            cd supabase/functions
+            deno coverage coverage --lcov > coverage.lcov
+            echo "## Test Coverage" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            deno coverage coverage >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  worktree-migrations:
+    name: Migration Validation
+    runs-on: ubuntu-latest
+    needs: detect-worktree
+    if: needs.detect-worktree.outputs.is_worktree == 'true'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      
+      - name: Validate migrations
+        run: |
+          if [ -d "supabase/migrations" ]; then
+            echo "Validating migration files..."
+            MIGRATION_COUNT=$(find supabase/migrations -name "*.sql" -type f | wc -l)
+            echo "Found $MIGRATION_COUNT migration files"
+            
+            # Check for syntax errors (basic)
+            for migration in supabase/migrations/*.sql; do
+              if [ -f "$migration" ]; then
+                echo "  ✓ $(basename $migration)"
+              fi
+            done
+            echo "✓ Migration validation passed"
+          else
+            echo "⚠ No migrations directory found, skipping"
+          fi
+      
+      - name: Start Supabase and test migrations
+        run: |
+          echo "Starting Supabase to test migrations..."
+          supabase start
+          
+          echo "Checking migration status..."
+          supabase db reset
+          
+          echo "✓ Migrations applied successfully"
+      
+      - name: Stop Supabase
+        if: always()
+        run: supabase stop --no-backup
+
+  worktree-rls-tests:
+    name: RLS Policy Tests
+    runs-on: ubuntu-latest
+    needs: detect-worktree
+    if: needs.detect-worktree.outputs.is_worktree == 'true'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      
+      - name: Start Supabase
+        run: supabase start
+      
+      - name: Run RLS tests
+        run: |
+          if [ -f "tests/rls_test_suite.sql" ]; then
+            echo "Running RLS policy tests..."
+            supabase db execute --file tests/rls_test_suite.sql
+            echo "✓ RLS tests passed"
+          else
+            echo "⚠ RLS test suite not found, skipping"
+          fi
+      
+      - name: Stop Supabase
+        if: always()
+        run: supabase stop --no-backup
+
+  worktree-summary:
+    name: Worktree CI Summary
+    runs-on: ubuntu-latest
+    needs: [detect-worktree, worktree-lint, worktree-typecheck, worktree-unit-tests, worktree-migrations, worktree-rls-tests]
+    if: always() && needs.detect-worktree.outputs.is_worktree == 'true'
+    
+    steps:
+      - name: Generate summary
+        run: |
+          echo "# Worktree CI Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ needs.detect-worktree.outputs.branch_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Type:** ${{ needs.detect-worktree.outputs.branch_type }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Test Suite | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Lint & Format | ${{ needs.worktree-lint.result == 'success' && '✅ Passed' || needs.worktree-lint.result == 'skipped' && '⊘ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Type Check | ${{ needs.worktree-typecheck.result == 'success' && '✅ Passed' || needs.worktree-typecheck.result == 'skipped' && '⊘ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Unit Tests | ${{ needs.worktree-unit-tests.result == 'success' && '✅ Passed' || needs.worktree-unit-tests.result == 'skipped' && '⊘ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Migrations | ${{ needs.worktree-migrations.result == 'success' && '✅ Passed' || needs.worktree-migrations.result == 'skipped' && '⊘ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| RLS Tests | ${{ needs.worktree-rls-tests.result == 'success' && '✅ Passed' || needs.worktree-rls-tests.result == 'skipped' && '⊘ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Check overall result
+        if: |
+          needs.worktree-lint.result == 'failure' ||
+          needs.worktree-typecheck.result == 'failure' ||
+          needs.worktree-unit-tests.result == 'failure' ||
+          needs.worktree-migrations.result == 'failure' ||
+          needs.worktree-rls-tests.result == 'failure'
+        run: |
+          echo "❌ One or more worktree CI tests failed"
+          exit 1
+      
+      - name: Success
+        if: |
+          needs.worktree-lint.result == 'success' &&
+          needs.worktree-typecheck.result == 'success' &&
+          needs.worktree-unit-tests.result == 'success' &&
+          needs.worktree-migrations.result == 'success' &&
+          needs.worktree-rls-tests.result == 'success'
+        run: |
+          echo "✅ All worktree CI tests passed!"

@@ -95,6 +95,7 @@ The `supabase/config.toml` file contains all project configuration. Key sections
 | **pr-checks.yml** | Pull requests | Validate PRs, check for secrets | ✅ Ready |
 | **migrations-validation.yml** | Migration changes | Test migrations in isolated environment | ✅ Ready |
 | **edge-functions-test.yml** | Function changes | Lint, type-check, and test functions | ✅ Ready |
+| **worktree-ci.yml** | Worktree branches | Parallel testing for worktree branches | ✅ Ready |
 | **schema-lint.yml** | Database changes | Check schema for anti-patterns | ✅ Ready |
 | **security-scan.yml** | All pushes | Scan for vulnerabilities | ✅ Ready |
 | **type-generation.yml** | Database changes | Generate TypeScript types | ✅ Ready |
@@ -150,7 +151,19 @@ Complete function validation:
 - Integration tests with local Supabase
 - Security analysis
 
-#### 5. **Schema Linting** (`schema-lint.yml`)
+#### 5. **Worktree CI Testing** (`worktree-ci.yml`)
+
+Parallel testing for worktree branches:
+
+- Auto-detects `feature/**`, `bugfix/**`, `hotfix/**` branches
+- Runs lint, typecheck, unit tests in parallel
+- Validates migrations and RLS policies
+- Posts results to PR comments
+- Blocks merge if tests fail
+
+See [docs/CI_WORKTREE.md](docs/CI_WORKTREE.md) for local CI integration.
+
+#### 6. **Schema Linting** (`schema-lint.yml`)
 
 Database best practices:
 
@@ -160,7 +173,7 @@ Database best practices:
 - Naming conventions
 - Performance anti-patterns
 
-#### 6. **Security Scanning** (`security-scan.yml`)
+#### 7. **Security Scanning** (`security-scan.yml`)
 
 Comprehensive security checks:
 

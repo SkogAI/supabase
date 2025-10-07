@@ -66,6 +66,30 @@ git worktree add "$WORKTREE_PATH" -b "$BRANCH_NAME" "origin/$BASE_BRANCH"
 
 echo ""
 echo "✓ Worktree created successfully!"
+
+# Install Git hooks in the worktree
+echo ""
+echo "Installing Git hooks..."
+cd "$WORKTREE_PATH"
+if [ -f ".github/scripts/install-hooks.sh" ]; then
+    if .github/scripts/install-hooks.sh > /dev/null 2>&1; then
+        echo "✓ Git hooks installed (pre-push validation enabled)"
+    else
+        echo "⚠ Could not install Git hooks (continuing anyway)"
+    fi
+else
+    echo "⚠ Hook installation script not found (skipping)"
+fi
+cd - > /dev/null
+
+# Preview environment (future feature)
+if [ "$ENABLE_PREVIEW" = true ]; then
+    echo ""
+    echo "⚠ Preview environment flag detected"
+    echo "ℹ Preview environment integration is planned for future release"
+    echo "ℹ Currently, you can manually deploy to Supabase preview branches"
+fi
+
 echo ""
 
 # Run template setup script if it exists
@@ -102,6 +126,9 @@ echo "  cd $WORKTREE_PATH"
 echo "  # Make your changes"
 echo "  git add ."
 echo "  git commit -m \"Description of changes\""
+echo "  # Run CI checks before pushing (optional):"
+echo "  .github/scripts/ci-worktree.sh"
+echo "  # Push (pre-push hook will run CI checks automatically)"
 echo "  git push -u origin $BRANCH_NAME"
 echo "  gh pr create --base $BASE_BRANCH"
 echo ""
