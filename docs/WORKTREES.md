@@ -29,10 +29,14 @@ Git worktrees allow you to have multiple working directories attached to the sam
 ```
 /home/skogix/dev/supabase/          # Main repository
 ├── .dev/
-│   └── worktree/                    # All worktrees live here
-│       ├── feature-auth-123/
-│       ├── bugfix-cors-error-124/
-│       └── hotfix-security-125/
+│   ├── worktree/                    # All worktrees live here
+│   │   ├── feature-auth-123/
+│   │   ├── bugfix-cors-error-124/
+│   │   └── hotfix-security-125/
+│   └── worktree-templates/          # Templates for auto-configuration
+│       ├── feature/
+│       ├── bugfix/
+│       └── hotfix/
 ```
 
 ## GitHub Git Flow Branch Types
@@ -77,7 +81,26 @@ Git worktrees allow you to have multiple working directories attached to the sam
 #   Path: .dev/worktree/feature-add-user-profiles-42
 #   Branch: feature/add-user-profiles-42
 #   Base: develop
+#
+# ✓ Worktree created successfully!
+#
+# Running feature template setup...
+# 🚀 Setting up feature worktree...
+# ✓ Environment configured
+# ✓ Dependencies installed
+# ✓ Database ready
+# ✓ Types generated
+# ✅ Feature Worktree Setup Complete!
 ```
+
+**What happens automatically:**
+- Template files copied to worktree
+- `.env` created from `.env.example`
+- Dependencies installed (`npm install`)
+- Supabase started (if not running)
+- Database reset with migrations
+- TypeScript types generated
+- Feature checklist displayed
 
 ### 2. Work in the worktree
 
@@ -161,13 +184,32 @@ cd ../..
 git worktree remove .dev/worktree/pr-review-42
 ```
 
+## Worktree Templates
+
+Worktrees are automatically configured with templates based on their type. See [.dev/worktree-templates/README.md](../.dev/worktree-templates/README.md) for details.
+
+**Available templates:**
+- **feature** - Full development setup with workflow guide
+- **bugfix** - Testing checklist and debugging guide  
+- **hotfix** - Critical deployment checklist with safety checks
+
+Each template includes:
+- Automated environment setup
+- Dependency installation
+- Database initialization
+- Type generation
+- Type-specific checklists and guides
+
 ## Best Practices
 
 1. **Always create worktrees in `.dev/worktree/`** - Keeps them organized and ignored by git
 2. **Use meaningful names** - Scripts auto-generate from issue titles
-3. **Clean up merged branches** - Remove worktrees after PR is merged
-4. **One worktree per issue** - Keeps changes isolated and reviewable
-5. **Sync regularly** - `git fetch origin` before creating new worktrees
+3. **Let templates run** - Auto-setup ensures consistency
+4. **Update .env with real values** - Templates use placeholders
+5. **Follow type-specific checklists** - They prevent missing steps
+6. **Clean up merged branches** - Remove worktrees after PR is merged
+7. **One worktree per issue** - Keeps changes isolated and reviewable
+8. **Sync regularly** - `git fetch origin` before creating new worktrees
 
 ## Troubleshooting
 
