@@ -36,17 +36,40 @@ The `deno.json` file provides:
 - ✅ Linting configuration
 - ✅ Formatting rules
 
-### 5. CI/CD Integration ✅
+### 5. Testing Framework ✅
+Comprehensive testing setup with:
+- ✅ Shared testing utilities (`_shared/testing/`)
+  - `fixtures.ts` - Test data, users, messages, JWT generation
+  - `mocks.ts` - Mock fetch, Supabase client, API responses
+  - `helpers.ts` - Test helpers, assertions, performance testing
+  - `example_test.ts` - Complete examples of all test patterns
+- ✅ Enhanced test files for all functions
+  - `hello-world/test.ts` - Comprehensive unit tests
+  - `openai-chat/test.ts` - 15+ tests with mocking
+  - `openrouter-chat/test.ts` - 20+ tests with multiple providers
+- ✅ Coverage configuration in `deno.json`
+- ✅ Multiple test commands in `package.json`
+  - `test:functions` - Run all tests
+  - `test:functions:watch` - Watch mode
+  - `test:functions:coverage` - Generate coverage
+  - `test:functions:integration` - Integration tests
+- ✅ Complete documentation
+  - `TESTING.md` - 15KB comprehensive guide
+  - `TESTING_QUICKSTART.md` - Quick reference
+
+### 6. CI/CD Integration ✅
 The `.github/workflows/edge-functions-test.yml` workflow:
-- ✅ Runs on PR and push to main
+- ✅ Runs on PR and push to main/develop
 - ✅ Verifies Deno formatting
 - ✅ Lints all functions
 - ✅ Type-checks TypeScript code
-- ✅ Runs unit tests
-- ✅ Tests functions with Supabase running
-- ✅ Generates comprehensive test reports
+- ✅ Runs unit tests with coverage
+- ✅ Tests functions with Supabase running (integration)
+- ✅ Uploads coverage to Codecov
+- ✅ Security scanning (hardcoded secrets, dependency audit)
+- ✅ Generates comprehensive test reports in GitHub Actions summary
 
-### 6. Documentation ✅
+### 7. Documentation ✅
 Complete documentation covering:
 - ✅ Local development workflow
 - ✅ Function creation and testing
@@ -54,6 +77,9 @@ Complete documentation covering:
 - ✅ Deployment instructions
 - ✅ Debugging and troubleshooting
 - ✅ Security considerations
+- ✅ Comprehensive testing guide (TESTING.md)
+- ✅ Quick testing reference (TESTING_QUICKSTART.md)
+- ✅ Testing utilities documentation (_shared/testing/README.md)
 
 ## Quick Start
 
@@ -73,8 +99,21 @@ curl -i http://localhost:54321/functions/v1/hello-world \
 
 ### Run Tests
 ```bash
+# All tests
+npm run test:functions
+
+# Specific function
 cd supabase/functions/hello-world
 deno test --allow-all test.ts
+
+# With coverage
+npm run test:functions:coverage
+
+# Watch mode
+npm run test:functions:watch
+
+# Integration tests (requires Supabase running)
+npm run test:functions:integration
 ```
 
 ### Create New Function

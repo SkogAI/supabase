@@ -6,7 +6,7 @@
   },
   "lint": {
     "include": ["**/*.ts"],
-    "exclude": ["**/node_modules/**"],
+    "exclude": ["**/node_modules/**", "**/coverage/**"],
     "rules": {
       "tags": ["recommended"],
       "include": ["ban-untagged-todo"],
@@ -21,12 +21,17 @@
     "singleQuote": false,
     "proseWrap": "preserve",
     "include": ["**/*.ts"],
-    "exclude": ["**/node_modules/**"]
+    "exclude": ["**/node_modules/**", "**/coverage/**"]
+  },
+  "test": {
+    "include": ["**/*test.ts", "**/*_test.ts"],
+    "exclude": ["**/node_modules/**", "**/coverage/**"]
   },
   "imports": {
     "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2",
     "std/": "https://deno.land/std@0.168.0/",
     "std/http/": "https://deno.land/std@0.168.0/http/",
-    "std/testing/": "https://deno.land/std@0.168.0/testing/"
+    "std/testing/": "https://deno.land/std@0.168.0/testing/",
+    "testing/": "./_shared/testing/"
   }
 }
