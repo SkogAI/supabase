@@ -581,6 +581,8 @@ Complete MCP documentation is available in the `docs/` directory:
 
 - **[MCP_SERVER_ARCHITECTURE.md](docs/MCP_SERVER_ARCHITECTURE.md)** - Architecture overview and design patterns
 - **[MCP_SERVER_CONFIGURATION.md](docs/MCP_SERVER_CONFIGURATION.md)** - Configuration templates for all agent types
+- **[MCP_SESSION_MODE_SETUP.md](docs/MCP_SESSION_MODE_SETUP.md)** - Session mode setup for IPv4 persistent agents
+- **[MCP_SESSION_VS_TRANSACTION.md](docs/MCP_SESSION_VS_TRANSACTION.md)** - Guide for choosing connection modes
 - **[MCP_AUTHENTICATION.md](docs/MCP_AUTHENTICATION.md)** - Authentication strategies and security
 - **[MCP_CONNECTION_EXAMPLES.md](docs/MCP_CONNECTION_EXAMPLES.md)** - Code examples in multiple languages
 - **[MCP_IMPLEMENTATION_SUMMARY.md](docs/MCP_IMPLEMENTATION_SUMMARY.md)** - Implementation overview
