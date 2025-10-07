@@ -58,6 +58,7 @@ gh label create "medium-priority" --color "fbca04" --description "Important but 
 gh label create "low-priority" --color "0e8a16" --description "Nice to have improvements" --repo SkogAI/supabase
 
 # Type labels
+gh label create "bug" --color "d73a4a" --description "Something isn't working" --repo SkogAI/supabase
 gh label create "enhancement" --color "a2eeef" --description "New feature or request" --repo SkogAI/supabase
 gh label create "documentation" --color "0075ca" --description "Documentation improvements" --repo SkogAI/supabase
 gh label create "security" --color "d73a4a" --description "Security-related issues" --repo SkogAI/supabase
