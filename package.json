@@ -28,6 +28,9 @@
     "test:realtime": "cd examples/realtime && npm install && npm run test",
     "examples:realtime": "cd examples/realtime && npm install",
     "test:rls": "supabase db execute --file tests/rls_test_suite.sql",
+    "ci:worktree": ".github/scripts/ci-worktree.sh",
+    "ci:validate": ".github/scripts/ci-worktree.sh",
+    "hooks:install": ".github/scripts/install-hooks.sh",
     "dev": "npm-run-all --parallel db:start functions:serve",
     "setup": "npm run db:start && npm run types:generate"
   },
