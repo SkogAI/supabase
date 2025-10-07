@@ -10,6 +10,7 @@ Complete configuration guide for CI/CD, secrets management, and deployment workf
 - [Local Development](#local-development)
 - [Deployment Process](#deployment-process)
 - [Monitoring & Maintenance](#monitoring--maintenance)
+- [AI Agent Integration (MCP)](#ai-agent-integration-mcp)
 
 ---
 
@@ -30,7 +31,9 @@ Configure these secrets in GitHub Settings → Secrets and variables → Actions
 | Secret Name | Description | Required For |
 |------------|-------------|--------------|
 | `CLAUDE_CODE_OAUTH_TOKEN` | Claude Code integration token | PR analysis, automated reviews |
-| `SUPABASE_OPENAI_API_KEY` | OpenAI API key for Studio AI features | Local development (optional) |
+| `SUPABASE_OPENAI_API_KEY` | OpenAI API key for Studio AI features | Local development (optional), see [OPENAI_SETUP.md](OPENAI_SETUP.md) |
+| `OPENAI_API_KEY` | OpenAI API key for Edge Functions | Custom AI features, see [openai-chat function](supabase/functions/openai-chat/) |
+| `OPENROUTER_API_KEY` | OpenRouter API key for Edge Functions | Access 100+ AI models, see [openrouter-chat function](supabase/functions/openrouter-chat/) |
 
 ### Setting Up Secrets
 
@@ -406,18 +409,246 @@ supabase functions logs <name> --tail
 
 ---
 
+## Realtime Configuration
+
+### Overview
+
+Supabase Realtime enables WebSocket connections for live database updates, presence tracking, and broadcast messaging.
+
+### Enabling Realtime on Tables
+
+Realtime is enabled via the `supabase_realtime` publication:
+
+```sql
+-- Enable realtime for a table
+ALTER PUBLICATION supabase_realtime ADD TABLE your_table;
+
+-- Set replica identity to FULL (required for UPDATE/DELETE events)
+ALTER TABLE your_table REPLICA IDENTITY FULL;
+
+-- Verify realtime is enabled
+SELECT * FROM pg_publication_tables WHERE pubname = 'supabase_realtime';
+```
+
+### Currently Enabled Tables
+
+- ✅ `public.profiles`
+- ✅ `public.posts`
+
+### Configuration
+
+Realtime settings in `supabase/config.toml`:
+
+```toml
+[realtime]
+enabled = true
+max_connections = 100              # Max concurrent connections per client
+max_channels_per_client = 100      # Max channels per connection
+max_joins_per_second = 500         # Max joins per second per client
+max_messages_per_second = 1000     # Max messages per second per client
+max_events_per_second = 100        # Max events per second per channel
+```
+
+### Security Considerations
+
+1. **RLS Policies Required**: Users must have SELECT permission to receive realtime updates
+2. **Filter Server-Side**: Use filters to reduce data exposure
+3. **Rate Limiting**: Configure appropriate limits based on your use case
+4. **Connection Management**: Always clean up subscriptions when done
+
+### Testing Realtime
+
+```bash
+# Run the realtime test suite
+node examples/realtime/test-realtime.js
+
+# Test with individual examples
+node examples/realtime/basic-subscription.js
+node examples/realtime/table-changes.js
+node examples/realtime/filtered-subscription.js
+node examples/realtime/presence.js
+node examples/realtime/broadcast.js
+
+# Browser testing
+open examples/realtime/rate-limiting.html
+```
+
+### Monitoring
+
+```bash
+# Check realtime connections
+supabase logs realtime
+
+# Monitor in Supabase Dashboard
+# Dashboard → Database → Realtime
+```
+
+### Troubleshooting
+
+**Problem**: Not receiving realtime updates
+
+**Solutions**:
+1. Check table is in publication:
+   ```sql
+   SELECT * FROM pg_publication_tables 
+   WHERE pubname = 'supabase_realtime' AND tablename = 'your_table';
+   ```
+
+2. Verify RLS policies allow SELECT:
+   ```sql
+   SELECT * FROM pg_policies WHERE tablename = 'your_table';
+   ```
+
+3. Check replica identity:
+   ```sql
+   SELECT relname, relreplident 
+   FROM pg_class 
+   WHERE relname = 'your_table';
+   -- 'f' = FULL, 'd' = DEFAULT
+   ```
+
+4. Verify API keys are correct in client
+
+**Problem**: Too many connections
+
+**Solutions**:
+- Reduce number of active subscriptions
+- Share channels between components
+- Implement connection pooling
+- Adjust `max_connections` in config.toml
+
+**Problem**: Performance issues
+
+**Solutions**:
+- Use filters to reduce payload size
+- Implement client-side debouncing
+- Consider using broadcast for high-frequency updates
+- Check `max_events_per_second` setting
+
+### Production Recommendations
+
+1. **Set appropriate rate limits** based on expected load
+2. **Monitor connection count** and adjust limits as needed
+3. **Implement reconnection logic** with exponential backoff
+4. **Use filters** to minimize data transfer
+5. **Test under load** before going to production
+6. **Document realtime patterns** for your team
+
+### Migration Checklist
+
+When enabling realtime on a new table:
+
+- [ ] Add table to `supabase_realtime` publication
+- [ ] Set replica identity to FULL
+- [ ] Update RLS policies to allow SELECT
+- [ ] Test with example code
+- [ ] Document expected events for the table
+- [ ] Update client code to handle new events
+- [ ] Test rate limits under expected load
+## AI Agent Integration (MCP)
+
+### Model Context Protocol (MCP) Server Infrastructure
+
+This project includes comprehensive infrastructure for AI agents to connect to Supabase databases using the Model Context Protocol.
+
+#### Documentation
+
+Complete MCP documentation is available in the `docs/` directory:
+
+- **[MCP_SERVER_ARCHITECTURE.md](docs/MCP_SERVER_ARCHITECTURE.md)** - Architecture overview and design patterns
+- **[MCP_SERVER_CONFIGURATION.md](docs/MCP_SERVER_CONFIGURATION.md)** - Configuration templates for all agent types
+- **[MCP_AUTHENTICATION.md](docs/MCP_AUTHENTICATION.md)** - Authentication strategies and security
+- **[MCP_CONNECTION_EXAMPLES.md](docs/MCP_CONNECTION_EXAMPLES.md)** - Code examples in multiple languages
+- **[MCP_IMPLEMENTATION_SUMMARY.md](docs/MCP_IMPLEMENTATION_SUMMARY.md)** - Implementation overview
+
+#### Quick Reference
+
+**Supported Agent Types:**
+- Persistent Agents (Direct IPv6 connection)
+- Serverless Agents (Transaction pooling)
+- Edge Agents (Optimized for low latency)
+- High-Performance Agents (Dedicated pooler)
+
+**Connection Methods:**
+- Direct Connection (IPv6/IPv4)
+- Supavisor Session Mode (port 5432)
+- Supavisor Transaction Mode (port 6543)
+- Dedicated Pooler (custom configuration)
+
+**Authentication Methods:**
+- Service Role Key (full access)
+- Database User Credentials (limited permissions)
+- JWT Token (RLS-aware)
+- API Key (rate-limited)
+- OAuth 2.0 (delegated access)
+
+#### Connection String Examples
+
+```bash
+# Direct IPv6 connection
+DATABASE_URL=postgresql://postgres.project-ref:[password]@db.project-ref.supabase.co:5432/postgres
+
+# Supavisor Session Mode
+DATABASE_URL=postgresql://postgres.project-ref:[password]@aws-0-us-east-1.pooler.supabase.com:5432/postgres
+
+# Supavisor Transaction Mode (Serverless)
+DATABASE_URL=postgresql://postgres.project-ref:[password]@aws-0-us-east-1.pooler.supabase.com:6543/postgres
+```
+
+#### Environment Variables for MCP
+
+Add these to your `.env` file for AI agent connections:
+
+```bash
+# MCP Server Configuration
+MCP_SERVER_NAME=supabase-mcp-server
+MCP_SERVER_PORT=3000
+
+# Database Connection
+DATABASE_URL=postgresql://user:password@host:5432/database
+DB_CONNECTION_TYPE=supavisor_transaction
+
+# Authentication
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+JWT_SECRET=your-jwt-secret
+
+# Monitoring
+ENABLE_MCP_MONITORING=true
+LOG_LEVEL=info
+```
+
+For complete implementation guides, examples, and best practices, see the [MCP Implementation Summary](docs/MCP_IMPLEMENTATION_SUMMARY.md).
+
+---
+
 ## Additional Resources
 
+### Supabase Documentation
 - [Supabase CLI Reference](https://supabase.com/docs/reference/cli)
 - [Edge Functions Guide](https://supabase.com/docs/guides/functions)
 - [Database Migrations](https://supabase.com/docs/guides/database/migrations)
 - [Row Level Security](https://supabase.com/docs/guides/database/postgres/row-level-security)
+- [Realtime Documentation](https://supabase.com/docs/guides/realtime)
+- [Auth & SSO](https://supabase.com/docs/guides/auth/sso/auth-sso-saml)
+- [Supavisor Documentation](https://supabase.com/docs/guides/database/supavisor)
+
+### Project-Specific Documentation
+- [Contributing Guide](CONTRIBUTING.md) - Complete contributor guide with code guidelines and PR process
+- [Development Workflows](WORKFLOWS.md) - Detailed development workflows and common procedures
+- [Troubleshooting Guide](TROUBLESHOOTING.md) - Comprehensive troubleshooting guide for all common issues
+- [Architecture Overview](ARCHITECTURE.md) - System architecture and design decisions
+- [ZITADEL SAML IdP Setup](docs/ZITADEL_SAML_IDP_SETUP.md) - Complete guide for SAML SSO with ZITADEL
+
+### External Resources
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
+- [Model Context Protocol Specification](https://modelcontextprotocol.io/)
+- [ZITADEL Documentation](https://zitadel.com/docs)
 
 ---
 
 ## Support
 
+- **Maintainers**: Contact @Skogix or @Ic0n for assistance
 - **Issues**: Open a GitHub issue
 - **Supabase Support**: https://supabase.com/support
 - **Community**: https://github.com/supabase/supabase/discussions
@@ -425,4 +656,4 @@ supabase functions logs <name> --tail
 ---
 
 **Last Updated**: 2025-10-05
-**Maintained By**: DevOps Team
+**Maintained By**: @Skogix and @Ic0n

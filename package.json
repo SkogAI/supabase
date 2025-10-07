@@ -21,6 +21,13 @@
     "lint:functions": "cd supabase/functions && deno lint",
     "format:functions": "cd supabase/functions && deno fmt",
     "test:functions": "cd supabase/functions && deno test --allow-all",
+    "test:functions:watch": "cd supabase/functions && deno test --allow-all --watch",
+    "test:functions:coverage": "cd supabase/functions && deno test --allow-all --coverage=coverage && deno coverage coverage",
+    "test:functions:coverage-lcov": "cd supabase/functions && deno test --allow-all --coverage=coverage && deno coverage coverage --lcov > coverage.lcov",
+    "test:functions:integration": "RUN_INTEGRATION_TESTS=true npm run test:functions",
+    "test:realtime": "cd examples/realtime && npm install && npm run test",
+    "examples:realtime": "cd examples/realtime && npm install",
+    "test:rls": "supabase db execute --file tests/rls_test_suite.sql",
     "dev": "npm-run-all --parallel db:start functions:serve",
     "setup": "npm run db:start && npm run types:generate"
   },

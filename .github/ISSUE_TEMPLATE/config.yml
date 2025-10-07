@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 📚 Documentation
+    url: https://supabase.com/docs
+    about: Check the official Supabase documentation
+  - name: 💬 Community Support
+    url: https://github.com/supabase/supabase/discussions
+    about: Ask questions and discuss with the community

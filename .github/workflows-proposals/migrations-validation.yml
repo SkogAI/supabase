@@ -1,0 +1,73 @@
+name: Validate Database Migrations
+
+on:
+  pull_request:
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/config.toml'
+  push:
+    branches:
+      - master
+      - main
+    paths:
+      - 'supabase/migrations/**'
+
+jobs:
+  validate-migrations:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase local
+        run: supabase start
+
+      - name: Verify database is up
+        run: supabase status
+
+      - name: Run migration tests
+        run: |
+          # Test that migrations can be applied cleanly
+          supabase db reset --debug
+
+      - name: Check for migration conflicts
+        run: |
+          # Ensure no duplicate timestamps
+          cd supabase/migrations
+          if [ -d "$(pwd)" ]; then
+            duplicates=$(ls -1 *.sql 2>/dev/null | cut -d'_' -f1 | sort | uniq -d)
+            if [ -n "$duplicates" ]; then
+              echo "Error: Duplicate migration timestamps found:"
+              echo "$duplicates"
+              exit 1
+            fi
+          fi
+
+      - name: Generate migration analysis with Claude Code
+        if: github.event_name == 'pull_request'
+        uses: anthropics/claude-code-action@v1
+        continue-on-error: true
+        with:
+          github_token: ${{ github.token }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Analyze the database migrations and generate a comprehensive validation report to $GITHUB_STEP_SUMMARY:
+            1. Review all migration files in supabase/migrations/
+            2. Analyze each migration for:
+               - Breaking changes
+               - Performance implications
+               - Data integrity risks
+               - Rollback procedures
+            3. Check for best practices (indexes, constraints, etc.)
+            4. Provide migration order verification
+            5. Suggest testing strategies for each migration
+
+      - name: Stop Supabase
+        if: always()
+        run: supabase stop --no-backup

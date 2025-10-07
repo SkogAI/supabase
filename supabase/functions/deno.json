@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "lib": ["deno.window"],
+    "strict": true
+  },
+  "lint": {
+    "include": ["**/*.ts"],
+    "exclude": ["**/node_modules/**", "**/coverage/**"],
+    "rules": {
+      "tags": ["recommended"],
+      "include": ["ban-untagged-todo"],
+      "exclude": ["no-unused-vars"]
+    }
+  },
+  "fmt": {
+    "useTabs": false,
+    "lineWidth": 100,
+    "indentWidth": 2,
+    "semiColons": true,
+    "singleQuote": false,
+    "proseWrap": "preserve",
+    "include": ["**/*.ts"],
+    "exclude": ["**/node_modules/**", "**/coverage/**"]
+  },
+  "test": {
+    "include": ["**/*test.ts", "**/*_test.ts"],
+    "exclude": ["**/node_modules/**", "**/coverage/**"]
+  },
+  "imports": {
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2",
+    "std/": "https://deno.land/std@0.168.0/",
+    "std/http/": "https://deno.land/std@0.168.0/http/",
+    "std/testing/": "https://deno.land/std@0.168.0/testing/",
+    "testing/": "./_shared/testing/"
+  }
+}

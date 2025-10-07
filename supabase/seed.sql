@@ -2,36 +2,11 @@
 -- SEED DATA FOR LOCAL DEVELOPMENT AND TESTING
 -- ============================================================================
 -- This file is automatically loaded when running `supabase db reset`
--- Referenced in: supabase/config.toml -> [db.seed] section
+-- DO NOT use this for production data!
 --
--- ⚠️  WARNING: DO NOT USE THIS FOR PRODUCTION DATA!
--- This file contains test credentials and mock data for development only.
---
--- ============================================================================
--- WHAT THIS FILE DOES
--- ============================================================================
--- 1. Creates test users in auth.users with authentication credentials
--- 2. Automatically triggers profile creation via handle_new_user() function
--- 3. Seeds sample posts for each user to demonstrate RLS policies
--- 4. Provides verification summary of seeded data
---
--- ============================================================================
--- HOW TO USE TEST USERS
--- ============================================================================
--- Test users can log in with these credentials:
---   alice@example.com    | password123
---   bob@example.com      | password123
---   charlie@example.com  | password123
---
--- For manual RLS testing in SQL, set the auth context:
---   SET request.jwt.claim.sub = '00000000-0000-0000-0000-000000000001'; -- Alice
---   SET request.jwt.claim.sub = '00000000-0000-0000-0000-000000000002'; -- Bob
---   SET request.jwt.claim.sub = '00000000-0000-0000-0000-000000000003'; -- Charlie
---
--- Then run queries to test RLS policies:
---   SELECT * FROM posts; -- Should only see published posts + own drafts
---   UPDATE posts SET title = 'New Title' WHERE id = '...'; -- Should only work on own posts
---
+-- For complete documentation, see: supabase/README.md (Seed Data section)
+
+
 -- ============================================================================
 -- SEED CONFIGURATION
 -- ============================================================================
@@ -225,6 +200,46 @@ VALUES
 ON CONFLICT DO NOTHING;
 
 -- ============================================================================
+-- POST-CATEGORY RELATIONSHIPS
+-- ============================================================================
+-- Note: Categories are seeded in the migration file (20251005070000_example_add_categories.sql)
+-- Here we just link posts to categories
+
+-- Link Alice's posts to Technology category
+INSERT INTO public.post_categories (post_id, category_id)
+SELECT 
+    p.id,
+    c.id
+FROM public.posts p
+CROSS JOIN public.categories c
+WHERE p.user_id = '00000000-0000-0000-0000-000000000001'
+  AND p.title IN ('Getting Started with Supabase', 'Building Secure APIs with RLS')
+  AND c.slug = 'technology'
+ON CONFLICT DO NOTHING;
+
+-- Link Bob's posts to Technology and Business categories
+INSERT INTO public.post_categories (post_id, category_id)
+SELECT 
+    p.id,
+    c.id
+FROM public.posts p
+CROSS JOIN public.categories c
+WHERE p.user_id = '00000000-0000-0000-0000-000000000002'
+  AND c.slug IN ('technology', 'business')
+ON CONFLICT DO NOTHING;
+
+-- Link Charlie's posts to Lifestyle category
+INSERT INTO public.post_categories (post_id, category_id)
+SELECT 
+    p.id,
+    c.id
+FROM public.posts p
+CROSS JOIN public.categories c
+WHERE p.user_id = '00000000-0000-0000-0000-000000000003'
+  AND c.slug = 'lifestyle'
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
 -- VERIFY SEED DATA
 -- ============================================================================
 -- Displays a summary of seeded data and helpful testing information
@@ -234,8 +249,8 @@ DECLARE
     user_count INTEGER;
     profile_count INTEGER;
     post_count INTEGER;
-    published_count INTEGER;
-    draft_count INTEGER;
+    category_count INTEGER;
+    post_category_count INTEGER;
 BEGIN
     SELECT COUNT(*) INTO user_count FROM auth.users WHERE id IN (
         '00000000-0000-0000-0000-000000000001',
@@ -244,46 +259,36 @@ BEGIN
     );
     SELECT COUNT(*) INTO profile_count FROM public.profiles;
     SELECT COUNT(*) INTO post_count FROM public.posts;
-    SELECT COUNT(*) INTO published_count FROM public.posts WHERE published = true;
-    SELECT COUNT(*) INTO draft_count FROM public.posts WHERE published = false;
+    SELECT COUNT(*) INTO category_count FROM public.categories;
+    SELECT COUNT(*) INTO post_category_count FROM public.post_categories;
 
     RAISE NOTICE '';
     RAISE NOTICE '================================================================================';
     RAISE NOTICE '🌱 SEED DATA LOADED SUCCESSFULLY';
     RAISE NOTICE '================================================================================';
+    RAISE NOTICE 'Profiles created: %', profile_count;
+    RAISE NOTICE 'Posts created: %', post_count;
+    RAISE NOTICE 'Categories: %', category_count;
+    RAISE NOTICE 'Post-Category links: %', post_category_count;
     RAISE NOTICE '';
-    RAISE NOTICE '📊 Data Summary:';
-    RAISE NOTICE '  • Auth Users:      % (with authentication credentials)', user_count;
-    RAISE NOTICE '  • User Profiles:   % (auto-created via trigger)', profile_count;
-    RAISE NOTICE '  • Total Posts:     % (% published, % drafts)', post_count, published_count, draft_count;
+    RAISE NOTICE 'Test Users (username / email / password):';
+    RAISE NOTICE '  - alice / alice@example.com / password123';
+    RAISE NOTICE '    ID: 00000000-0000-0000-0000-000000000001';
+    RAISE NOTICE '  - bob / bob@example.com / password123';
+    RAISE NOTICE '    ID: 00000000-0000-0000-0000-000000000002';
+    RAISE NOTICE '  - charlie / charlie@example.com / password123';
+    RAISE NOTICE '    ID: 00000000-0000-0000-0000-000000000003';
     RAISE NOTICE '';
-    RAISE NOTICE '👥 Test User Credentials (LOCAL DEVELOPMENT ONLY):';
-    RAISE NOTICE '  ┌─────────────────────────┬──────────────────────────────────────┐';
-    RAISE NOTICE '  │ Email                   │ Password                             │';
-    RAISE NOTICE '  ├─────────────────────────┼──────────────────────────────────────┤';
-    RAISE NOTICE '  │ alice@example.com       │ password123                          │';
-    RAISE NOTICE '  │ bob@example.com         │ password123                          │';
-    RAISE NOTICE '  │ charlie@example.com     │ password123                          │';
-    RAISE NOTICE '  └─────────────────────────┴──────────────────────────────────────┘';
+    RAISE NOTICE 'Test Categories:';
+    RAISE NOTICE '  - Technology (slug: technology)';
+    RAISE NOTICE '  - Lifestyle (slug: lifestyle)';
+    RAISE NOTICE '  - Business (slug: business)';
     RAISE NOTICE '';
-    RAISE NOTICE '🔐 User IDs for RLS Testing:';
-    RAISE NOTICE '  • Alice:   00000000-0000-0000-0000-000000000001';
-    RAISE NOTICE '  • Bob:     00000000-0000-0000-0000-000000000002';
-    RAISE NOTICE '  • Charlie: 00000000-0000-0000-0000-000000000003';
+    RAISE NOTICE 'RLS Testing:';
+    RAISE NOTICE '  Set auth context: SET request.jwt.claim.sub = ''<user_id>'';';
+    RAISE NOTICE '  Run test suite: npm run test:rls';
     RAISE NOTICE '';
-    RAISE NOTICE '💡 Quick Testing Tips:';
-    RAISE NOTICE '  1. Login via Supabase Studio: http://localhost:8000';
-    RAISE NOTICE '  2. Test auth in your app using the credentials above';
-    RAISE NOTICE '  3. Test RLS policies with: SET request.jwt.claim.sub = ''<user_id>'';';
-    RAISE NOTICE '  4. View Studio tables to see seeded data';
-    RAISE NOTICE '';
-    RAISE NOTICE '📝 Example RLS Test:';
-    RAISE NOTICE '  -- Set context as Alice';
-    RAISE NOTICE '  SET request.jwt.claim.sub = ''00000000-0000-0000-0000-000000000001'';';
-    RAISE NOTICE '  -- Should see published posts + Alice''s drafts only';
-    RAISE NOTICE '  SELECT title, published, user_id FROM posts;';
-    RAISE NOTICE '';
-    RAISE NOTICE '⚠️  Remember: This is test data for LOCAL DEVELOPMENT ONLY!';
+    RAISE NOTICE 'See supabase/README.md for complete seed data documentation';
     RAISE NOTICE '================================================================================';
     RAISE NOTICE '';
 END $$;

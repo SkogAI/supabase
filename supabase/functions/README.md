@@ -7,12 +7,38 @@ Edge Functions are server-side TypeScript functions that run on Deno, distribute
 ```
 functions/
 ├── README.md
-└── hello-world/
-    ├── index.ts      # Main function code
+├── deno.json         # Deno configuration and import maps
+├── hello-world/
+│   ├── index.ts      # Example: Basic function with auth & database
+│   └── test.ts       # Unit tests
+├── openai-chat/
+│   ├── index.ts      # Example: OpenAI direct integration
+│   └── test.ts       # Unit tests
+└── openrouter-chat/
+    ├── index.ts      # Example: OpenRouter (100+ AI models)
     └── test.ts       # Unit tests
 ```
 
 ## Development
+
+### Configuration
+
+The `deno.json` file provides:
+
+- **Import Maps**: Centralized dependency management with shorthand imports
+- **Compiler Options**: TypeScript configuration for strict type checking
+- **Linting Rules**: Consistent code quality standards
+- **Formatting**: Automated code formatting settings
+
+You can use import maps in your functions:
+
+```typescript
+// Instead of: import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { serve } from "std/http/server.ts";
+
+// Instead of: import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "@supabase/supabase-js";
+```
 
 ### Creating a New Function
 
@@ -98,13 +124,10 @@ serve(async (req: Request) => {
     });
   } catch (error) {
     console.error("Function error:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        headers: { "Content-Type": "application/json" },
-        status: 500,
-      }
-    );
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { "Content-Type": "application/json" },
+      status: 500,
+    });
   }
 });
 ```
@@ -116,7 +139,8 @@ Always include CORS headers for browser requests:
 ```typescript
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 // Handle OPTIONS requests
@@ -139,10 +163,12 @@ const supabaseClient = createClient(
     global: {
       headers: { Authorization: req.headers.get("Authorization")! },
     },
-  }
+  },
 );
 
-const { data: { user } } = await supabaseClient.auth.getUser();
+const {
+  data: { user },
+} = await supabaseClient.auth.getUser();
 ```
 
 ### 4. **Environment Variables**
@@ -209,7 +235,7 @@ supabase functions logs <function-name> --tail
 ```typescript
 const supabaseClient = createClient(
   Deno.env.get("SUPABASE_URL") ?? "",
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
 );
 
 const { data, error } = await supabaseClient
@@ -225,13 +251,38 @@ const response = await fetch("https://api.example.com/data", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
-    "Authorization": `Bearer ${apiKey}`,
+    Authorization: `Bearer ${apiKey}`,
   },
   body: JSON.stringify({ data: "example" }),
 });
 
 const result = await response.json();
 ```
+
+**Example: AI Provider Integration**
+
+We provide two AI integration examples:
+
+1. **openai-chat** - Direct OpenAI integration
+   - Uses OpenAI API directly
+   - Access to GPT models
+   - See function for implementation details
+
+2. **openrouter-chat** - OpenRouter integration
+   - Access to 100+ AI models (GPT-4, Claude, Gemini, Llama, etc.)
+   - Automatic fallbacks and cost optimization
+   - Single API for multiple providers
+   - See function for implementation details
+
+Both examples demonstrate:
+
+- External API calls
+- Environment variable handling
+- Error handling for API failures
+- User authentication with Supabase Auth
+- CORS configuration
+
+See [OPENAI_SETUP.md](../../OPENAI_SETUP.md) for complete setup instructions
 
 ### Scheduled Functions (via cron)
 
@@ -262,15 +313,19 @@ supabase functions serve --inspect-brk
 ### Common Issues
 
 **Issue**: Function not found
+
 - **Solution**: Ensure function is deployed and name matches exactly
 
 **Issue**: CORS errors
+
 - **Solution**: Add proper CORS headers to all responses
 
 **Issue**: Authentication fails
+
 - **Solution**: Verify JWT is being passed correctly in Authorization header
 
 **Issue**: Environment variables undefined
+
 - **Solution**: Set secrets via `supabase secrets set` or in Dashboard
 
 ## Security
@@ -289,12 +344,106 @@ supabase functions serve --inspect-brk
 - [Deno Deploy](https://deno.com/deploy/docs)
 - [Edge Function Examples](https://github.com/supabase/supabase/tree/master/examples/edge-functions)
 
+## Testing
+
+### Testing Framework
+
+We use Deno's built-in test framework with comprehensive test coverage. See [TESTING.md](./TESTING.md) for complete testing guide.
+
+### Quick Start
+
+```bash
+# Run all tests
+npm run test:functions
+
+# Run tests with coverage
+npm run test:functions:coverage
+
+# Run tests in watch mode
+npm run test:functions:watch
+
+# Run integration tests (requires Supabase running)
+npm run test:functions:integration
+```
+
+### Test Structure
+
+Each function should have a `test.ts` file:
+
+```typescript
+import { assertEquals, assertExists } from "std/testing/asserts.ts";
+import { testFetch, testCORS } from "../_shared/testing/helpers.ts";
+
+Deno.test("function-name: description", async () => {
+  const response = await testFetch("function-name", {
+    body: { key: "value" },
+  });
+  assertEquals(response.status, 200);
+});
+```
+
+### Shared Testing Utilities
+
+Use shared testing utilities in `_shared/testing/`:
+
+- **fixtures.ts** - Test data, users, messages
+- **mocks.ts** - Mock fetch, Supabase client, API responses
+- **helpers.ts** - Test helpers, assertions, performance testing
+
+Example:
+
+```typescript
+import { testUsers, generateTestJWT } from "../_shared/testing/fixtures.ts";
+import { MockFetch, mockOpenAIResponse } from "../_shared/testing/mocks.ts";
+import { testFetch, measureResponseTime } from "../_shared/testing/helpers.ts";
+
+Deno.test("authenticated request", async () => {
+  const token = generateTestJWT(testUsers.alice.id);
+  const response = await testFetch("my-function", {
+    body: { name: "test" },
+    token,
+  });
+  assertEquals(response.status, 200);
+});
+```
+
+### Test Categories
+
+1. **Unit Tests** - Test function logic in isolation
+2. **Integration Tests** - Test with real Supabase services (set `RUN_INTEGRATION_TESTS=true`)
+3. **Performance Tests** - Measure response times
+4. **CORS Tests** - Verify cross-origin headers
+5. **Error Handling Tests** - Test edge cases and failures
+
+### Coverage Requirements
+
+Aim for these minimum coverage targets:
+- Line Coverage: 80%
+- Branch Coverage: 75%
+- Function Coverage: 85%
+
+### Best Practices
+
+1. **Keep tests close to code** - `function-name/test.ts`
+2. **Use descriptive names** - `"function-name: what it tests"`
+3. **Test edge cases** - Empty inputs, special characters, large payloads
+4. **Mock external APIs** - Use `MockFetch` for external services
+5. **Clean up after tests** - Delete test data in integration tests
+6. **Make tests independent** - Each test should run in isolation
+
+See [TESTING.md](./TESTING.md) for comprehensive testing documentation.
+
 ## CI/CD
 
 All edge functions are automatically:
+
 - **Linted** on PR (via `deno lint`)
+- **Formatted** checked on PR (via `deno fmt --check`)
 - **Type-checked** on PR (via `deno check`)
-- **Tested** on PR (via `deno test`)
+- **Unit tested** on PR (via `deno test`)
+- **Integration tested** on PR (with Supabase running)
+- **Coverage reported** on PR (via Codecov)
+- **Security scanned** on PR (dependency audit)
 - **Deployed** on merge to main (via GitHub Actions)
 
 See `.github/workflows/edge-functions-test.yml` and `.github/workflows/deploy.yml` for details.

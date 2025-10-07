@@ -7,8 +7,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // CORS headers for browser requests
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 // Types for our request/response
@@ -39,8 +38,9 @@ serve(async (req: Request): Promise<Response> => {
 
   try {
     // Parse request body
-    const { name = "World", includeDatabase = false }: RequestBody =
-      await req.json().catch(() => ({}));
+    const { name = "World", includeDatabase = false }: RequestBody = await req.json().catch(
+      () => ({}),
+    );
 
     // Get authorization header to check if user is authenticated
     const authHeader = req.headers.get("Authorization");
