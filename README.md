@@ -464,13 +464,16 @@ User → Supabase → ZITADEL (IdP) → Authentication → User Profile in Supab
 - Export SAML metadata
 - Create test users
 
-**Phase 2: Supabase Configuration** (Next)
-- Configure Supabase Auth with SAML provider
-- Import ZITADEL SAML metadata
+**Phase 2: Supabase Configuration** ✅ Complete
+- Generate SAML private key for Supabase
+- Configure GoTrue (Supabase Auth) with SAML support
+- Register ZITADEL as trusted Identity Provider
 - Test SSO authentication flow
 - Deploy to production
 
-**📖 Complete Guide**: See [docs/ZITADEL_SAML_IDP_SETUP.md](docs/ZITADEL_SAML_IDP_SETUP.md) for step-by-step ZITADEL configuration instructions.
+**📖 Complete Guides**:
+- **Phase 1**: [docs/ZITADEL_SAML_IDP_SETUP.md](docs/ZITADEL_SAML_IDP_SETUP.md) - Configure ZITADEL as Identity Provider
+- **Phase 2**: [docs/SUPABASE_SAML_CONFIGURATION.md](docs/SUPABASE_SAML_CONFIGURATION.md) - Configure Supabase to use SAML SSO
 
 ### Authentication Configuration
 
