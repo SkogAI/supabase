@@ -35,6 +35,17 @@ Configure these secrets in GitHub Settings → Secrets and variables → Actions
 | `OPENAI_API_KEY` | OpenAI API key for Edge Functions | Custom AI features, see [openai-chat function](supabase/functions/openai-chat/) |
 | `OPENROUTER_API_KEY` | OpenRouter API key for Edge Functions | Access 100+ AI models, see [openrouter-chat function](supabase/functions/openrouter-chat/) |
 
+### SAML SSO Secrets (Self-Hosted Only)
+
+For self-hosted Supabase with SAML SSO enabled:
+
+| Secret Name | Description | Required For |
+|------------|-------------|--------------|
+| `GOTRUE_SAML_ENABLED` | Enable SAML SSO in GoTrue | SAML authentication |
+| `GOTRUE_SAML_PRIVATE_KEY` | Base64-encoded private key for SAML signing | SAML authentication |
+
+**📖 Complete Setup Guide**: See [docs/SUPABASE_SAML_SP_CONFIGURATION.md](docs/SUPABASE_SAML_SP_CONFIGURATION.md) for detailed SAML configuration instructions.
+
 ### Setting Up Secrets
 
 ```bash
