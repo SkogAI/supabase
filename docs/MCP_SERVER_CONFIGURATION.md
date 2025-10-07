@@ -241,6 +241,17 @@ windowMs = 60000
 }
 ```
 
+**⚠️ Important Note on Prepared Statements**
+
+Transaction mode **does NOT support prepared statements**. The `"preparedStatements": false` setting is critical. Most database libraries use prepared statements by default for performance, so you must explicitly disable them:
+
+- **Node.js (pg)**: Configure pool options or use simple query protocol
+- **Python (asyncpg)**: Set `statement_cache_size=0`
+- **Go (pgx)**: Use `QueryExecModeSimpleProtocol`
+- **Deno (postgres)**: Use connection without statement caching
+
+For complete library-specific configuration examples, see [MCP_TRANSACTION_MODE.md](./MCP_TRANSACTION_MODE.md).
+
 ### 3. Edge AI Agent Configuration
 
 **Use Case:** Cloudflare Workers, Deno Deploy, Vercel Edge
@@ -888,9 +899,38 @@ echo "!config/*.schema.json" >> .gitignore
    - Enable pool eviction
    - Monitor connection lifecycle
 
+### Transaction Mode Specific Issues
+
+1. **"prepared statement does not exist"**
+   - **Cause**: Library using prepared statements in transaction mode
+   - **Solution**: Explicitly disable prepared statements in your library configuration
+   - **Example (Node.js pg)**: See [MCP_TRANSACTION_MODE.md](./MCP_TRANSACTION_MODE.md#library-configuration)
+
+2. **"cannot use transaction mode with LISTEN/NOTIFY"**
+   - **Cause**: Transaction mode doesn't support pub/sub operations
+   - **Solution**: Use session mode (port 5432) for realtime features
+
+3. **"temporary table not found"**
+   - **Cause**: Transaction mode doesn't persist temporary tables
+   - **Solution**: Use persistent tables or switch to session mode
+
+4. **"SET variable doesn't persist"**
+   - **Cause**: Session variables cleared after each transaction
+   - **Solution**: Set variables per transaction or use session mode
+
+5. **"high connection overhead"**
+   - **Cause**: New backend connection per transaction
+   - **Solution**: 
+     - Cache and reuse client instances in serverless functions
+     - Use shorter timeouts: `idleTimeoutMillis: 3000`
+     - Consider session mode for persistent agents
+
+For comprehensive transaction mode troubleshooting, see [MCP_TRANSACTION_MODE.md](./MCP_TRANSACTION_MODE.md#troubleshooting).
+
 ## Related Documentation
 
 - [MCP Server Architecture](./MCP_SERVER_ARCHITECTURE.md)
+- [MCP Transaction Mode (Serverless/Edge Agents)](./MCP_TRANSACTION_MODE.md)
 - [MCP Authentication Strategies](./MCP_AUTHENTICATION.md)
 - [MCP Connection Examples](./MCP_CONNECTION_EXAMPLES.md)
 

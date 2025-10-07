@@ -130,8 +130,9 @@ Different connection methods are supported based on agent execution environment:
 - Variable resource availability
 
 **Recommended Connection:**
-- Primary: Supavisor Transaction Mode
+- Primary: Supavisor Transaction Mode (Port 6543)
 - Optimize for: Fast connection establishment
+- **Critical**: Disable prepared statements in library
 
 **Configuration:**
 ```typescript
@@ -142,10 +143,13 @@ Different connection methods are supported based on agent execution environment:
     pooler: "transaction",
     maxConnections: 5,
     connectionTimeout: 5000,
-    statementTimeout: 30000
+    statementTimeout: 30000,
+    preparedStatements: false  // REQUIRED for transaction mode
   }
 }
 ```
+
+**See Also**: [Transaction Mode Setup Guide](./MCP_TRANSACTION_MODE.md)
 
 ### Edge Agents
 
@@ -156,8 +160,9 @@ Different connection methods are supported based on agent execution environment:
 - Resource constraints
 
 **Recommended Connection:**
-- Primary: Supavisor Transaction Mode
+- Primary: Supavisor Transaction Mode (Port 6543)
 - Optimize for: Geographic proximity
+- **Critical**: Disable prepared statements in library
 
 **Configuration:**
 ```typescript
@@ -169,10 +174,13 @@ Different connection methods are supported based on agent execution environment:
     pooler: "transaction",
     maxConnections: 3,
     connectionTimeout: 3000,
-    statementTimeout: 10000
+    statementTimeout: 10000,
+    preparedStatements: false  // REQUIRED for transaction mode
   }
 }
 ```
+
+**See Also**: [Transaction Mode Setup Guide](./MCP_TRANSACTION_MODE.md)
 
 ### High-Performance Agents
 
@@ -246,7 +254,11 @@ Example:
 postgresql://postgres.abcdefghijklmnop:password@aws-0-us-east-1.pooler.supabase.com:6543/postgres
 ```
 
-**Note:** Transaction mode typically uses port 6543 (different from session mode).
+**Important Notes:**
+- Transaction mode uses port **6543** (different from session mode's 5432)
+- **Does NOT support prepared statements** - must disable in your library
+- Ideal for serverless/edge agents with short-lived connections
+- See [MCP_TRANSACTION_MODE.md](./MCP_TRANSACTION_MODE.md) for complete configuration guide
 
 ### Connection String Components
 
@@ -550,6 +562,7 @@ See [MCP_SERVER_CONFIGURATION.md](./MCP_SERVER_CONFIGURATION.md) for detailed co
 ## Related Documentation
 
 - [MCP Server Configuration Templates](./MCP_SERVER_CONFIGURATION.md)
+- [MCP Transaction Mode (Serverless/Edge Agents)](./MCP_TRANSACTION_MODE.md)
 - [MCP Authentication Strategies](./MCP_AUTHENTICATION.md)
 - [MCP Connection Examples](./MCP_CONNECTION_EXAMPLES.md)
 - [Row Level Security Policies](./RLS_POLICIES.md)
