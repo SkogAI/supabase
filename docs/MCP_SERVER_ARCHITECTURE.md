@@ -67,10 +67,14 @@ Different connection methods are supported based on agent execution environment:
 - **Pooling**: Transaction-level (connections released after each transaction)
 
 #### Dedicated Pooler
-- **Use Case**: High-performance AI workloads with many concurrent requests
-- **Protocol**: PgBouncer-compatible pooling
-- **Advantages**: Maximum throughput, isolated resources
+- **Use Case**: High-performance AI workloads with many concurrent requests on paid tiers
+- **Protocol**: PgBouncer-compatible pooling in transaction mode
+- **Port**: 6543 (transaction mode only)
+- **Advantages**: Maximum throughput, isolated resources, lowest latency (co-located with database)
+- **Requirements**: Pro/Enterprise plan, IPv6 or IPv4 add-on
+- **Limitations**: No prepared statements, no session-level features
 - **Configuration**: Custom pool sizes and timeouts
+- **Documentation**: See [MCP Dedicated Pooler Guide](./MCP_DEDICATED_POOLER.md)
 
 ### 3. Authentication Layer
 
@@ -247,6 +251,24 @@ postgresql://postgres.abcdefghijklmnop:password@aws-0-us-east-1.pooler.supabase.
 ```
 
 **Note:** Transaction mode typically uses port 6543 (different from session mode).
+
+### Dedicated Pooler (Paid Tier)
+
+```
+postgresql://[user].[project-ref]:[password]@db.[project-ref].supabase.co:6543/postgres
+```
+
+Example:
+```
+postgresql://postgres.apbkobhfnmcqqzqeeqss:password@db.apbkobhfnmcqqzqeeqss.supabase.co:6543/postgres
+```
+
+**Key Differences:**
+- Co-located with database: `db.[project-ref].supabase.co` instead of pooler host
+- Transaction mode only (port 6543)
+- Requires paid tier and dedicated pooler provisioning
+- Prepared statements must be disabled
+- See [MCP_DEDICATED_POOLER.md](./MCP_DEDICATED_POOLER.md) for complete guide
 
 ### Connection String Components
 
@@ -550,6 +572,7 @@ See [MCP_SERVER_CONFIGURATION.md](./MCP_SERVER_CONFIGURATION.md) for detailed co
 ## Related Documentation
 
 - [MCP Server Configuration Templates](./MCP_SERVER_CONFIGURATION.md)
+- [MCP Dedicated Pooler Guide](./MCP_DEDICATED_POOLER.md) - High-performance pooler for paid tiers
 - [MCP Authentication Strategies](./MCP_AUTHENTICATION.md)
 - [MCP Connection Examples](./MCP_CONNECTION_EXAMPLES.md)
 - [Row Level Security Policies](./RLS_POLICIES.md)
