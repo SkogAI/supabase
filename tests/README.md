@@ -1,16 +1,24 @@
-# RLS Policy Test Suite
+# Database Test Suites
 
-Automated tests for Row Level Security (RLS) policies.
+Automated tests for database security, RLS policies, and AI agent authentication.
 
 ## Overview
 
-This directory contains SQL test scripts to validate that RLS policies are working correctly. These tests verify that:
+This directory contains SQL test scripts to validate database functionality:
 
+### RLS Policy Test Suite (`rls_test_suite.sql`)
 - RLS is enabled on all public tables
 - Service role has full access
 - Authenticated users can only access/modify their own data
 - Anonymous users have read-only access to published content
 - No accidental data exposure occurs
+
+### AI Agent Authentication Test Suite (`ai_agent_authentication_test.sql`)
+- AI agent roles are created correctly
+- Audit logging infrastructure is functional
+- RLS policies protect audit tables
+- API key generation and validation works
+- Authentication and query logging is operational
 
 ## Running Tests
 
@@ -24,7 +32,15 @@ npm run db:start
 npm run db:reset
 
 # Run the RLS test suite
+npm run test:rls
+# or: supabase db execute --file tests/rls_test_suite.sql
+
+# Run the AI Agent Authentication test suite
+supabase db execute --file tests/ai_agent_authentication_test.sql
+
+# Run all tests
 supabase db execute --file tests/rls_test_suite.sql
+supabase db execute --file tests/ai_agent_authentication_test.sql
 ```
 
 ### Option 2: Using Supabase Studio
@@ -32,7 +48,7 @@ supabase db execute --file tests/rls_test_suite.sql
 1. Start Supabase: `npm run db:start`
 2. Open Supabase Studio: http://localhost:8000
 3. Navigate to **SQL Editor**
-4. Open `tests/rls_test_suite.sql`
+4. Open `tests/rls_test_suite.sql` or `tests/ai_agent_authentication_test.sql`
 5. Copy and paste the entire file
 6. Click **Run** to execute all tests
 
@@ -42,11 +58,16 @@ supabase db execute --file tests/rls_test_suite.sql
 # Connect to local database
 psql postgresql://postgres:postgres@localhost:54322/postgres
 
-# Run the test file
+# Run RLS tests
 \i tests/rls_test_suite.sql
+
+# Run AI Agent Authentication tests
+\i tests/ai_agent_authentication_test.sql
 ```
 
 ## Test Coverage
+
+### RLS Test Suite
 
 The test suite includes:
 
