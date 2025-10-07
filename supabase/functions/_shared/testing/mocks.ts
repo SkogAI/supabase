@@ -342,11 +342,12 @@ export async function simulateUnreliableFetch(
   options: RequestInit = {},
   failureRate = 0.1,
   delayMs = 100,
+  errorMessage = "Simulated network error",
 ): Promise<Response> {
   await simulateDelay(delayMs);
 
   if (Math.random() < failureRate) {
-    throw new Error("Simulated network error");
+    throw new Error(errorMessage);
   }
 
   return fetch(url, options);

@@ -226,17 +226,20 @@ export async function assertResponse(
 
       if (expected.bodyValues) {
         for (const [key, value] of Object.entries(expected.bodyValues)) {
-          if ((body as Record<string, unknown>)[key] !== value) {
+          const bodyRecord = body as Record<string, unknown>;
+          if (bodyRecord[key] !== value) {
             errors.push(
-              `Expected ${key}='${value}', got '${
-                (body as Record<string, unknown>)[key]
-              }'`,
+              `Expected ${key}='${value}', got '${bodyRecord[key]}'`,
             );
           }
         }
       }
     } catch (error) {
-      errors.push(`Failed to parse JSON response: ${error.message}`);
+      errors.push(
+        `Failed to parse JSON response: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
     }
   }
 

@@ -38,6 +38,7 @@ import {
   generateTestData,
   assertResponse,
   testPatterns,
+  waitForCondition,
 } from "./helpers.ts";
 
 // Example 1: Basic test with fixtures
@@ -226,10 +227,9 @@ Deno.test("example: wait for condition", async () => {
     counter = 5;
   }, 50);
 
-  // Import from helpers if needed
-  const success = await waitFor(async () => counter === 5, 200, 10);
+  // Import from fixtures.ts (waitFor is a simple delay helper)
+  await waitFor(100);
 
-  assertEquals(success, true);
   assertEquals(counter, 5);
 });
 
