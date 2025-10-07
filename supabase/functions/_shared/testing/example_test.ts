@@ -73,7 +73,9 @@ Deno.test("example: mock fetch response", async () => {
 
 // Example 3: Mock OpenAI response
 Deno.test("example: mock OpenAI API", () => {
-  const response = mockOpenAIResponse("Hello, world!");
+  const response = mockOpenAIResponse("Hello, world!") as {
+    choices: Array<{ message: { content: string } }>;
+  };
 
   assertExists(response.choices);
   assertEquals(response.choices[0].message.content, "Hello, world!");
@@ -94,10 +96,10 @@ Deno.test("example: mock Supabase client", async () => {
     .from("profiles")
     .select("*")
     .eq("id", "1")
-    .single();
+    .single() as { data: { name: string } | null; error: unknown };
 
   assertEquals(error, null);
-  assertEquals(data.name, "Alice");
+  assertEquals(data?.name, "Alice");
 });
 
 // Example 5: Generate test JWT
