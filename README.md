@@ -688,6 +688,8 @@ For more details, see `examples/realtime/README.md`
 ### MCP Server Infrastructure (AI Agents)
 - **[docs/MCP_SERVER_ARCHITECTURE.md](docs/MCP_SERVER_ARCHITECTURE.md)** - MCP server architecture and design patterns for AI agents
 - **[docs/MCP_SERVER_CONFIGURATION.md](docs/MCP_SERVER_CONFIGURATION.md)** - Configuration templates for all agent types and environments
+- **[docs/MCP_SESSION_MODE_SETUP.md](docs/MCP_SESSION_MODE_SETUP.md)** - Session mode setup for IPv4 persistent agents
+- **[docs/MCP_SESSION_VS_TRANSACTION.md](docs/MCP_SESSION_VS_TRANSACTION.md)** - Guide for choosing connection modes
 - **[docs/MCP_AUTHENTICATION.md](docs/MCP_AUTHENTICATION.md)** - Authentication strategies and security best practices
 - **[docs/MCP_CONNECTION_EXAMPLES.md](docs/MCP_CONNECTION_EXAMPLES.md)** - Code examples in Node.js, Python, Deno, and more
 - **[docs/MCP_IMPLEMENTATION_SUMMARY.md](docs/MCP_IMPLEMENTATION_SUMMARY.md)** - Complete MCP implementation overview

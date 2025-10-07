@@ -170,6 +170,120 @@ windowMs = 60000
 }
 ```
 
+### 1.5. Persistent AI Agent with Session Mode (IPv4)
+
+**Use Case:** Long-running AI assistants requiring IPv4 connectivity
+
+**Connection Mode:** Supavisor Session Mode via IPv4 pooler
+
+```json
+{
+  "mcp": {
+    "version": "1.0.0",
+    "agentType": "persistent_ipv4",
+    "server": {
+      "name": "persistent-session-mode-mcp",
+      "port": 3000,
+      "host": "0.0.0.0",
+      "healthCheck": {
+        "enabled": true,
+        "interval": 30000,
+        "timeout": 5000
+      }
+    },
+    "database": {
+      "connectionString": "${SUPABASE_SESSION_POOLER}",
+      "connectionType": "supavisor_session",
+      "pooler": {
+        "mode": "session",
+        "port": 5432,
+        "region": "us-east-1"
+      },
+      "ssl": {
+        "rejectUnauthorized": true
+      },
+      "pool": {
+        "min": 5,
+        "max": 20,
+        "idleTimeoutMillis": 300000,
+        "connectionTimeoutMillis": 10000,
+        "acquireTimeoutMillis": 30000,
+        "maxLifetimeMillis": 1800000
+      },
+      "query": {
+        "statementTimeout": 30000,
+        "queryTimeout": 30000,
+        "idleInTransactionSessionTimeout": 60000
+      },
+      "features": {
+        "preparedStatements": true,
+        "sessionVariables": true,
+        "temporaryTables": true
+      }
+    },
+    "security": {
+      "authentication": {
+        "method": "service_role",
+        "serviceRoleKey": "${SUPABASE_SERVICE_ROLE_KEY}"
+      },
+      "rateLimit": {
+        "enabled": true,
+        "maxRequests": 200,
+        "windowMs": 60000
+      },
+      "cors": {
+        "enabled": true,
+        "origins": ["http://localhost:3000", "https://app.example.com"],
+        "methods": ["GET", "POST"],
+        "allowedHeaders": ["Content-Type", "Authorization"]
+      }
+    },
+    "monitoring": {
+      "enabled": true,
+      "metrics": {
+        "port": 9090,
+        "path": "/metrics",
+        "poolStats": true,
+        "queryMetrics": true
+      },
+      "logging": {
+        "level": "info",
+        "format": "json",
+        "auditQueries": true,
+        "logConnections": true
+      },
+      "alerts": {
+        "poolSaturation": {
+          "enabled": true,
+          "threshold": 0.8
+        },
+        "connectionErrors": {
+          "enabled": true,
+          "threshold": 5
+        }
+      }
+    }
+  }
+}
+```
+
+**Key Features:**
+- IPv4 compatibility for environments without IPv6 support
+- Persistent connections with session-level state
+- Prepared statement support for query optimization
+- Session variable preservation across queries
+- Connection pooling with 30 default connections (adjustable)
+- Full PostgreSQL feature support
+
+**When to Use:**
+- AI agents in IPv4-only networks
+- Conversational AI requiring session state
+- Agents using prepared statements
+- Long-running database operations
+- Agents requiring advisory locks or temporary tables
+
+**See Also:** [Session Mode Setup Guide](./MCP_SESSION_MODE_SETUP.md)
+
 ### 2. Serverless AI Agent Configuration
 
 **Use Case:** AWS Lambda, Google Cloud Functions, Azure Functions
