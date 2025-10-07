@@ -1,198 +1,185 @@
-# Supabase Project
+# Supabase CLI
 
-Production-ready Supabase backend with database migrations, Row Level Security, edge functions, and complete CI/CD pipeline.
+[![Coverage Status](https://coveralls.io/repos/github/supabase/cli/badge.svg?branch=main)](https://coveralls.io/github/supabase/cli?branch=main) [![Bitbucket Pipelines](https://img.shields.io/bitbucket/pipelines/supabase-cli/setup-cli/master?style=flat-square&label=Bitbucket%20Canary)](https://bitbucket.org/supabase-cli/setup-cli/pipelines) [![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/sweatybridge%2Fsetup-cli?label=Gitlab%20Canary)
+](https://gitlab.com/sweatybridge/setup-cli/-/pipelines)
 
-## 🚀 Quick Start
+[Supabase](https://supabase.io) is an open source Firebase alternative. We're building the features of Firebase using enterprise-grade open source tools.
 
-### Automated Setup (Recommended)
+This repository contains all the functionality for Supabase CLI.
 
-```bash
-# Run the setup script
-./scripts/setup.sh
-```
+- [x] Running Supabase locally
+- [x] Managing database migrations
+- [x] Creating and deploying Supabase Functions
+- [x] Generating types directly from your database schema
+- [x] Making authenticated HTTP requests to [Management API](https://supabase.com/docs/reference/api/introduction)
 
-This will:
-- Check all prerequisites
-- Create `.env` file
-- Install dependencies
-- Start Supabase services
-- Generate TypeScript types
-- Show access information
+## Getting started
 
-### Manual Setup
+### Install the CLI
 
-1. **Prerequisites**
-   - [Docker Desktop](https://www.docker.com/products/docker-desktop) (must be running)
-   - [Supabase CLI](https://supabase.com/docs/guides/cli/getting-started)
-   - [Node.js 18+](https://nodejs.org/) (optional, for TypeScript types)
-   - [Deno 2.x](https://deno.land/) (optional, for edge functions)
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Setup environment**
-   ```bash
-   cp .env.example .env
-   # Edit .env and add your API keys (optional for local dev)
-   # For OpenAI integration, see OPENAI_SETUP.md
-   ```
-
-4. **Start Supabase**
-   ```bash
-   npm run db:start
-   # OR
-   ./scripts/dev.sh
-   ```
-
-5. **Access local services**
-   - 🎨 **Studio UI**: http://localhost:8000
-   - 🔌 **API**: http://localhost:8000
-   - 🗄️ **Database**: `postgresql://postgres:postgres@localhost:54322/postgres`
-
-## 📁 Project Structure
-
-```
-.
-├── supabase/
-│   ├── README.md                # Supabase directory documentation
-│   ├── config.toml              # Supabase configuration
-│   ├── migrations/              # Database migrations (timestamped SQL)
-│   │   └── 20251005065505_initial_schema.sql
-│   ├── functions/               # Edge functions (Deno/TypeScript)
-│   │   ├── README.md
-│   │   └── hello-world/
-│   │       ├── index.ts         # Function code
-│   │       └── test.ts          # Function tests
-│   └── seed.sql                 # Development seed data (see supabase/README.md)
-├── types/
-│   └── database.ts              # Auto-generated TypeScript types
-├── scripts/
-│   ├── setup.sh                 # Automated setup script
-│   ├── dev.sh                   # Quick dev start
-│   └── reset.sh                 # Database reset
-├── .github/workflows/           # CI/CD pipelines
-│   ├── deploy.yml               # Auto deployment
-│   ├── pr-checks.yml            # PR validation
-│   ├── migrations-validation.yml
-│   ├── edge-functions-test.yml
-│   ├── schema-lint.yml
-│   ├── security-scan.yml
-│   ├── type-generation.yml
-│   ├── performance-test.yml
-│   ├── backup.yml
-│   └── dependency-updates.yml
-├── DEVOPS.md                    # Complete DevOps guide
-├── QUICKSTART_OPENAI.md         # Quick OpenAI setup (5 min)
-├── OPENAI_SETUP.md              # Detailed OpenAI guide
-├── package.json                 # npm scripts
-└── .env.example                 # Environment template
-```
-
-## 🤖 AI Integration
-
-Integrate AI providers with Supabase for AI-powered features:
-
-- **Studio AI Features**: SQL generation, query assistance (OpenAI)
-- **Edge Functions**: Custom AI endpoints (OpenAI, OpenRouter, and more)
-
-**OpenRouter**: Access 100+ AI models (GPT-4, Claude, Gemini, Llama) through one API  
-**Quick Start**: See [QUICKSTART_OPENAI.md](QUICKSTART_OPENAI.md) for 5-minute setup  
-**Full Guide**: See [OPENAI_SETUP.md](OPENAI_SETUP.md) for complete documentation  
-**Examples**: 
-- [openai-chat](supabase/functions/openai-chat) - OpenAI direct integration
-- [openrouter-chat](supabase/functions/openrouter-chat) - OpenRouter for multiple models
-
-## 💻 Development Workflow
-
-### Database Migrations
+Available via [NPM](https://www.npmjs.com) as dev dependency. To install:
 
 ```bash
-# Create a new migration
-npm run migration:new <migration_name>
-# OR
-supabase migration new <migration_name>
-
-# Apply all migrations (resets database with seed data)
-npm run db:reset
-# OR
-./scripts/reset.sh
-
-# Check migration status
-npm run db:status
-
-# Generate SQL diff of current changes
-npm run db:diff
+npm i supabase --save-dev
 ```
 
-**📖 Documentation:**
-- **Migrations**: See `supabase/migrations/README.md`
-- **Seed Data**: See `supabase/README.md` (includes test users, credentials, and sample data)
-- **Types**: Run `npm run types:generate` after schema changes
-
-### Edge Functions
+To install the beta release channel:
 
 ```bash
-# Create a new function
-npm run functions:new <function_name>
-
-# Serve functions locally (with hot reload)
-npm run functions:serve
-
-# Test a function
-cd supabase/functions/<function-name>
-deno test --allow-all test.ts
-
-# Lint functions
-npm run lint:functions
-
-# Format functions
-npm run format:functions
-
-# Deploy specific function
-supabase functions deploy <function_name>
-
-# Deploy all functions
-npm run functions:deploy
+npm i supabase@beta --save-dev
 ```
 
-### TypeScript Types
+When installing with yarn 4, you need to disable experimental fetch with the following nodejs config.
 
-```bash
-# Generate types from database schema
-npm run types:generate
-
-# Watch for changes and auto-regenerate
-npm run types:watch
+```
+NODE_OPTIONS=--no-experimental-fetch yarn add supabase
 ```
 
-## 🚢 Deployment
+> **Note**
+For Bun versions below v1.0.17, you must add `supabase` as a [trusted dependency](https://bun.sh/guides/install/trusted) before running `bun add -D supabase`.
 
-### Automatic Deployment (Recommended)
+<details>
+  <summary><b>macOS</b></summary>
 
-Every push to `master`/`main` automatically:
-1. ✅ Validates migrations
-2. ✅ Runs tests
-3. ✅ Deploys to production
-4. ✅ Generates deployment summary
+  Available via [Homebrew](https://brew.sh). To install:
 
-**See [DEVOPS.md](DEVOPS.md) for complete deployment guide.**
+  ```sh
+  brew install supabase/tap/supabase
+  ```
 
-### Manual Deployment
+  To install the beta release channel:
+  
+  ```sh
+  brew install supabase/tap/supabase-beta
+  brew link --overwrite supabase-beta
+  ```
+  
+  To upgrade:
+
+  ```sh
+  brew upgrade supabase
+  ```
+</details>
+
+<details>
+  <summary><b>Windows</b></summary>
+
+  Available via [Scoop](https://scoop.sh). To install:
+
+  ```powershell
+  scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+  scoop install supabase
+  ```
+
+  To upgrade:
+
+  ```powershell
+  scoop update supabase
+  ```
+</details>
+
+<details>
+  <summary><b>Linux</b></summary>
+
+  Available via [Homebrew](https://brew.sh) and Linux packages.
+
+  #### via Homebrew
+
+  To install:
+
+  ```sh
+  brew install supabase/tap/supabase
+  ```
+
+  To upgrade:
+
+  ```sh
+  brew upgrade supabase
+  ```
+
+  #### via Linux packages
+
+  Linux packages are provided in [Releases](https://github.com/supabase/cli/releases). To install, download the `.apk`/`.deb`/`.rpm`/`.pkg.tar.zst` file depending on your package manager and run the respective commands.
+
+  ```sh
+  sudo apk add --allow-untrusted <...>.apk
+  ```
+
+  ```sh
+  sudo dpkg -i <...>.deb
+  ```
+
+  ```sh
+  sudo rpm -i <...>.rpm
+  ```
+
+  ```sh
+  sudo pacman -U <...>.pkg.tar.zst
+  ```
+</details>
+
+<details>
+  <summary><b>Other Platforms</b></summary>
+
+  You can also install the CLI via [go modules](https://go.dev/ref/mod#go-install) without the help of package managers.
+
+  ```sh
+  go install github.com/supabase/cli@latest
+  ```
+
+  Add a symlink to the binary in `$PATH` for easier access:
+
+  ```sh
+  ln -s "$(go env GOPATH)/bin/cli" /usr/bin/supabase
+  ```
+
+  This works on other non-standard Linux distros.
+</details>
+
+<details>
+  <summary><b>Community Maintained Packages</b></summary>
+
+  Available via [pkgx](https://pkgx.sh/). Package script [here](https://github.com/pkgxdev/pantry/blob/main/projects/supabase.com/cli/package.yml).
+  To install in your working directory:
+
+  ```bash
+  pkgx install supabase
+  ```
+
+  Available via [Nixpkgs](https://nixos.org/). Package script [here](https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/tools/supabase-cli/default.nix).
+</details>
+
+### Run the CLI
 
 ```bash
-# 1. Link to your Supabase project
-supabase link --project-ref <your-project-ref>
+supabase bootstrap
+```
 
-# 2. Push database migrations
-supabase db push
+Or using npx:
 
-# 3. Deploy edge functions
-supabase functions deploy
+```bash
+npx supabase bootstrap
+```
 
-# Or use GitHub CLI to trigger deployment
-gh workflow run deploy.yml -f environment=production
+The bootstrap command will guide you through the process of setting up a Supabase project using one of the [starter](https://github.com/supabase-community/supabase-samples/blob/main/samples.json) templates.
+
+## Docs
+
+Command & config reference can be found [here](https://supabase.com/docs/reference/cli/about).
+
+## Breaking changes
+
+We follow semantic versioning for changes that directly impact CLI commands, flags, and configurations.
+
+However, due to dependencies on other service images, we cannot guarantee that schema migrations, seed.sql, and generated types will always work for the same CLI major version. If you need such guarantees, we encourage you to pin a specific version of CLI in package.json.
+
+## Developing
+
+To run from source:
+
+```sh
+# Go >= 1.22
+go run . help
 ```
 
 ### Required GitHub Secrets

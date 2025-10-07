@@ -48,8 +48,18 @@ The seed file creates three test users in the `auth.users` table with correspond
 Test users are created with:
 - Properly encrypted passwords using `crypt()` and `gen_salt('bf')`
 - Email confirmation already completed
-- User metadata including username and full_name
+- User metadata including username, full_name, and avatar_url in `raw_user_meta_data`
 - Creation dates spread over 30 days for realistic testing
+- **Automatic profile creation via `handle_new_user()` trigger** (defined in `migrations/20251005052938_initial_schema.sql`)
+
+#### 🔄 How Profile Creation Works
+
+When a user is inserted into `auth.users`, the `handle_new_user()` trigger automatically:
+1. Extracts `username`, `full_name`, and `avatar_url` from `raw_user_meta_data`
+2. Creates a corresponding entry in `public.profiles` table
+3. Links the profile to the auth user via the user's UUID
+
+The `bio` field is then populated via UPDATE statements since it's not stored in metadata. This approach matches production behavior where Supabase Auth creates profiles automatically on signup.
 
 ### 🧪 Using Test Users for RLS Testing
 
@@ -80,13 +90,16 @@ npm run db:reset
 
 # Or using Supabase CLI directly
 supabase db reset
+
+# Validate SQL syntax before resetting
+npm run lint:sql
 ```
 
 This will:
 1. Drop the existing database
 2. Create a fresh database
-3. Run all migrations in order
-4. Load the seed data
+3. Run all migrations in order (including trigger creation)
+4. Load the seed data (which triggers profile auto-creation)
 5. Display a summary of loaded data
 
 ### 📋 Seed Data Verification
@@ -130,6 +143,8 @@ ON CONFLICT DO NOTHING;
 
 - **Migrations**: See `migrations/README.md` for database schema changes
 - **RLS Testing**: See `tests/README.md` and `docs/RLS_TESTING.md` for security testing
+- **RLS Policies**: See `docs/RLS_POLICIES.md` for policy patterns and best practices
+- **Trigger Functions**: The `handle_new_user()` trigger is defined in `migrations/20251005052938_initial_schema.sql`
 - **Config**: See `config.toml` for Supabase project configuration
 - **Types**: Run `npm run types:generate` to update TypeScript types after schema changes
 

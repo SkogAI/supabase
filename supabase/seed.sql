@@ -18,9 +18,11 @@ SET client_min_messages = warning;
 -- TEST USERS
 -- ============================================================================
 -- Note: In production, users are created via Supabase Auth
--- For local testing, we'll create auth users first (changed from profiles-only approach), then profiles
+-- For local testing, we create auth users with metadata in raw_user_meta_data.
+-- The handle_new_user() trigger (defined in migrations) automatically creates
+-- corresponding profile entries when users are inserted into auth.users.
 
--- Create auth users (required for foreign key constraint)
+-- Create auth users (profiles are auto-created by handle_new_user() trigger)
 INSERT INTO auth.users (
     id,
     instance_id,
@@ -49,7 +51,7 @@ VALUES
         NOW() - INTERVAL '30 days',
         NOW() - INTERVAL '30 days',
         '{"provider": "email", "providers": ["email"]}',
-        '{"username": "alice", "full_name": "Alice Johnson"}',
+        '{"username": "alice", "full_name": "Alice Johnson", "avatar_url": "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice"}',
         false,
         '',
         ''
@@ -65,7 +67,7 @@ VALUES
         NOW() - INTERVAL '25 days',
         NOW() - INTERVAL '25 days',
         '{"provider": "email", "providers": ["email"]}',
-        '{"username": "bob", "full_name": "Bob Smith"}',
+        '{"username": "bob", "full_name": "Bob Smith", "avatar_url": "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob"}',
         false,
         '',
         ''
@@ -81,41 +83,25 @@ VALUES
         NOW() - INTERVAL '20 days',
         NOW() - INTERVAL '20 days',
         '{"provider": "email", "providers": ["email"]}',
-        '{"username": "charlie", "full_name": "Charlie Davis"}',
+        '{"username": "charlie", "full_name": "Charlie Davis", "avatar_url": "https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie"}',
         false,
         '',
         ''
     )
 ON CONFLICT (id) DO NOTHING;
 
--- Test user profiles
-INSERT INTO public.profiles (id, username, full_name, avatar_url, bio, created_at)
-VALUES
-    (
-        '00000000-0000-0000-0000-000000000001',
-        'alice',
-        'Alice Johnson',
-        'https://api.dicebear.com/7.x/avataaars/svg?seed=Alice',
-        'Software engineer and open source enthusiast. Love building with Supabase!',
-        NOW() - INTERVAL '30 days'
-    ),
-    (
-        '00000000-0000-0000-0000-000000000002',
-        'bob',
-        'Bob Smith',
-        'https://api.dicebear.com/7.x/avataaars/svg?seed=Bob',
-        'Full-stack developer passionate about web technologies.',
-        NOW() - INTERVAL '25 days'
-    ),
-    (
-        '00000000-0000-0000-0000-000000000003',
-        'charlie',
-        'Charlie Davis',
-        'https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie',
-        'Designer and developer hybrid. Creating beautiful UX.',
-        NOW() - INTERVAL '20 days'
-    )
-ON CONFLICT (id) DO NOTHING;
+-- Update profile bios (profiles are already created by trigger, just add bio field)
+UPDATE public.profiles 
+SET bio = 'Software engineer and open source enthusiast. Love building with Supabase!'
+WHERE id = '00000000-0000-0000-0000-000000000001';
+
+UPDATE public.profiles 
+SET bio = 'Full-stack developer passionate about web technologies.'
+WHERE id = '00000000-0000-0000-0000-000000000002';
+
+UPDATE public.profiles 
+SET bio = 'Designer and developer hybrid. Creating beautiful UX.'
+WHERE id = '00000000-0000-0000-0000-000000000003';
 
 -- ============================================================================
 -- SAMPLE POSTS
