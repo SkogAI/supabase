@@ -334,7 +334,9 @@ async with pool.acquire() as conn:
     rows = await conn.fetch('SELECT * FROM users LIMIT 10')
 ```
 
-**See [docs/MCP_SERVER_ARCHITECTURE.md](docs/MCP_SERVER_ARCHITECTURE.md) for complete documentation.**
+**Documentation:**
+- [MCP Server Architecture](docs/MCP_SERVER_ARCHITECTURE.md) - Complete architecture and design patterns
+- [Connection Pool Optimization](docs/MCP_CONNECTION_POOLING.md) - Performance tuning for AI workloads
 
 ## 🧪 Testing
 
@@ -688,6 +690,7 @@ For more details, see `examples/realtime/README.md`
 ### MCP Server Infrastructure (AI Agents)
 - **[docs/MCP_SERVER_ARCHITECTURE.md](docs/MCP_SERVER_ARCHITECTURE.md)** - MCP server architecture and design patterns for AI agents
 - **[docs/MCP_SERVER_CONFIGURATION.md](docs/MCP_SERVER_CONFIGURATION.md)** - Configuration templates for all agent types and environments
+- **[docs/MCP_CONNECTION_POOLING.md](docs/MCP_CONNECTION_POOLING.md)** - Connection pool optimization for AI workloads
 - **[docs/MCP_AUTHENTICATION.md](docs/MCP_AUTHENTICATION.md)** - Authentication strategies and security best practices
 - **[docs/MCP_CONNECTION_EXAMPLES.md](docs/MCP_CONNECTION_EXAMPLES.md)** - Code examples in Node.js, Python, Deno, and more
 - **[docs/MCP_IMPLEMENTATION_SUMMARY.md](docs/MCP_IMPLEMENTATION_SUMMARY.md)** - Complete MCP implementation overview
