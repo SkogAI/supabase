@@ -28,6 +28,11 @@
     "test:realtime": "cd examples/realtime && npm install && npm run test",
     "examples:realtime": "cd examples/realtime && npm install",
     "test:rls": "supabase db execute --file tests/rls_test_suite.sql",
+    "test:storage": "supabase db execute --file tests/storage_test_suite.sql",
+    "test:connection": "bash scripts/test-connection.sh",
+    "test:db-health": "bash scripts/check-db-health.sh",
+    "diagnose:connection": "supabase db execute --file tests/connection_diagnostics.sql",
+    "diagnose:pool": "supabase db execute --file tests/pool_monitoring.sql",
     "dev": "npm-run-all --parallel db:start functions:serve",
     "setup": "npm run db:start && npm run types:generate"
   },
