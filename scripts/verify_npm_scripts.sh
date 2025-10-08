@@ -93,8 +93,13 @@ check_prerequisites() {
     
     # Check Deno
     if command_exists deno; then
-        local version=$(deno --version | head -n1)
-        print_success "Deno is installed: $version"
+        if deno --version &> /dev/null; then
+            local version=$(deno --version 2>&1 | head -n1)
+            print_success "Deno is installed: $version"
+        else
+            print_warning "Deno is installed but not functioning correctly (required for functions:*, lint:functions, format:functions, test:functions*)"
+            has_all=false
+        fi
     else
         print_warning "Deno is not installed (required for functions:*, lint:functions, format:functions, test:functions*)"
         has_all=false
