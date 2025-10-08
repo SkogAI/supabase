@@ -52,6 +52,19 @@ build/
 # Generated types (uncomment to ignore)
 # types/database.ts
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
 # Backups
 backups/
 *.backup
