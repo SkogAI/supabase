@@ -34,9 +34,9 @@ Git worktrees allow you to have multiple working directories attached to the sam
 ## Directory Structure
 
 ```
-/home/skogix/dev/supabase/          # Main repository
+<your-project-root>/                 # Main repository
 ├── .dev/
-│   ├── worktree/                    # All worktrees live here
+│   ├── worktree/                    # All worktrees live here (gitignored)
 │   │   ├── feature-auth-123/
 │   │   ├── bugfix-cors-error-124/
 │   │   └── hotfix-security-125/
@@ -45,6 +45,12 @@ Git worktrees allow you to have multiple working directories attached to the sam
 │       ├── bugfix/
 │       └── hotfix/
 ```
+
+**Note**: Worktrees share the `.git` directory but have separate working trees. This means:
+- Git history is shared (no need to refetch)
+- Configuration is shared (.gitignore, .git/config)
+- Working files are independent
+- Docker ports are shared across all worktrees (same Supabase instance)
 
 ## GitHub Git Flow Branch Types
 
