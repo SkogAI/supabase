@@ -152,8 +152,10 @@ for worktree_path in "${WORKTREES[@]}"; do
     fi
     
     # Check if worktree has uncommitted changes
-    if ! git -C "$worktree_path" diff-index --quiet HEAD -- 2>/dev/null; then
-        DIRTY_WORKTREES+=("$worktree_path:$branch_name")
+    if git -C "$worktree_path" rev-parse --verify HEAD >/dev/null 2>&1; then
+        if ! git -C "$worktree_path" diff-index --quiet HEAD -- 2>/dev/null; then
+            DIRTY_WORKTREES+=("$worktree_path:$branch_name")
+        fi
     fi
     
     # Determine base branch based on branch type
