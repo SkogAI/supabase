@@ -351,6 +351,23 @@ npm run lint:sql
 # or use Supabase Studio at http://localhost:8000
 ```
 
+### Verify NPM Scripts
+
+Verify that all npm scripts are working correctly:
+
+```bash
+# Run comprehensive verification of all npm scripts
+./scripts/verify_npm_scripts.sh
+
+# This will check:
+# - All prerequisites (Docker, Supabase CLI, Deno, etc.)
+# - Script definitions in package.json
+# - Required files and directories
+# - Provide installation instructions for missing tools
+```
+
+See [VERIFICATION_RESULTS.md](VERIFICATION_RESULTS.md) for detailed verification results.
+
 ## 💾 Storage
 
 Supabase Storage provides secure file uploads with three pre-configured buckets:
