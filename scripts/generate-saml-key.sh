@@ -250,7 +250,9 @@ show_next_steps() {
 
 # Main execution
 main() {
-    clear
+    if [ -t 1 ]; then
+        clear
+    fi
     print_header "SAML Private Key Generator"
     
     # Allow custom directory as argument
