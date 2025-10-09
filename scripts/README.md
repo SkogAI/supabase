@@ -273,6 +273,82 @@ claude-watch --compact
 - Automatic completion detection
 - Optional log following
 
+---
+
+### create-issues-138.sh
+
+Create GitHub issues for the proposed changes and tests from issue #138.
+
+**Usage:**
+```bash
+./scripts/create-issues-138.sh
+```
+
+**What it does:**
+- Creates 7 GitHub issues based on the analysis in issue #138
+- Each issue tracks a specific improvement or test implementation
+- Issues include: storage buckets, realtime, RLS policies, edge functions, and tests
+- Requires GitHub CLI authentication
+
+**Created Issues:**
+1. Add Storage Buckets to Tracked Migrations (High Priority)
+2. Enable Realtime on Profiles Table (Medium Priority)
+3. Add Service Role RLS Policy to Profiles (High Priority)
+4. Create User Profile Edge Functions (Medium Priority)
+5. Create Unit Tests for Profiles Functionality (High Priority)
+6. Create Tests for Storage Buckets (High Priority)
+7. Create Tests for Realtime Subscriptions (Medium Priority)
+
+**Reference:** See [ISSUE_138_IMPLEMENTATION.md](../ISSUE_138_IMPLEMENTATION.md) for complete documentation.
+
+---
+
+### create-issues.sh
+
+Create comprehensive GitHub issues for project setup and tracking.
+
+**Usage:**
+```bash
+./scripts/create-issues.sh
+```
+
+**What it does:**
+- Creates 12 comprehensive issues covering project infrastructure
+- Issues include: storage, monitoring, testing, documentation, security, and more
+- Requires GitHub CLI authentication
+
+---
+
+## Database & Testing Scripts
+
+### test-connection.sh
+
+Test database connectivity with comprehensive diagnostics.
+
+**Usage:**
+```bash
+./scripts/test-connection.sh [connection-string]
+# Or use DATABASE_URL environment variable
+npm run test:connection
+```
+
+---
+
+### check-db-health.sh
+
+Real-time database health monitoring.
+
+**Usage:**
+```bash
+./scripts/check-db-health.sh [connection-string]
+# Or use DATABASE_URL environment variable
+npm run test:db-health
+```
+
+See [../tests/README.md](../tests/README.md) for complete testing documentation.
+
+---
+
 ## How It Works
 
 All tools trigger the GitHub workflow defined in `.github/workflows/claude.yml`:
