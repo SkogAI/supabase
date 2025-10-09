@@ -260,6 +260,10 @@ Each template includes:
 6. **Clean up merged branches** - Remove worktrees after PR is merged
 7. **One worktree per issue** - Keeps changes isolated and reviewable
 8. **Sync regularly** - `git fetch origin` before creating new worktrees
+3. **Clean up merged branches** - Use `cleanup-worktrees.sh --auto` for automated cleanup
+4. **One worktree per issue** - Keeps changes isolated and reviewable
+5. **Sync regularly** - `git fetch origin` before creating new worktrees
+6. **Regular maintenance** - Run `cleanup-worktrees.sh --status` periodically to check for merged PRs
 
 ## Troubleshooting
 

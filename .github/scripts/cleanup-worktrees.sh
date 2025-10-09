@@ -156,6 +156,8 @@ for worktree_path in "${WORKTREES[@]}"; do
         if ! git -C "$worktree_path" diff-index --quiet HEAD -- 2>/dev/null; then
             DIRTY_WORKTREES+=("$worktree_path:$branch_name")
         fi
+    if ! git -C "$worktree_path" diff-index --quiet HEAD -- 2>/dev/null; then
+        DIRTY_WORKTREES+=("$worktree_path:$branch_name")
     fi
     
     # Determine base branch based on branch type
