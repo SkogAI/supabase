@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+#
+# claude-on-issue - Add @claude comments to existing GitHub issues
+#
+# Usage: claude-on-issue <issue-number> <task-description>
+#
+# Example:
+#   claude-on-issue 123 "analyze the root cause of this bug"
+#
+# This script adds a comment with @claude mention to an existing issue,
+# triggering the Claude workflow immediately.
+
+set -euo pipefail
+
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Function to print error messages
+error() {
+    echo -e "${RED}Error: $1${NC}" >&2
+    exit 1
+}
+
+# Function to print success messages
+success() {
+    echo -e "${GREEN}$1${NC}"
+}
+
+# Function to print info messages
+info() {
+    echo -e "${YELLOW}$1${NC}"
+}
+
+# Check if gh CLI is installed
+if ! command -v gh &> /dev/null; then
+    error "gh CLI is not installed. Please install it from https://cli.github.com/"
+fi
+
+# Check if we're in a git repository
+if ! git rev-parse --git-dir > /dev/null 2>&1; then
+    error "Not in a git repository"
+fi
+
+# Check arguments
+if [ $# -lt 2 ]; then
+    echo "Usage: claude-on-issue <issue-number> <task-description>"
+    echo ""
+    echo "Example:"
+    echo "  claude-on-issue 123 \"analyze the root cause of this bug\""
+    echo ""
+    echo "Add @claude comment to an existing issue to trigger the Claude workflow."
+    exit 1
+fi
+
+ISSUE_NUMBER="$1"
+shift
+TASK_DESCRIPTION="$*"
+
+# Validate issue number is numeric
+if ! [[ "$ISSUE_NUMBER" =~ ^[0-9]+$ ]]; then
+    error "Issue number must be numeric. Got: $ISSUE_NUMBER"
+fi
+
+# Create the comment body with @claude mention
+COMMENT_BODY="@claude
+
+$TASK_DESCRIPTION"
+
+info "Adding @claude comment to issue #$ISSUE_NUMBER..."
+
+# Add the comment using gh CLI
+if gh issue comment "$ISSUE_NUMBER" --body "$COMMENT_BODY"; then
+    success "✓ Comment added successfully to issue #$ISSUE_NUMBER"
+    success "✓ Claude workflow should be triggered shortly"
+
+    # Get the issue URL
+    ISSUE_URL=$(gh issue view "$ISSUE_NUMBER" --json url -q .url)
+    echo ""
+    echo "View issue: $ISSUE_URL"
+else
+    error "Failed to add comment to issue #$ISSUE_NUMBER"
+fi
