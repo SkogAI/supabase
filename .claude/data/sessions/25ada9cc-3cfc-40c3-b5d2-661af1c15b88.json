@@ -1,0 +1,15 @@
+{
+  "session_id": "25ada9cc-3cfc-40c3-b5d2-661af1c15b88",
+  "prompts": [
+    "hi Claude ",
+    "please check issue 69 and recreate the steps as best you can",
+    "all the zitadel steps are done so ask me when you need information from it. also kill all containers / docker since they are probably left from experimenting ",
+    "../supabase-docker have all info ",
+    "continue. it took to long ",
+    "hard code it for now if needed, it is the least of things to care about right now ",
+    "read what was used in ../supabase-docker something 64b",
+    "why is not the current env good enough ?",
+    "take down all the containers, volume and prune the living shit out of everything ",
+    "TURN IT OFF ! BURN IT! DON'T TOUCHH"
+  ]
+}

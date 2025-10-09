@@ -1,0 +1,9 @@
+{
+  "session_id": "f6ad8f1c-67bb-4cb2-b2cf-829aa3e0924d",
+  "prompts": [
+    "good. now what am i not understanding?",
+    "there is no such thing as ./CLAUDE.md in sight",
+    "What do you mean \"which is where it should be\"? That would be *literally* retarded at all levels to do what every AI Agent-framework have done for years by now - including my own: INJECT THE INFORMATION ON PATH ENTRY\n\nmy current work project have 22 million rows of code at a fresh startup; how do you think a single claude.md at root would look like?... ultrathink about how i can test this and improve the documentation claude code don't give you that you should have",
+    "create a claude.md with \"the bird is the word\". then run @agent-general-purpose two times. one with \"what is the word? @testdir\" and one with \"what is the word?\" to try it out"
+  ]
+}

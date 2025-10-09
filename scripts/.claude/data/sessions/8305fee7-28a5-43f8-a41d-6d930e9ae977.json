@@ -1,0 +1,11 @@
+{
+  "session_id": "8305fee7-28a5-43f8-a41d-6d930e9ae977",
+  "prompts": [
+    "sorry the CLI broke. i think the one without the testdir reference got through and did not know the word",
+    "inow please try @agent-general-purpose and include the @ testdir in your query",
+    "i created @testdir/words.md \n\nnow if you do the same test but with the only description being \"add claude to the list of words\". ",
+    "now if you do the same thing again, the query being \"Tell me about the words in @testdir/ \". please ultrathink about what this tells us and make sure you give the agent the exact query i showed you",
+    "I do think this actually is okay. Since we added the folder as \"included\" with the @-syntax it probably should \"re-read the claude file on entry\" always. But if you do the same thing but @-syntax the words.md file i hope he \"reads\" the file anyway so please try it out. the same thing again but testdir/words.md as included instead of only the directory",
+    "now please try again and reference the words.md exactly like last message"
+  ]
+}

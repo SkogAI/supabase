@@ -1,101 +1,85 @@
-# Supabase CLI
+# Image Search with Supabase Vector
 
-[![Coverage Status](https://coveralls.io/repos/github/supabase/cli/badge.svg?branch=main)](https://coveralls.io/github/supabase/cli?branch=main) [![Bitbucket Pipelines](https://img.shields.io/bitbucket/pipelines/supabase-cli/setup-cli/master?style=flat-square&label=Bitbucket%20Canary)](https://bitbucket.org/supabase-cli/setup-cli/pipelines) [![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/sweatybridge%2Fsetup-cli?label=Gitlab%20Canary)
-](https://gitlab.com/sweatybridge/setup-cli/-/pipelines)
+In this example we're implementing image search using the [OpenAI CLIP Model](https://github.com/openai/CLIP), which was trained on a variety of (image, text)-pairs.
 
-[Supabase](https://supabase.io) is an open source Firebase alternative. We're building the features of Firebase using enterprise-grade open source tools.
+We're implementing two methods in the [`/image_search/main.py` file](/image_search/main.py):
 
-This repository contains all the functionality for Supabase CLI.
+1. The `seed` method generates embeddings for the images in the `images` folder and upserts them into a collection in Supabase Vector.
+2. The `search` method generates an embedding from the search query and performs a vector similarity search query.
 
-- [x] Running Supabase locally
-- [x] Managing database migrations
-- [x] Creating and deploying Supabase Functions
-- [x] Generating types directly from your database schema
-- [x] Making authenticated HTTP requests to [Management API](https://supabase.com/docs/reference/api/introduction)
+## Prerequisites
 
-## Getting started
+Before running this example, ensure you have:
 
-### Install the CLI
+- Python 3.8 or higher installed
+- A Supabase account (sign up at https://supabase.com)
+- Poetry package manager
+- Basic familiarity with vector databases (helpful but not required)
 
-Available via [NPM](https://www.npmjs.com) as dev dependency. To install:
+## Setup
 
-```bash
-npm i supabase --save-dev
-```
+- Create a new project in your [Supabase dashboard](https://supabase.com/dashboard)
+- Go to Settings > Database and copy your connection string
+- Ensure the Vector extension is enabled in your project
+- Install poetry: `pip install poetry`
+- Activate the virtual environment: `poetry shell`
+  - (to leave the venv just run `exit`)
+- Install app dependencies: `poetry install`
 
-To install the beta release channel:
+## Run locally
 
-```bash
-npm i supabase@beta --save-dev
-```
+### Generate the embeddings and seed the collection
 
-When installing with yarn 4, you need to disable experimental fetch with the following nodejs config.
+- `supabase start`
+- `poetry run seed`
+- Check the embeddings stored in the local Supabase Dashboard: http://localhost:54323/project/default/editor > schema: vecs
 
-```
-NODE_OPTIONS=--no-experimental-fetch yarn add supabase
-```
+**What to expect:** The seed command will process all images in the `images` folder and generate vector embeddings for each one.
 
-> **Note**
-For Bun versions below v1.0.17, you must add `supabase` as a [trusted dependency](https://bun.sh/guides/install/trusted) before running `bun add -D supabase`.
+### Perform a search
 
-<details>
-  <summary><b>macOS</b></summary>
+- `poetry run search "bike in front of red brick wall"`
 
-  Available via [Homebrew](https://brew.sh). To install:
+**What to expect:** The search will return a list of images ranked by similarity to your search query, along with similarity scores.
 
-  ```sh
-  brew install supabase/tap/supabase
-  ```
+## Run on hosted Supabase project
 
-  To install the beta release channel:
-  
-  ```sh
-  brew install supabase/tap/supabase-beta
-  brew link --overwrite supabase-beta
-  ```
-  
-  To upgrade:
+- Set `DB_CONNECTION` with the connection string from your hosted Supabase Dashboard: https://supabase.com/dashboard/project/_/database/settings > Connection string > URI
 
-  ```sh
-  brew upgrade supabase
-  ```
-</details>
+## Example Search Queries
 
-<details>
-  <summary><b>Windows</b></summary>
+Try these search queries to test the image search functionality:
 
-  Available via [Scoop](https://scoop.sh). To install:
+- `"bike in front of red brick wall"`
+- `"person walking in park"`
+- `"blue sky with clouds"`
+- `"city street at night"`
 
-  ```powershell
-  scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
-  scoop install supabase
-  ```
+## Troubleshooting
 
-  To upgrade:
+**Common Issues:**
 
-  ```powershell
-  scoop update supabase
-  ```
-</details>
+- **Poetry not found:** Make sure Poetry is installed with `pip install poetry`
+- **Connection errors:** Verify your Supabase connection string is correct
+- **No search results:** Ensure you've run the seed command first to populate the database
+- **Python version errors:** This example requires Python 3.8 or higher
 
-<details>
-  <summary><b>Linux</b></summary>
+## How It Works
 
-  Available via [Homebrew](https://brew.sh) and Linux packages.
+This example uses the CLIP (Contrastive Language-Image Pre-training) model to:
 
-  #### via Homebrew
+1. Convert images into high-dimensional vector representations (embeddings)
+2. Convert text search queries into similar vector representations
+3. Find images with embeddings most similar to the search query embedding
+4. Return ranked results based on vector similarity scores
 
-  To install:
+## Attributions
 
-  ```sh
-  brew install supabase/tap/supabase
-  ```
+### Models
 
-  To upgrade:
+[clip-ViT-B-32](https://www.sbert.net/examples/applications/image-search/README.html) via [Hugging Face](https://huggingface.co/sentence-transformers/clip-ViT-B-32)
 
-  ```sh
-  brew upgrade supabase
-  ```
+### Images
 
   #### via Linux packages
 
@@ -801,3 +785,100 @@ MIT
 ---
 
 **Built with [Supabase](https://supabase.com) | Deployed with [GitHub Actions](https://github.com/features/actions)**
+  # Get all open PRs
+  prs=$(gh pr list --state open --json number,title,headRefName,mergeable,mergeStateStatus --limit 100)
+  
+  if [ "$prs" = "[]" ]; then
+    echo "No open PRs found." >> report.md
+    cat report.md
+    exit 0
+  fi
+  
+  # Parse and categorize PRs
+  cleanly_mergeable=""
+  behind_but_clean=""
+  has_conflicts=""
+  unknown_status=""
+  
+  echo "$prs" | jq -r '.[] | @base64' | while IFS= read -r pr; do
+    _jq() {
+      echo "$pr" | base64 --decode | jq -r "$1"
+    }
+  
+    number=$(_jq '.number')
+    '.title')
+    branch=$(_jq '.headRefName')
+    mergeable=$(_jq '.mergeable')
+    mergeState=$(_jq '.mergeStateStatus')
+  
+    case "$mergeable" in
+      "MERGEABLE")
+        if [ "$mergeState" = "BEHIND" ]; then
+          echo "- #$number: $title (\`$branch\`) - Behind master but no conflicts" >> behind.txt
+        else
+          echo "- #$number: $title (\`$branch\`) - Cleanly mergeable" >> clean.txt
+        fi
+        ;;
+      "CONFLICTING")
+        echo "- #$number: $title (\`$branch\`) - **HAS CONFLICTS**" >> conflicts.txt
+        # Comment on the PR about conflicts
+        gh pr comment "$number" --body "⚠️ This PR has merge conflicts with master after the latest push. Please sync your branch and resolve conflicts."
+        ;;
+      *)
+        echo "- #$number: $title (\`$branch\`) - Status: $mergeable" >> unknown.txt
+        ;;
+    esac
+  done
+  
+  # Build the report
+  if [ -f clean.txt ]; then
+    echo "### ✅ Cleanly Mergeable PRs" >> report.md
+    cat clean.txt >> report.md
+    echo "" >> report.md
+  fi
+  
+  if [ -f behind.txt ]; then
+    echo "### 📋 Behind Master (No Conflicts)" >> report.md
+    cat behind.txt >> report.md
+    echo "" >> report.md
+  fi
+  
+  if [ -f conflicts.txt ]; then
+    echo "### ⚠️ PRs with Merge Conflicts" >> report.md
+    cat conflicts.txt >> report.md
+    echo "" >> report.md
+  fi
+  
+  if [ -f unknown.txt ]; then
+    echo "### ❓ Unknown Status" >> report.md
+    cat unknown.txt >> report.md
+    echo "" >> report.md
+  fi
+  
+  # Output the report
+  cat report.md
+  
+  # Create/update a summary issue if there are conflicts or behind PRs
+  if [ -f conflicts.txt ] || [ -f behind.txt ]; then
+    issue_title="PR Sync Status - $(date +%Y-%m-%d)"
+    issue_body=$(cat report.md)
+  
+    # Check if there's already an open issue with this title pattern
+    existing_issue=$(gh issue list --state open --search "PR Sync Status" --json number --limit 1 | jq -r '.[0].number // empty')
+  
+    if [ -n "$existing_issue" ]; then
+      # Update existing issue
+      gh issue comment "$existing_issue" --body "$issue_body"
+      echo "Updated issue #$existing_issue with latest status"
+    else
+      # Create new issue
+      gh issue create --title "$issue_title" --body "$issue_body" --label "automation"
+      echo "Created new sync status issue"
+    fi
+  fi
+  shell: /usr/bin/bash -e {0}
+  env:
+    GH_TOKEN: ***
+/home/runner/work/_temp/d1e62cd0-7e06-4845-b651-86c9e44f1f23.sh: line 27: syntax error near unexpected token `)'
+Error: Process completed with exit code 2.
+Images from https://unsplash.com/license via https://picsum.photos/

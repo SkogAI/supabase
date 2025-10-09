@@ -1,0 +1,7 @@
+{
+  "session_id": "3d041336-f4ce-4404-acb8-2de6b239ee4a",
+  "prompts": [
+    "hello claude. having some port choices to make in supabase/config want to tell me the standards one usually go with?",
+    "want to change to the standards and keep studio on 8000 (simple current project-port for my web setup)"
+  ]
+}

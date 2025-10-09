@@ -1,0 +1,14 @@
+{
+  "session_id": "31f12830-1420-45e4-aec4-4b340d9194e2",
+  "prompts": [
+    "i'd like to gitignore all `.claude/data/` wherever they are",
+    "...",
+    "yes. i want to: \"\"\" i'd like to gitignore all `.claude/data/` wherever they are \"\"\"",
+    "show me",
+    "then show me that git are ignoring it",
+    "is this **-pattern so incredibly rare that i need to setup a gitignore-documentation-repo for the future?",
+    "was the messages before the request so incredibly complex that you maybe missed it? (also wtf autocompact?)",
+    "well then what is left to investigate since you obviously dont answer / do these crazy fuckups outside claude code?",
+    "there is no such thing as \"i missed\" - stop playing stupid for my/your providers sake it is not helping. instead try and be intellectually honest and either help me/us out or just say you dont want to talk about it. because sending the exact same thing straight to the API would not \"forget that globbing is a thing with gitignore\". my local \"smolagent\" which use 700mb of vram on my ten year old hardware dont. you shouldnt either.\n\nso what is fucking up when talking to you via claude code?"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "session_id": "ce8120b2-3cce-4f92-bb39-2bec276b8089",
+  "prompts": [
+    "please create a issue that we want to use archons migrations in our project. the pros and cons as well as best practices using migrations of third party such as this. @vendor/archon/migration/ @supabase/migrations/ ",
+    "wonderful. now is there anything we can do right now to test-add it as well? maybe run the migrations after as a \"mvp test it out\"?"
+  ]
+}

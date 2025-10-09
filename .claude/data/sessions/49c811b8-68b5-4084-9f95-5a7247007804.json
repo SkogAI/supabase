@@ -1,0 +1,10 @@
+{
+  "session_id": "49c811b8-68b5-4084-9f95-5a7247007804",
+  "prompts": [
+    "hello claude!",
+    "I'm looking to setup a basic workflow using git worktrees with github, you/claude code as well as the local \"git flow AVH edition\" i personally follow and to start we need to do some research",
+    "well i know that git flow and worktrees not go hand in hand as well as github dont like the git flow workflow. claude code dont like either and here we are ^^\n\n@.git/config should tell you about the currently active settings at least",
+    "1. how would you make git-flow and worktrees play nicely together? it actively uses .git/config to keep track of things like this? is more active git flow \"tracking\" something that helps here maybe?\n2. i'm still thinking about having a \"meta repo\" which use git-flow and manage the \"release\" part by tagging submodules but keeping the \"develop\"-side and outward as \"develop is the trunk\". there is probably a name for this and a whole business built around it i guess ^^\n\ni still dont know how to manage the github part of things except just \"pretend master dont exists\" :P",
+    "I did some research and essentially i have to submit to the \"GitHub Git Flow\"-way of things i believe? Master becomes Release and \"develop\" becomes the \"github trunk\" with every push going into the ci/cd-pipeline and releases essentially becomes my \"snapshot of stuff actually working and being stable\". that's how i understood the research i did at least :P"
+  ]
+}

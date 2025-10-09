@@ -1,0 +1,11 @@
+{
+  "session_id": "ea934c84-a4f8-4147-bd48-0086ce64e63d",
+  "prompts": [
+    "hello claude. im testing some worktree automation. can you check the git state currently with extra focus on worktrees and the branches created?",
+    "crap, is it the currently checked out branch a worktree normally gets created from?",
+    "is there any way to set any default via git?",
+    "so that is a no then :/ feels like a waste to have a \"always leave this at develop branch\"-repo.. wait it works from head? do it fetch before creating the tree or how do that work?",
+    "fuck.. any way to edit the worktree itself after creation then?",
+    "and hooks do not exist for this?"
+  ]
+}

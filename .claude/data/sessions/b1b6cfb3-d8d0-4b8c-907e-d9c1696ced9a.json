@@ -1,0 +1,12 @@
+{
+  "session_id": "b1b6cfb3-d8d0-4b8c-907e-d9c1696ced9a",
+  "prompts": [
+    "Now the reason for asking is that we are looking for zitadel integration with supabase and how it is done. @tmp/saml-zitadel.md ",
+    "Would you like to start planning for the integration steps and create issues describing the integration that needs to be done for each one?",
+    "SORRY CLAUDE! <3 I did not mention that this is via *self hosted supabase* as well (not supabase.com) - so there is probably some steps which needs to be redone",
+    "now would you know what to do with this then:\n\n```\nSAML certificate  :  https://auth.aldervall.se/saml/v2/certificate\nSingle Sign On (SSO)   : https://auth.aldervall.se/saml/v2/SSO\nSingle Logout (SLO)  : https://auth.aldervall.se/saml/v2/SLO\n\nDiscovery Endpoint:\nhttps://auth.aldervall.se/.well-known/openid-configuration\n```\n",
+    "First could you create a \"todo list\" for the zitadel parts so we can begin there already?",
+    "Save it to ./tmp/zitadel-todo.md please <32",
+    "Wonderful! Now i created a feature branch which we currently are in and please start with the first things to let the zitadel todo-list continue (i guess the saml assertion attributes comes first?)"
+  ]
+}

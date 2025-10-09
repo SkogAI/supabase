@@ -1,0 +1,10 @@
+{
+  "session_id": "d8b587e0-8ef2-45d8-b033-3ca851410935",
+  "prompts": [
+    "isnt the \"complete_setup\" a \"run once\"-version of the numbered ones? ",
+    "i started up a feature branch for the archon integration to \"learn and test\" locally so please implement the \"mvp test\" as you see fit",
+    "now what is \"eli5 usage guide\" to let me look at it from a user/developer perspective?",
+    "is this worth creating a PR for and actually starting up the implementation for the issue 64?",
+    "Please create a PR for it as is - if nothing else this is a great start to build upon"
+  ]
+}
