@@ -28,19 +28,36 @@ This directory contains SQL test scripts and diagnostic tools to validate databa
 - Authentication and query logging is operational
 ## Available Test Suites
 
-### 1. RLS Policy Tests (`rls_test_suite.sql`)
+### 1. Profiles Basic Tests (`profiles_basic_test_suite.sql`) ⭐ NEW
+
+Small, incremental unit tests to verify profiles functionality is working.
+
+**What it tests:**
+- Profiles table exists with expected columns
+- RLS is enabled
+- Required constraints (unique username, foreign key)
+- Trigger for auto-creating profiles exists
+- Seed data loaded correctly
+- Basic query operations work
+
+**Run with:**
+```bash
+supabase db execute --file tests/profiles_basic_test_suite.sql
+```
+
+### 2. RLS Policy Tests (`rls_test_suite.sql`)
 
 Tests Row Level Security policies to ensure proper access control.
 
-### 2. Storage Tests (`storage_test_suite.sql`)
+### 3. Storage Tests (`storage_test_suite.sql`)
 
 Tests storage bucket policies and file access permissions.
 
-### 3. Connection Diagnostics (`connection_diagnostics.sql`)
+### 4. Connection Diagnostics (`connection_diagnostics.sql`)
 
 Comprehensive diagnostic tests for database connectivity and configuration.
 
-### 4. Pool Monitoring (`pool_monitoring.sql`)
+### 5. Pool Monitoring (`pool_monitoring.sql`)
 
 Real-time monitoring of connection pool usage and health.
 
