@@ -171,7 +171,7 @@ This will:
    ```bash
    cp .env.example .env
    # Edit .env and add your API keys (optional for local dev)
-   # For OpenAI integration, see docs/setup/OPENAI_SETUP.md
+   # For OpenAI integration, see OPENAI_SETUP.md
    ```
 
 4. **Start Supabase**
@@ -232,9 +232,9 @@ Integrate AI providers with Supabase for AI-powered features:
 - **Studio AI Features**: SQL generation, query assistance (OpenAI)
 - **Edge Functions**: Custom AI endpoints (OpenAI, OpenRouter, and more)
 
-**OpenRouter**: Access 100+ AI models (GPT-4, Claude, Gemini, Llama) through one API
-**Quick Start**: See [QUICKSTART_OPENAI.md](docs/setup/QUICKSTART_OPENAI.md) for 5-minute setup
-**Full Guide**: See [OPENAI_SETUP.md](docs/setup/OPENAI_SETUP.md) for complete documentation  
+**OpenRouter**: Access 100+ AI models (GPT-4, Claude, Gemini, Llama) through one API  
+**Quick Start**: See [QUICKSTART_OPENAI.md](QUICKSTART_OPENAI.md) for 5-minute setup  
+**Full Guide**: See [OPENAI_SETUP.md](OPENAI_SETUP.md) for complete documentation  
 **Examples**: 
 - [openai-chat](supabase/functions/openai-chat) - OpenAI direct integration
 - [openrouter-chat](supabase/functions/openrouter-chat) - OpenRouter for multiple models
@@ -347,7 +347,7 @@ Current schema includes:
 - **Auto profile creation** - On user signup via Auth
 - **Custom types** - Enums and composite types for better data modeling
 
-See `supabase/migrations/` for full schema and **[SCHEMA_ORGANIZATION.md](docs/features/SCHEMA_ORGANIZATION.md)** for detailed documentation on schema organization and custom types.
+See `supabase/migrations/` for full schema and **[SCHEMA_ORGANIZATION.md](SCHEMA_ORGANIZATION.md)** for detailed documentation on schema organization and custom types.
 
 ### Row Level Security (RLS)
 
@@ -852,13 +852,13 @@ For more details, see `examples/realtime/README.md`
 - **[DEVOPS.md](DEVOPS.md)** - Complete DevOps guide with secrets, workflows, troubleshooting
 - **[docs/WORKTREES.md](docs/WORKTREES.md)** - Git worktrees for parallel development
 - **[docs/CI_WORKTREE_INTEGRATION.md](docs/CI_WORKTREE_INTEGRATION.md)** - CI/CD integration for worktree-based testing
-- **[QUICKSTART_OPENAI.md](docs/setup/QUICKSTART_OPENAI.md)** - 5-minute OpenAI setup guide ⚡
-- **[OPENAI_SETUP.md](docs/setup/OPENAI_SETUP.md)** - OpenAI integration guide for Studio AI features and Edge Functions
+- **[QUICKSTART_OPENAI.md](QUICKSTART_OPENAI.md)** - 5-minute OpenAI setup guide ⚡
+- **[OPENAI_SETUP.md](OPENAI_SETUP.md)** - OpenAI integration guide for Studio AI features and Edge Functions
 - **[docs/ZITADEL_SAML_IDP_SETUP.md](docs/ZITADEL_SAML_IDP_SETUP.md)** - Complete guide for configuring ZITADEL as SAML Identity Provider for SSO
 - **[docs/RLS_POLICIES.md](docs/RLS_POLICIES.md)** - Complete RLS policy guide with patterns and best practices
 - **[docs/RLS_TESTING.md](docs/RLS_TESTING.md)** - RLS testing guidelines for local and CI/CD
 - **[docs/STORAGE.md](docs/STORAGE.md)** - Storage buckets guide with usage examples and security patterns
-- **[SCHEMA_ORGANIZATION.md](docs/features/SCHEMA_ORGANIZATION.md)** - Schema organization and custom types documentation
+- **[SCHEMA_ORGANIZATION.md](SCHEMA_ORGANIZATION.md)** - Schema organization and custom types documentation
 
 ### MCP Server Infrastructure (AI Agents)
 - **[docs/MCP_SERVER_ARCHITECTURE.md](docs/MCP_SERVER_ARCHITECTURE.md)** - MCP server architecture and design patterns for AI agents
