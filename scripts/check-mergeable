@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+
+set -e
+
+# check-mergeable: Check PR mergeability and auto-resolve when possible
+# This script checks all open PRs for merge conflicts and attempts to
+# fast-forward or merge them automatically by calling @claude.
+
+echo "## PR Mergeability Report" > report.md
+echo "" >> report.md
+echo "Triggered by push to master: ${GITHUB_SHA:-manual}" >> report.md
+echo "" >> report.md
+
+# Get all open PRs
+prs=$(gh pr list --state open --json number,title,headRefName,mergeable,mergeStateStatus --limit 100)
+
+if [ "$prs" = "[]" ]; then
+    echo "No open PRs found." >> report.md
+    cat report.md
+    exit 0
+fi
+
+# Parse and categorize PRs
+cleanly_mergeable=""
+behind_but_clean=""
+has_conflicts=""
+unknown_status=""
+
+echo "$prs" | jq -r '.[] | @base64' | while IFS= read -r pr; do
+    _jq() {
+        echo "$pr" | base64 --decode | jq -r "$1"
+    }
+
+    number=$(_jq '.number')
+    title=$(_jq '.title')
+    branch=$(_jq '.headRefName')
+    mergeable=$(_jq '.mergeable')
+    mergeState=$(_jq '.mergeStateStatus')
+
+    case "$mergeable" in
+        "MERGEABLE")
+            if [ "$mergeState" = "BEHIND" ]; then
+                echo "- #$number: $title (\`$branch\`) - Behind master but no conflicts" >> behind.txt
+                # Ask Claude to fast-forward this branch
+                echo "🤖 Attempting to fast-forward branch..."
+                gh pr comment "$number" --body "@claude This branch is behind master but has no conflicts. Please merge master into this branch to bring it up to date."
+            else
+                echo "- #$number: $title (\`$branch\`) - Cleanly mergeable" >> clean.txt
+            fi
+            ;;
+        "CONFLICTING")
+            echo "- #$number: $title (\`$branch\`) - **HAS CONFLICTS**" >> conflicts.txt
+            # Ask Claude to resolve conflicts
+            echo "⚠️  Calling @claude to resolve conflicts..."
+            gh pr comment "$number" --body "@claude This PR has merge conflicts with master after the latest push. Please analyze the conflicts and attempt to resolve them if possible. If the conflicts are too complex, please provide guidance on how to resolve them manually."
+            ;;
+        *)
+            echo "- #$number: $title (\`$branch\`) - Status: $mergeable" >> unknown.txt
+            ;;
+    esac
+done
+
+# Build the report
+if [ -f clean.txt ]; then
+    echo "### ✅ Cleanly Mergeable PRs" >> report.md
+    cat clean.txt >> report.md
+    echo "" >> report.md
+fi
+
+if [ -f behind.txt ]; then
+    echo "### 📋 Behind Master (No Conflicts)" >> report.md
+    cat behind.txt >> report.md
+    echo "" >> report.md
+fi
+
+if [ -f conflicts.txt ]; then
+    echo "### ⚠️ PRs with Merge Conflicts" >> report.md
+    cat conflicts.txt >> report.md
+    echo "" >> report.md
+fi
+
+if [ -f unknown.txt ]; then
+    echo "### ❓ Unknown Status" >> report.md
+    cat unknown.txt >> report.md
+    echo "" >> report.md
+fi
+
+# Output the report
+cat report.md
+
+# Create/update a summary issue if there are conflicts or behind PRs
+if [ -f conflicts.txt ] || [ -f behind.txt ]; then
+    issue_title="PR Sync Status - $(date +%Y-%m-%d)"
+    issue_body=$(cat report.md)
+
+    # Check if there's already an open issue with this title pattern
+    existing_issue=$(gh issue list --state open --search "PR Sync Status" --json number --limit 1 | jq -r '.[0].number // empty')
+
+    if [ -n "$existing_issue" ]; then
+        # Update existing issue
+        gh issue comment "$existing_issue" --body "$issue_body"
+        echo "Updated issue #$existing_issue with latest status"
+    else
+        # Create new issue
+        gh issue create --title "$issue_title" --body "$issue_body" --label "automation"
+        echo "Created new sync status issue"
+    fi
+fi
+
+echo ""
+echo "✅ Check complete. @claude has been called on PRs that need attention."

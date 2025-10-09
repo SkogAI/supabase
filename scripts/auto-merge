@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+
+# auto-merge: Automatically merge approved PRs when CI passes
+# This script checks all open PRs and auto-merges those that are:
+# - Approved by reviewers
+# - Have passing CI checks
+# - Have no merge conflicts
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+info() {
+  echo -e "${BLUE}[INFO]${NC} $*"
+}
+
+success() {
+  echo -e "${GREEN}[SUCCESS]${NC} $*"
+}
+
+warn() {
+  echo -e "${YELLOW}[WARN]${NC} $*"
+}
+
+error() {
+  echo -e "${RED}[ERROR]${NC} $*"
+}
+
+# Check if gh CLI is installed
+if ! command -v gh &> /dev/null; then
+    error "GitHub CLI (gh) is not installed."
+    echo "Please install it from: https://cli.github.com/"
+    exit 1
+fi
+
+# Check if we're in a git repository
+if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+    error "Not in a git repository."
+    exit 1
+fi
+
+info "🔍 Checking for PRs ready to auto-merge..."
+echo ""
+
+# Get all open PRs
+prs=$(gh pr list --state open --json number,title,headRefName,reviewDecision,statusCheckRollup,mergeable --limit 100)
+
+if [ "$prs" = "[]" ]; then
+    warn "No open PRs found."
+    exit 0
+fi
+
+merged_count=0
+skipped_count=0
+
+echo "$prs" | jq -c '.[]' | while IFS= read -r pr; do
+    number=$(echo "$pr" | jq -r '.number')
+    title=$(echo "$pr" | jq -r '.title')
+    branch=$(echo "$pr" | jq -r '.headRefName')
+    reviewDecision=$(echo "$pr" | jq -r '.reviewDecision // "PENDING"')
+    mergeable=$(echo "$pr" | jq -r '.mergeable')
+    
+    # Check CI status
+    statusCheckRollup=$(echo "$pr" | jq -r '.statusCheckRollup // []')
+    ci_status="unknown"
+    
+    if [ "$statusCheckRollup" != "[]" ] && [ "$statusCheckRollup" != "null" ]; then
+        # Check if all required checks passed
+        failed_checks=$(echo "$statusCheckRollup" | jq -r '[.[] | select(.conclusion != "SUCCESS" and .conclusion != "SKIPPED" and .conclusion != null)] | length')
+        pending_checks=$(echo "$statusCheckRollup" | jq -r '[.[] | select(.conclusion == null)] | length')
+        
+        if [ "$failed_checks" = "0" ] && [ "$pending_checks" = "0" ]; then
+            ci_status="passed"
+        elif [ "$pending_checks" -gt 0 ]; then
+            ci_status="pending"
+        else
+            ci_status="failed"
+        fi
+    else
+        # No status checks configured - consider as passed
+        ci_status="passed"
+    fi
+    
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    info "PR #$number: $title"
+    echo "   Branch: $branch"
+    echo "   Review: $reviewDecision"
+    echo "   CI Status: $ci_status"
+    echo "   Mergeable: $mergeable"
+    echo ""
+    
+    # Auto-merge conditions:
+    # 1. PR is approved (reviewDecision = APPROVED)
+    # 2. CI checks passed (ci_status = passed)
+    # 3. No merge conflicts (mergeable = MERGEABLE)
+    
+    if [ "$reviewDecision" = "APPROVED" ] && [ "$ci_status" = "passed" ] && [ "$mergeable" = "MERGEABLE" ]; then
+        success "✅ All conditions met - auto-merging!"
+        
+        if gh pr merge "$number" --squash --delete-branch; then
+            success "🎉 Successfully merged PR #$number and deleted branch!"
+            merged_count=$((merged_count + 1))
+            
+            # Add a comment to the PR
+            gh pr comment "$number" --body "🤖 **Auto-merged** by auto-merge script
+
+✅ All conditions met:
+- Review: Approved
+- CI: Passed  
+- Conflicts: None
+
+Branch \`$branch\` has been merged and deleted."
+        else
+            error "❌ Failed to merge PR #$number"
+            gh pr comment "$number" --body "⚠️ Auto-merge attempted but failed. Please merge manually."
+        fi
+    else
+        warn "⏸️  Not ready for auto-merge:"
+        [ "$reviewDecision" != "APPROVED" ] && echo "      - Waiting for approval (current: $reviewDecision)"
+        [ "$ci_status" != "passed" ] && echo "      - Waiting for CI (current: $ci_status)"
+        [ "$mergeable" != "MERGEABLE" ] && echo "      - Has merge conflicts or unknown state"
+        skipped_count=$((skipped_count + 1))
+    fi
+    echo ""
+done
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+success "✅ Auto-merge check complete"
+info "Merged: $merged_count PRs"
+info "Skipped: $skipped_count PRs"

@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+set -e
+
+# claude-sync - Sync all claude/* branches with main/master
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Detect main branch (master or main)
+detect_main_branch() {
+    if git show-ref --verify --quiet refs/heads/master; then
+        echo "master"
+    elif git show-ref --verify --quiet refs/heads/main; then
+        echo "main"
+    else
+        echo -e "${RED}Error: Could not detect main or master branch${NC}" >&2
+        exit 1
+    fi
+}
+
+# Get current branch
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+# Detect main branch
+main_branch=$(detect_main_branch)
+echo -e "${GREEN}Detected main branch: ${main_branch}${NC}"
+
+# Fetch latest changes
+echo "Fetching latest changes from origin..."
+git fetch origin
+
+# Update local main branch
+echo -e "\n${GREEN}Updating local ${main_branch} branch...${NC}"
+git fetch origin "${main_branch}:${main_branch}" 2>/dev/null || {
+    echo -e "${YELLOW}Note: Could not update local ${main_branch} (might be checked out)${NC}"
+}
+
+# Find all local claude/* branches
+claude_branches=$(git for-each-ref --format='%(refname:short)' refs/heads/claude/)
+
+if [ -z "$claude_branches" ]; then
+    echo -e "${YELLOW}No claude/* branches found${NC}"
+    exit 0
+fi
+
+echo -e "\n${GREEN}Found claude/* branches:${NC}"
+echo "$claude_branches"
+
+# Track success/failure
+success_count=0
+conflict_count=0
+failed_branches=""
+
+# Sync each branch
+echo -e "\n${GREEN}Syncing branches with ${main_branch}...${NC}"
+for branch in $claude_branches; do
+    echo -e "\n${GREEN}Processing: ${branch}${NC}"
+
+    # Checkout the branch
+    git checkout "$branch" 2>/dev/null || {
+        echo -e "${RED}Failed to checkout ${branch}${NC}"
+        continue
+    }
+
+    # Try to merge main branch
+    if git merge "origin/${main_branch}" --no-edit; then
+        echo -e "${GREEN}✓ Successfully synced ${branch}${NC}"
+        ((success_count++))
+    else
+        echo -e "${RED}✗ Merge conflict in ${branch}${NC}"
+        echo -e "${YELLOW}Aborting merge...${NC}"
+        git merge --abort
+        failed_branches="${failed_branches}\n  - ${branch}"
+        ((conflict_count++))
+    fi
+done
+
+# Return to original branch
+echo -e "\n${GREEN}Returning to original branch: ${current_branch}${NC}"
+git checkout "$current_branch"
+
+# Summary
+echo -e "\n${GREEN}=== Sync Summary ===${NC}"
+echo -e "Successfully synced: ${GREEN}${success_count}${NC}"
+echo -e "Conflicts detected: ${YELLOW}${conflict_count}${NC}"
+
+if [ $conflict_count -gt 0 ]; then
+    echo -e "\n${YELLOW}Branches with conflicts:${NC}"
+    echo -e "$failed_branches"
+    echo -e "\n${YELLOW}These branches need manual conflict resolution.${NC}"
+    exit 1
+fi
+
+echo -e "\n${GREEN}All branches synced successfully!${NC}"

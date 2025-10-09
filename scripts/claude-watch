@@ -1,0 +1,310 @@
+#!/usr/bin/env bash
+
+# claude-watch - Monitor Claude workflow runs with real-time status updates
+#
+# This tool provides real-time feedback on Claude's progress by:
+# - Watching the latest or specific workflow runs
+# - Auto-updating terminal with status changes
+# - Showing job progress and logs
+# - Notifying on completion
+
+set -euo pipefail
+
+# Colors for output
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly BLUE='\033[0;34m'
+readonly CYAN='\033[0;36m'
+readonly MAGENTA='\033[0;35m'
+readonly BOLD='\033[1m'
+readonly DIM='\033[2m'
+readonly NC='\033[0m' # No Color
+
+# Unicode symbols
+readonly SPINNER=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+readonly CHECK_MARK='✓'
+readonly CROSS_MARK='✗'
+readonly HOURGLASS='⏳'
+readonly ROCKET='🚀'
+readonly CLOCK='⏰'
+
+# Check if gh CLI is available
+if ! command -v gh &> /dev/null; then
+    echo -e "${RED}Error: GitHub CLI (gh) is not installed.${NC}"
+    echo "Please install it from: https://cli.github.com/"
+    exit 1
+fi
+
+# Check if we're in a git repository
+if ! git rev-parse --git-dir > /dev/null 2>&1; then
+    echo -e "${RED}Error: Not in a git repository${NC}"
+    exit 1
+fi
+
+# Get repository information
+REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || echo "")
+if [ -z "$REPO" ]; then
+    echo -e "${RED}Error: Could not determine repository${NC}"
+    exit 1
+fi
+
+# Parse command line arguments
+RUN_ID=""
+FOLLOW_LOGS=false
+COMPACT=false
+
+usage() {
+    cat << EOF
+${BOLD}claude-watch${NC} - Monitor Claude workflow runs with real-time updates
+
+${BOLD}USAGE:${NC}
+    claude-watch [OPTIONS] [RUN_ID]
+
+${BOLD}OPTIONS:${NC}
+    -l, --logs       Follow job logs in real-time
+    -c, --compact    Compact output (less verbose)
+    -h, --help       Show this help message
+
+${BOLD}ARGUMENTS:${NC}
+    RUN_ID           Specific workflow run ID to watch (default: latest)
+
+${BOLD}EXAMPLES:${NC}
+    # Watch latest Claude workflow run
+    claude-watch
+
+    # Watch specific run with logs
+    claude-watch --logs 12345678
+
+    # Compact mode for CI/scripts
+    claude-watch --compact
+
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -l|--logs)
+            FOLLOW_LOGS=true
+            shift
+            ;;
+        -c|--compact)
+            COMPACT=true
+            shift
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        *)
+            RUN_ID="$1"
+            shift
+            ;;
+    esac
+done
+
+# Function to get the latest Claude workflow run
+get_latest_run() {
+    gh run list \
+        --workflow="claude.yml" \
+        --limit 1 \
+        --json databaseId,status,conclusion,displayTitle,headBranch,createdAt \
+        --jq '.[0]'
+}
+
+# Function to get specific run details
+get_run_details() {
+    local run_id=$1
+    gh run view "$run_id" \
+        --json databaseId,status,conclusion,displayTitle,headBranch,createdAt,jobs,url \
+        --jq '.'
+}
+
+# Function to format status with color
+format_status() {
+    local status=$1
+    local conclusion=$2
+
+    case "$status" in
+        "completed")
+            case "$conclusion" in
+                "success")
+                    echo -e "${GREEN}${CHECK_MARK} Success${NC}"
+                    ;;
+                "failure")
+                    echo -e "${RED}${CROSS_MARK} Failed${NC}"
+                    ;;
+                "cancelled")
+                    echo -e "${YELLOW}${CROSS_MARK} Cancelled${NC}"
+                    ;;
+                "skipped")
+                    echo -e "${DIM}⊘ Skipped${NC}"
+                    ;;
+                *)
+                    echo -e "${MAGENTA}? ${conclusion}${NC}"
+                    ;;
+            esac
+            ;;
+        "in_progress")
+            echo -e "${BLUE}${HOURGLASS} In Progress${NC}"
+            ;;
+        "queued"|"waiting")
+            echo -e "${YELLOW}${CLOCK} Queued${NC}"
+            ;;
+        *)
+            echo -e "${CYAN}? ${status}${NC}"
+            ;;
+    esac
+}
+
+# Function to display run header
+display_run_header() {
+    local run_data=$1
+    local run_id=$(echo "$run_data" | jq -r '.databaseId')
+    local title=$(echo "$run_data" | jq -r '.displayTitle')
+    local branch=$(echo "$run_data" | jq -r '.headBranch')
+    local created=$(echo "$run_data" | jq -r '.createdAt')
+    local url=$(echo "$run_data" | jq -r '.url // empty')
+
+    if [ "$COMPACT" = false ]; then
+        echo -e "${BOLD}${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${BOLD}${ROCKET} Watching Claude Workflow Run #${run_id}${NC}"
+        echo -e "${BOLD}${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${BOLD}Title:${NC}   $title"
+        echo -e "${BOLD}Branch:${NC}  $branch"
+        echo -e "${BOLD}Started:${NC} $created"
+        if [ -n "$url" ]; then
+            echo -e "${BOLD}URL:${NC}     $url"
+        fi
+        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo ""
+    else
+        echo "Watching run #${run_id}: $title"
+    fi
+}
+
+# Function to display jobs status
+display_jobs() {
+    local run_data=$1
+    local jobs=$(echo "$run_data" | jq -r '.jobs[]')
+
+    if [ -z "$jobs" ] || [ "$jobs" = "null" ]; then
+        return
+    fi
+
+    echo "$run_data" | jq -r '.jobs[] |
+        "  \(.name)||\(.status)||\(.conclusion)"' | while IFS='||' read -r name status conclusion; do
+
+        if [ "$COMPACT" = true ]; then
+            printf "  %-40s %s\n" "$name" "$(format_status "$status" "$conclusion")"
+        else
+            echo -e "${BOLD}Job:${NC} $name"
+            echo -e "  Status: $(format_status "$status" "$conclusion")"
+            echo ""
+        fi
+    done
+}
+
+# Function to watch run with updates
+watch_run() {
+    local run_id=$1
+    local spinner_idx=0
+    local last_status=""
+    local last_conclusion=""
+
+    while true; do
+        # Get current run details
+        local run_data=$(get_run_details "$run_id" 2>/dev/null)
+
+        if [ -z "$run_data" ] || [ "$run_data" = "null" ]; then
+            echo -e "${RED}Error: Could not fetch run details for #${run_id}${NC}"
+            exit 1
+        fi
+
+        local current_status=$(echo "$run_data" | jq -r '.status')
+        local current_conclusion=$(echo "$run_data" | jq -r '.conclusion // "none"')
+
+        # Clear screen and redisplay if status changed or in compact mode
+        if [ "$last_status" != "$current_status" ] || [ "$last_conclusion" != "$current_conclusion" ]; then
+            if [ "$COMPACT" = false ]; then
+                clear
+            fi
+
+            display_run_header "$run_data"
+
+            if [ "$current_status" = "in_progress" ]; then
+                echo -e "${BLUE}${SPINNER[$spinner_idx]} Claude is working...${NC}"
+                echo ""
+            fi
+
+            display_jobs "$run_data"
+
+            last_status="$current_status"
+            last_conclusion="$current_conclusion"
+        fi
+
+        # Check if run is complete
+        if [ "$current_status" = "completed" ]; then
+            echo ""
+            if [ "$COMPACT" = false ]; then
+                echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+            fi
+
+            case "$current_conclusion" in
+                "success")
+                    echo -e "${GREEN}${CHECK_MARK} Workflow completed successfully!${NC}"
+                    ;;
+                "failure")
+                    echo -e "${RED}${CROSS_MARK} Workflow failed${NC}"
+                    ;;
+                "cancelled")
+                    echo -e "${YELLOW}${CROSS_MARK} Workflow was cancelled${NC}"
+                    ;;
+                *)
+                    echo -e "Workflow completed with status: $current_conclusion"
+                    ;;
+            esac
+
+            if [ "$COMPACT" = false ]; then
+                echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+            fi
+            break
+        fi
+
+        # Update spinner
+        spinner_idx=$(( (spinner_idx + 1) % ${#SPINNER[@]} ))
+
+        # Wait before next update
+        sleep 3
+    done
+}
+
+# Main execution
+main() {
+    # Determine which run to watch
+    if [ -z "$RUN_ID" ]; then
+        echo -e "${BLUE}Fetching latest Claude workflow run...${NC}"
+        local latest_run=$(get_latest_run)
+
+        if [ -z "$latest_run" ] || [ "$latest_run" = "null" ]; then
+            echo -e "${YELLOW}No Claude workflow runs found${NC}"
+            exit 0
+        fi
+
+        RUN_ID=$(echo "$latest_run" | jq -r '.databaseId')
+        echo -e "${GREEN}Found run #${RUN_ID}${NC}"
+        echo ""
+    fi
+
+    # Watch the run
+    watch_run "$RUN_ID"
+
+    # Follow logs if requested
+    if [ "$FOLLOW_LOGS" = true ]; then
+        echo ""
+        echo -e "${BLUE}Following logs...${NC}"
+        gh run view "$RUN_ID" --log
+    fi
+}
+
+main

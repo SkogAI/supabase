@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+
+# claude-quick: Intelligent wrapper that creates issue OR PR based on git state
+# - If unstaged/uncommitted changes exist → create issue
+# - If clean branch → create PR
+
+set -e
+
+# Get the script directory for relative path resolution
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Check if gh CLI is installed
+if ! command -v gh &> /dev/null; then
+    echo -e "${RED}Error: GitHub CLI (gh) is not installed.${NC}"
+    echo "Please install it from: https://cli.github.com/"
+    exit 1
+fi
+
+# Check if we're in a git repository
+if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+    echo -e "${RED}Error: Not in a git repository.${NC}"
+    exit 1
+fi
+
+# Get the task description from arguments
+if [ $# -eq 0 ]; then
+    echo -e "${RED}Error: No task description provided.${NC}"
+    echo ""
+    echo "Usage: claude-quick \"your task description\""
+    echo ""
+    echo "Examples:"
+    echo "  claude-quick \"fix authentication bug\""
+    echo "  claude-quick \"review this refactoring\""
+    echo ""
+    echo "This tool intelligently creates either an issue or PR based on git state:"
+    echo "  • Unstaged/uncommitted changes → Creates issue"
+    echo "  • Clean branch → Creates PR"
+    exit 1
+fi
+
+DESCRIPTION="$*"
+
+# Get the current branch
+CURRENT_BRANCH=$(git branch --show-current)
+
+if [ -z "$CURRENT_BRANCH" ]; then
+    echo -e "${RED}Error: Detached HEAD state detected.${NC}"
+    echo "Please checkout a branch first."
+    exit 1
+fi
+
+# Check git status for changes
+# --porcelain gives machine-readable output
+# If output is empty, working tree is clean
+GIT_STATUS=$(git status --porcelain)
+
+if [ -n "$GIT_STATUS" ]; then
+    # There are unstaged/uncommitted changes
+    echo -e "${BLUE}📝 Detected unstaged/uncommitted changes${NC}"
+    echo -e "${YELLOW}Creating issue with @claude mention...${NC}"
+    echo ""
+
+    # Use the claude-issue script
+    "$SCRIPT_DIR/claude-issue" "$DESCRIPTION"
+
+else
+    # Working tree is clean
+    echo -e "${BLUE}✨ Working tree is clean${NC}"
+
+    # Check if we're on main/master
+    if [ "$CURRENT_BRANCH" = "main" ] || [ "$CURRENT_BRANCH" = "master" ]; then
+        echo -e "${YELLOW}⚠️  On main/master branch with clean state${NC}"
+        echo -e "${YELLOW}Creating issue instead of PR...${NC}"
+        echo ""
+
+        # Use the claude-issue script
+        "$SCRIPT_DIR/claude-issue" "$DESCRIPTION"
+    else
+        echo -e "${YELLOW}Creating PR from ${CURRENT_BRANCH}...${NC}"
+        echo ""
+
+        # Use the claude-pr script
+        "$SCRIPT_DIR/claude-pr" "$DESCRIPTION"
+    fi
+fi

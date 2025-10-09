@@ -1,0 +1,87 @@
+#!/bin/bash
+
+# claude-on-pr - Add @claude comments to existing pull requests
+# Usage: claude-on-pr <PR_NUMBER> <TASK_DESCRIPTION>
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Function to print error messages
+error() {
+    echo -e "${RED}Error: $1${NC}" >&2
+    exit 1
+}
+
+# Function to print success messages
+success() {
+    echo -e "${GREEN}$1${NC}"
+}
+
+# Function to print info messages
+info() {
+    echo -e "${YELLOW}$1${NC}"
+}
+
+# Check if gh is installed
+if ! command -v gh &> /dev/null; then
+    error "GitHub CLI (gh) is not installed. Please install it from https://cli.github.com/"
+fi
+
+# Check if user is authenticated
+if ! gh auth status &> /dev/null; then
+    error "Not authenticated with GitHub CLI. Please run 'gh auth login' first."
+fi
+
+# Validate arguments
+if [ $# -lt 2 ]; then
+    echo "Usage: claude-on-pr <PR_NUMBER> <TASK_DESCRIPTION>"
+    echo ""
+    echo "Example:"
+    echo "  claude-on-pr 42 \"check if this handles edge cases properly\""
+    echo ""
+    echo "This tool adds a comment with @claude mention to an existing PR,"
+    echo "triggering the Claude workflow to analyze the PR."
+    exit 1
+fi
+
+PR_NUMBER="$1"
+TASK_DESCRIPTION="$2"
+
+# Validate PR number is a number
+if ! [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
+    error "PR number must be a positive integer. Got: $PR_NUMBER"
+fi
+
+# Get current repository
+REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null) || error "Not in a git repository or unable to determine repository."
+
+info "Repository: $REPO"
+info "PR Number: $PR_NUMBER"
+info "Task: $TASK_DESCRIPTION"
+echo ""
+
+# Check if PR exists
+if ! gh pr view "$PR_NUMBER" &> /dev/null; then
+    error "PR #$PR_NUMBER does not exist in $REPO"
+fi
+
+# Create the comment with @claude mention
+COMMENT="@claude
+
+$TASK_DESCRIPTION"
+
+info "Adding comment to PR #$PR_NUMBER..."
+
+if gh pr comment "$PR_NUMBER" --body "$COMMENT"; then
+    success "✓ Comment added successfully!"
+    echo ""
+    success "Claude will now analyze PR #$PR_NUMBER"
+    success "View PR: $(gh pr view "$PR_NUMBER" --json url -q .url)"
+else
+    error "Failed to add comment to PR #$PR_NUMBER"
+fi
