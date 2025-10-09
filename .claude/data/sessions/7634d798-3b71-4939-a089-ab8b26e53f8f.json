@@ -1,0 +1,6 @@
+{
+  "session_id": "7634d798-3b71-4939-a089-ab8b26e53f8f",
+  "prompts": [
+    "hello claude! please create a worktree called \"worktrees\" which creates the basic setup we need to create worktrees from issues. we will use `.dev/worktree/<name>` to create the tree itself and name should basicly be based upon the issue. keep in mind that we are migrating towards \"using GitHub Git Flow\" as our git workflow/style."
+  ]
+}

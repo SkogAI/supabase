@@ -1,0 +1,9 @@
+{
+  "session_id": "06cce949-aef2-4434-97da-64d4942053ce",
+  "prompts": [
+    "hello",
+    "I'd like you to tell me about the current project overall. Eli 20-programmer I guess ",
+    "good. I'm wondering about the modularity and integration in a project like this? is it one supabase per workstation? one per project? one monolith via web?",
+    "good,the reason for asking is essentially \"split this as a starting template and fork/branch I the actual project. and that time is about right now then "
+  ]
+}

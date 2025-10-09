@@ -1,0 +1,7 @@
+{
+  "session_id": "0b7a5c14-cc1b-47ef-b3c5-fe33317579e2",
+  "prompts": [
+    "Hello Claude! i have added a submodule from supabase auth with a PR checked out as well as @tmp/ have the documentation from zitadels documentation for integration.",
+    "Well we can start with creating a plan together built upon issues. But first could you explain to me what the roles for each party would be as a eli5? what role do zitadel play and what role do supabase?"
+  ]
+}

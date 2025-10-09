@@ -1,0 +1,7 @@
+{
+  "session_id": "c0789ba8-2b55-4e5a-9bff-025d178cdfb2",
+  "prompts": [
+    "hello claude! we are in a supabase and i want you to look at this table and tell me if my understanding is correct? @tmp/auth-definitions.md",
+    "oh sorry. the next part of the context is that the integration and use case comes from `Zitadel` which serves as our current auth service"
+  ]
+}

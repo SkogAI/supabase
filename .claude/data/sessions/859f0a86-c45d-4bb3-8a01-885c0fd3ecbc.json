@@ -1,0 +1,12 @@
+{
+  "session_id": "859f0a86-c45d-4bb3-8a01-885c0fd3ecbc",
+  "prompts": [
+    "sorry i'm back now. minor malfunction / meltdown but i'm back",
+    "SAML Configuration\nProvide your SAML configuration using one of the following options:\nOption 1. Specify the url where metadata file is located\nOption 2. Upload a file containing your metadata XML\nOption 3. Create a minimal metadata file on the fly providing ENTITYID and ACS URL\nEntity ID\nACS endpoint URL\nUse new Login UI\nCustom base URL for the new Login UI\n\n",
+    "## General\nSITE_URL=https://tavern.skogai.se\n",
+    "i restarted supabase auth",
+    "and again",
+    "eoaustnhhtnluieouatshrneuoi doeua hrl=o\u00f6",
+    "ok?"
+  ]
+}

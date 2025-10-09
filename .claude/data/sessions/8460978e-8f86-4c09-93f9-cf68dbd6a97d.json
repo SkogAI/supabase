@@ -1,0 +1,12 @@
+{
+  "session_id": "8460978e-8f86-4c09-93f9-cf68dbd6a97d",
+  "prompts": [
+    "hello claude! can you check the latest claude comment on PR #62 it was made with @.github/workflows/claude-code-review.yml and i'm looking for critique. i'm looking in particular if it should be left for copilot in general unless explicitly asked for a deeper look",
+    "Now what is the current triggers on the workflow itself? A manual run-command to make this a \"review\" before becoming a PR + \"manually ask to review this PR\" would probably be more fitting. is this alternatives that we can change to?",
+    "this is not available for our workflow solutions: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/requesting-a-pull-request-review ?",
+    "All that focus on a review as well as the @.claude/commands/issue.md \ncompare that to PR #61",
+    "Now can you see the actual workflow for both #61 and #62? Because if you compare the two results/actual PR's then something big is missing in our /issue command",
+    "no that is not it. we just removed all the useless \"checks\" since they are not needed. plus those checks are ran after creation anyway so we would create a \"/pr\" which handles the aftermath if needed instead.\n\ni ask again, did you compare the actual results/PR that got created by the two?",
+    "now normally that would be how we do it but it would be insane overkill for something which honestly should be done anyway. i will check up some SkogAI-solutions to this problem - because a README.md should not be needed to explicitly check when asked to change something like this"
+  ]
+}
