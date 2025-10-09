@@ -104,3 +104,4 @@ docker-compose.override.yml
 tmp
 .dev/worktree
 .claude/data/sessions
+node_modules/.package-lock.json
