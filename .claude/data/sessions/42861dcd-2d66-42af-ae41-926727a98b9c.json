@@ -1,0 +1,21 @@
+{
+  "session_id": "42861dcd-2d66-42af-ae41-926727a98b9c",
+  "prompts": [
+    "hello claude. i'm working on understanding and using git-flow with github+workflows. can you check the git state overall and then look at PR's",
+    "i tried to change the simple name to make \"copilot fixes\" a part of my local git flow-workflow but it was not that simple i suppose",
+    "well the dream would be setting up github to follow the \"feature,bufix,hotfix\"-naming scheme the same way i suppose? @.git/config sets up the git-flow naming scheme but dont know if github itself has some kind of feature like this",
+    "otherwise somehow figuring out a way to manually add copilot as a feature-name so my local git-flow treats it like a feature would be good enough for now",
+    "that is not what i asked for and would obviously not have the intended effect. ",
+    "almost there. you missed reading what i said again. having two prefixes for the same thing is what i'm looking for. feature and copilot having the same local meaning and threated the same way",
+    "never propose shitty hacks as solutions ever again and focus on what i am saying instead.",
+    "then please tell me all about the tracking part of git flow",
+    "i asked you a question. answer it instead",
+    "i want copilot/ prefixes to be functionally the same as feature/ would be",
+    "explain what you think you are saying with \"hardcoded branch types\" because that i know. and is not what i asked or even mentioned",
+    "\"i want copilot/ prefixes to be functionally the same as feature/ would be\"\n\ni told you already. focus.\n\ni can add: \"when using git-flow locally\" as context. easier to add that copilot is the same as \"feature\" locally than to change all of github",
+    "yes, but ONLY COPILOT WOULD BE A PREFIX AND FEATURE WOULD NOT WORK! fucking read",
+    "i want you to stop giving alternatives like it was the only way to do things - shitty\n\nwhy do you think a git alias would change a binary? why would creating not needed shell scripts help? and why is \"fuck it, i dont like to listen so nevermind\" the third option?\n\nwtf?",
+    "well tell me about what you have in context about \"git-flow\" and how it works so i know what to tell you.",
+    "so you are missing everything? and still propose \"fuck it\" as the third and last alternative possible..."
+  ]
+}

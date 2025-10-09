@@ -1,0 +1,9 @@
+{
+  "session_id": "fbc1bbea-e290-482c-8d19-3af5fa316b15",
+  "prompts": [
+    "hi",
+    "I have just looked over and merged so the setup script works and actually starts the basics on my machine. could you look over what the reasoning was for the dev script?",
+    "now why is not the supabase cli used for this?",
+    "run supabase start for me please "
+  ]
+}

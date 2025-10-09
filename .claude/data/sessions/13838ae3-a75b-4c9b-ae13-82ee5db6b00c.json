@@ -1,0 +1,7 @@
+{
+  "session_id": "13838ae3-a75b-4c9b-ae13-82ee5db6b00c",
+  "prompts": [
+    "i have added the keys to the .env file and restarted supabase - want to take over?",
+    "i did the steps for the docker-compose setup up until the kong configuration. should we move over to the new folder or something needs doing here before?"
+  ]
+}

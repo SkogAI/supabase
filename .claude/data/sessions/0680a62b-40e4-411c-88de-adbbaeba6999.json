@@ -1,0 +1,19 @@
+{
+  "session_id": "0680a62b-40e4-411c-88de-adbbaeba6999",
+  "prompts": [
+    "hi Claude ",
+    "need you to help me with some merges / prs. pretty much the older ones have merge problems r",
+    "Commit these changes first, then work on the PRs",
+    "any way up sync up against github in a better way?",
+    "Create a GitHub Action to auto-sync PRs going forward",
+    "now you will want to @copilot or @claude when those happens or it will literally stop the flow though ",
+    "now you will want to @copilot or @claude when those happens or it will literally stop the flow though ",
+    "please run the command",
+    "nope, do it like a regular workflow instead ",
+    "you don't need a @ when you call claude normally ",
+    "JUST FUCKING COPY THE WORKING CLAUDE ACTION AND CHANGE IT!",
+    "JUST FUCKING COPY THE WORKING CLAUDE ACTION AND CHANGE IT!",
+    "now check the result ",
+    "remove all shit you have wasted my time with "
+  ]
+}

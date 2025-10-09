@@ -1,0 +1,6 @@
+{
+  "session_id": "58ea013d-23c0-474f-ba0c-94362e0df71b",
+  "prompts": [
+    "please check scripts setup:\n\nDigest: sha256:017c09b00b0be7e28dbc25bb408f4a44512cbe1ec9d8c9a6cdbc8849665218e4\nStatus: Downloaded newer image for public.ecr.aws/supabase/postgres-meta:v0.91.5\n2025.08.04-sha-6e99ca6: Pulling from supabase/studio\n59e22667830b: Already exists \ndbe5016d5605: Pull complete \n013b1f6b2fa0: Pull complete \nc222336d941a: Pull complete \n372c13f59098: Pull complete \n6fec85b885eb: Pull complete \n9388cb01a5fd: Pull complete \ndfa608f1599b: Pull complete \nb90f0153011a: Pull complete \n0e462a4210bf: Pull complete \nb5640177341c: Pull complete \nDigest: sha256:b1e762e4061b749c827d67ce5331c8582e76ac3b7f004a2b228b7702aa74bcfb\nStatus: Downloaded newer image for public.ecr.aws/supabase/studio:2025.08.04-sha-6e99ca6\nStopping containers...\nfailed to start docker container: Error response from daemon: failed to set up container networking: driver failed programming external connectivity on endpoint supabase_studio_SkogAI (6e9b7a4e0fcb34ecd88de8083955a08bc1ae8f1d8df395bfffca64379b3e3eb0): Bind for 0.0.0.0:8000 failed: port is already allocated"
+  ]
+}

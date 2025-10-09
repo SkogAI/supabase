@@ -1,0 +1,6 @@
+{
+  "session_id": "d4491fee-a3c5-4e24-a2f8-3daf8f7b2d8c",
+  "prompts": [
+    "hi claude. trying out some \"claude workflow/actions\" via github. can you look at the three i added in @.github/workflows/ and tell me what each one does and when?"
+  ]
+}
