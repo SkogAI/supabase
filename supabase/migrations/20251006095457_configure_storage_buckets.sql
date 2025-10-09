@@ -17,76 +17,54 @@
 -- ============================================================================
 -- STORAGE BUCKETS
 -- ============================================================================
+-- Note: Storage buckets in Supabase CLI v2.34.3 have limited column support
+-- File size limits and MIME type restrictions are configured via Dashboard or API
+-- This migration only creates the buckets with basic settings
 
--- Create avatars bucket (public, for profile pictures)
-INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES (
-    'avatars',
-    'avatars',
-    true,
-    5242880, -- 5MB in bytes
-    ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
-)
-ON CONFLICT (id) DO UPDATE SET
-    public = true,
-    file_size_limit = 5242880,
-    allowed_mime_types = ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+-- Create avatars bucket (for profile pictures)
+INSERT INTO storage.buckets (id, name)
+VALUES ('avatars', 'avatars')
+ON CONFLICT (id) DO NOTHING;
 
--- Create public-assets bucket (public, for general public files)
-INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES (
-    'public-assets',
-    'public-assets',
-    true,
-    10485760, -- 10MB in bytes
-    ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
-          'application/pdf', 'text/plain', 'text/csv']
-)
-ON CONFLICT (id) DO UPDATE SET
-    public = true,
-    file_size_limit = 10485760,
-    allowed_mime_types = ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
-                                'application/pdf', 'text/plain', 'text/csv'];
+-- Create public-assets bucket (for general public files)
+INSERT INTO storage.buckets (id, name)
+VALUES ('public-assets', 'public-assets')
+ON CONFLICT (id) DO NOTHING;
 
--- Create user-files bucket (private, for user documents)
-INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES (
-    'user-files',
-    'user-files',
-    false,
-    52428800, -- 50MB in bytes
-    ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
-          'application/pdf', 'application/msword',
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-          'application/vnd.ms-excel',
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          'text/plain', 'text/csv', 'application/zip']
-)
-ON CONFLICT (id) DO UPDATE SET
-    public = false,
-    file_size_limit = 52428800,
-    allowed_mime_types = ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
-                                'application/pdf', 'application/msword',
-                                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                                'application/vnd.ms-excel',
-                                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                                'text/plain', 'text/csv', 'application/zip'];
+-- Create user-files bucket (for user documents)
+INSERT INTO storage.buckets (id, name)
+VALUES ('user-files', 'user-files')
+ON CONFLICT (id) DO NOTHING;
+
+-- TODO: Configure bucket settings via Supabase Dashboard or API:
+-- - avatars: Public, 5MB limit, images only
+-- - public-assets: Public, 10MB limit, images + PDFs
+-- - user-files: Private, 50MB limit, documents
 
 -- ============================================================================
 -- STORAGE RLS POLICIES
 -- ============================================================================
 
+-- Note: PostgreSQL doesn't support IF NOT EXISTS for policies
+-- Using DO blocks for idempotent policy creation
+
 -- ----------------------------------------------------------------------------
 -- AVATARS BUCKET POLICIES
 -- ----------------------------------------------------------------------------
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Avatars are publicly accessible" ON storage.objects;
+DROP POLICY IF EXISTS "Users can upload their own avatar" ON storage.objects;
+DROP POLICY IF EXISTS "Users can update their own avatar" ON storage.objects;
+DROP POLICY IF EXISTS "Users can delete their own avatar" ON storage.objects;
+
 -- Anyone can view avatars (public bucket)
-CREATE POLICY IF NOT EXISTS "Avatars are publicly accessible"
+CREATE POLICY "Avatars are publicly accessible"
 ON storage.objects FOR SELECT
 USING (bucket_id = 'avatars');
 
 -- Authenticated users can upload their own avatar
-CREATE POLICY IF NOT EXISTS "Users can upload their own avatar"
+CREATE POLICY "Users can upload their own avatar"
 ON storage.objects FOR INSERT
 WITH CHECK (
     bucket_id = 'avatars'
@@ -94,7 +72,7 @@ WITH CHECK (
 );
 
 -- Users can update their own avatar
-CREATE POLICY IF NOT EXISTS "Users can update their own avatar"
+CREATE POLICY "Users can update their own avatar"
 ON storage.objects FOR UPDATE
 USING (
     bucket_id = 'avatars'
@@ -106,7 +84,7 @@ WITH CHECK (
 );
 
 -- Users can delete their own avatar
-CREATE POLICY IF NOT EXISTS "Users can delete their own avatar"
+CREATE POLICY "Users can delete their own avatar"
 ON storage.objects FOR DELETE
 USING (
     bucket_id = 'avatars'
@@ -117,13 +95,18 @@ USING (
 -- PUBLIC-ASSETS BUCKET POLICIES
 -- ----------------------------------------------------------------------------
 
+DROP POLICY IF EXISTS "Public assets are viewable by everyone" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can upload public assets" ON storage.objects;
+DROP POLICY IF EXISTS "Users can update their own public assets" ON storage.objects;
+DROP POLICY IF EXISTS "Users can delete their own public assets" ON storage.objects;
+
 -- Anyone can view public assets
-CREATE POLICY IF NOT EXISTS "Public assets are viewable by everyone"
+CREATE POLICY "Public assets are viewable by everyone"
 ON storage.objects FOR SELECT
 USING (bucket_id = 'public-assets');
 
 -- Authenticated users can upload to public assets
-CREATE POLICY IF NOT EXISTS "Authenticated users can upload public assets"
+CREATE POLICY "Authenticated users can upload public assets"
 ON storage.objects FOR INSERT
 WITH CHECK (
     bucket_id = 'public-assets'
@@ -131,7 +114,7 @@ WITH CHECK (
 );
 
 -- Users can update their own public assets
-CREATE POLICY IF NOT EXISTS "Users can update their own public assets"
+CREATE POLICY "Users can update their own public assets"
 ON storage.objects FOR UPDATE
 USING (
     bucket_id = 'public-assets'
@@ -143,7 +126,7 @@ WITH CHECK (
 );
 
 -- Users can delete their own public assets
-CREATE POLICY IF NOT EXISTS "Users can delete their own public assets"
+CREATE POLICY "Users can delete their own public assets"
 ON storage.objects FOR DELETE
 USING (
     bucket_id = 'public-assets'
@@ -154,8 +137,13 @@ USING (
 -- USER-FILES BUCKET POLICIES
 -- ----------------------------------------------------------------------------
 
+DROP POLICY IF EXISTS "Users can view their own files" ON storage.objects;
+DROP POLICY IF EXISTS "Users can upload their own files" ON storage.objects;
+DROP POLICY IF EXISTS "Users can update their own files" ON storage.objects;
+DROP POLICY IF EXISTS "Users can delete their own files" ON storage.objects;
+
 -- Users can only view their own files
-CREATE POLICY IF NOT EXISTS "Users can view their own files"
+CREATE POLICY "Users can view their own files"
 ON storage.objects FOR SELECT
 USING (
     bucket_id = 'user-files'
@@ -163,7 +151,7 @@ USING (
 );
 
 -- Users can upload their own files
-CREATE POLICY IF NOT EXISTS "Users can upload their own files"
+CREATE POLICY "Users can upload their own files"
 ON storage.objects FOR INSERT
 WITH CHECK (
     bucket_id = 'user-files'
@@ -171,7 +159,7 @@ WITH CHECK (
 );
 
 -- Users can update their own files
-CREATE POLICY IF NOT EXISTS "Users can update their own files"
+CREATE POLICY "Users can update their own files"
 ON storage.objects FOR UPDATE
 USING (
     bucket_id = 'user-files'
@@ -183,7 +171,7 @@ WITH CHECK (
 );
 
 -- Users can delete their own files
-CREATE POLICY IF NOT EXISTS "Users can delete their own files"
+CREATE POLICY "Users can delete their own files"
 ON storage.objects FOR DELETE
 USING (
     bucket_id = 'user-files'
