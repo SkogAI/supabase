@@ -7,6 +7,10 @@
 
 set -e
 
+# Source shared utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/_shared_utils.sh"
+
 ISSUE_NUMBER="$1"
 TYPE="${2:-feature}"
 BASE_BRANCH="develop"
@@ -20,74 +24,138 @@ for arg in "$@"; do
 done
 
 if [ -z "$ISSUE_NUMBER" ]; then
+    print_error "Missing required argument: issue-number"
+    echo ""
     echo "Usage: $0 <issue-number> [type] [--preview]"
     echo "  type: feature (default), bugfix, hotfix"
     echo "  --preview: Create preview environment"
     exit 1
 fi
 
-# Fetch latest from origin
+# Validate type
+if [[ ! "$TYPE" =~ ^(feature|bugfix|hotfix)$ ]]; then
+    print_error "Invalid type: $TYPE"
+    echo "Valid types: feature, bugfix, hotfix"
+    exit 1
+fi
+
+print_info "Fetching latest from origin..."
 git fetch origin
 
 # Get issue title from GitHub CLI if available
 if command -v gh &> /dev/null; then
     ISSUE_TITLE=$(gh issue view "$ISSUE_NUMBER" --json title -q .title 2>/dev/null || echo "")
     if [ -n "$ISSUE_TITLE" ]; then
-        # Convert title to slug format (lowercase, hyphens)
-        SLUG=$(echo "$ISSUE_TITLE" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]/-/g' | sed 's/--*/-/g' | sed 's/^-//g' | sed 's/-$//g')
+        # Convert title to slug format with 50 char limit
+        SLUG=$(slugify "$ISSUE_TITLE" 50)
         WORKTREE_NAME="${TYPE}-${SLUG}-${ISSUE_NUMBER}"
         BRANCH_NAME="${TYPE}/${SLUG}-${ISSUE_NUMBER}"
     else
+        print_warning "Could not fetch issue title from GitHub (using generic name)"
         WORKTREE_NAME="${TYPE}-issue-${ISSUE_NUMBER}"
         BRANCH_NAME="${TYPE}/issue-${ISSUE_NUMBER}"
     fi
 else
+    print_warning "GitHub CLI not found (using generic name)"
     WORKTREE_NAME="${TYPE}-issue-${ISSUE_NUMBER}"
     BRANCH_NAME="${TYPE}/issue-${ISSUE_NUMBER}"
 fi
 
-# Hotfixes branch from master/main
+# Determine base branch
 if [ "$TYPE" = "hotfix" ]; then
-    BASE_BRANCH="master"
+    # Auto-detect main/master for hotfixes
+    if branch_exists_on_remote "master"; then
+        BASE_BRANCH="master"
+    elif branch_exists_on_remote "main"; then
+        BASE_BRANCH="main"
+    else
+        print_error "Neither 'master' nor 'main' branch found on remote"
+        exit 1
+    fi
+else
+    # For features and bugfixes, use develop or fallback to main/master
+    if branch_exists_on_remote "develop"; then
+        BASE_BRANCH="develop"
+    else
+        BASE_BRANCH=$(get_default_branch)
+        print_warning "No 'develop' branch found, using '$BASE_BRANCH' as base"
+    fi
+fi
+
+# Validate base branch exists
+if ! branch_exists_on_remote "$BASE_BRANCH"; then
+    print_error "Base branch 'origin/$BASE_BRANCH' does not exist"
+    exit 1
 fi
 
 WORKTREE_PATH=".dev/worktree/${WORKTREE_NAME}"
 
-echo "Creating worktree:"
+# Check if branch already exists locally
+if branch_exists_locally "$BRANCH_NAME"; then
+    print_error "Branch '$BRANCH_NAME' already exists locally"
+    echo ""
+    echo "Options:"
+    echo "  1. Delete the existing branch: git branch -D $BRANCH_NAME"
+    echo "  2. Use a different issue number or type"
+    echo "  3. Checkout existing worktree if it exists"
+    exit 1
+fi
+
+# Check if worktree directory already exists
+if [ -d "$WORKTREE_PATH" ]; then
+    print_error "Worktree directory already exists: $WORKTREE_PATH"
+    echo ""
+    echo "Options:"
+    echo "  1. Remove existing worktree: .github/scripts/remove-worktree.sh $(basename "$WORKTREE_PATH")"
+    echo "  2. Use a different issue number or type"
+    exit 1
+fi
+
+echo ""
+print_header "Creating worktree"
 echo "  Path: $WORKTREE_PATH"
 echo "  Branch: $BRANCH_NAME"
-echo "  Base: $BASE_BRANCH"
+echo "  Base: origin/$BASE_BRANCH"
+echo ""
 
 # Create worktree directory if needed
 mkdir -p .dev/worktree
 
 # Create the worktree
-git worktree add "$WORKTREE_PATH" -b "$BRANCH_NAME" "origin/$BASE_BRANCH"
-
-echo ""
-echo "✓ Worktree created successfully!"
+if git worktree add "$WORKTREE_PATH" -b "$BRANCH_NAME" "origin/$BASE_BRANCH"; then
+    print_success "Worktree created successfully!"
+else
+    print_error "Failed to create worktree"
+    exit 1
+fi
 
 # Install Git hooks in the worktree
 echo ""
-echo "Installing Git hooks..."
+print_info "Installing Git hooks..."
 cd "$WORKTREE_PATH"
 if [ -f ".github/scripts/install-hooks.sh" ]; then
     if .github/scripts/install-hooks.sh > /dev/null 2>&1; then
-        echo "✓ Git hooks installed (pre-push validation enabled)"
+        print_success "Git hooks installed (pre-push validation enabled)"
     else
-        echo "⚠ Could not install Git hooks (continuing anyway)"
+        print_warning "Could not install Git hooks (continuing anyway)"
     fi
 else
-    echo "⚠ Hook installation script not found (skipping)"
+    print_warning "Hook installation script not found (skipping)"
 fi
 cd - > /dev/null
 
-# Preview environment (future feature)
-if [ "$ENABLE_PREVIEW" = true ]; then
+# Preview environment setup
+if [ "$CREATE_PREVIEW" = true ]; then
     echo ""
-    echo "⚠ Preview environment flag detected"
-    echo "ℹ Preview environment integration is planned for future release"
-    echo "ℹ Currently, you can manually deploy to Supabase preview branches"
+    print_info "Setting up preview environment..."
+    if command -v supabase &> /dev/null; then
+        print_warning "Preview environment creation requires Supabase project credentials"
+        print_warning "This feature is planned but not yet implemented"
+        print_warning "See docs/CI_WORKTREE_INTEGRATION.md for details"
+    else
+        print_warning "Supabase CLI not found - skipping preview environment"
+        print_info "Install: https://supabase.com/docs/guides/cli"
+    fi
 fi
 
 echo ""
@@ -95,33 +163,13 @@ echo ""
 # Run template setup script if it exists
 TEMPLATE_SETUP=".dev/worktree-templates/${TYPE}/setup.sh"
 if [ -f "$TEMPLATE_SETUP" ]; then
-    echo "Running $TYPE template setup..."
+    print_info "Running $TYPE template setup..."
     echo ""
     (cd "$WORKTREE_PATH" && bash "../../worktree-templates/${TYPE}/setup.sh")
-else
-    echo "Next steps:"
-    echo "  cd $WORKTREE_PATH"
-    echo "  # Make your changes"
-    echo "  git add ."
-    echo "  git commit -m \"Description of changes\""
-    echo "  git push -u origin $BRANCH_NAME"
-    echo "  gh pr create --base $BASE_BRANCH"
-fi
-# Preview environment setup
-if [ "$CREATE_PREVIEW" = true ]; then
-    echo "Setting up preview environment..."
-    if command -v supabase &> /dev/null; then
-        echo "⚠ Preview environment creation requires Supabase project credentials"
-        echo "⚠ This feature is planned but not yet implemented"
-        echo "⚠ See docs/CI_WORKTREE_INTEGRATION.md for details"
-    else
-        echo "⚠ Supabase CLI not found - skipping preview environment"
-        echo "⚠ Install: https://supabase.com/docs/guides/cli"
-    fi
-    echo ""
 fi
 
-echo "Next steps:"
+echo ""
+print_header "Next steps:"
 echo "  cd $WORKTREE_PATH"
 echo "  # Make your changes"
 echo "  git add ."
@@ -132,5 +180,5 @@ echo "  # Push (pre-push hook will run CI checks automatically)"
 echo "  git push -u origin $BRANCH_NAME"
 echo "  gh pr create --base $BASE_BRANCH"
 echo ""
-echo "Optional: Run CI checks before pushing:"
-echo "  .github/scripts/ci-worktree.sh"
+print_info "Docker ports are shared across all worktrees (same Supabase instance)"
+print_info "Worktrees share .git directory but have separate working trees"
