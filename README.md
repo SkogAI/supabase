@@ -466,12 +466,27 @@ User → Supabase → ZITADEL (IdP) → Authentication → User Profile in Supab
 - Configure Supabase Auth (GoTrue) with SAML support
 - Set up Kong API Gateway routes for SAML endpoints
 - Register ZITADEL as trusted Identity Provider via Admin API
+- Configure Supabase Auth with SAML provider
+- Import ZITADEL SAML metadata
 - Test SSO authentication flow
-- Deploy to production
 
 **📖 Complete Guides**: 
 - **Phase 1**: [docs/ZITADEL_SAML_IDP_SETUP.md](docs/ZITADEL_SAML_IDP_SETUP.md) - ZITADEL IdP configuration
 - **Phase 2**: [docs/SUPABASE_SAML_SP_CONFIGURATION.md](docs/SUPABASE_SAML_SP_CONFIGURATION.md) - Supabase SP configuration
+**Phase 3: Testing & Validation** ✅ Complete
+- Test SAML authentication flow end-to-end
+- Validate user provisioning and attribute mapping
+- Security testing and compliance checks
+
+**Phase 4: Production Deployment** ✅ Complete
+- Production infrastructure setup
+- SSL/TLS certificate configuration
+- Security hardening and monitoring
+- Production deployment procedures
+
+**📖 Documentation**:
+- [Phase 1: ZITADEL IdP Setup](docs/ZITADEL_SAML_IDP_SETUP.md) - Configure ZITADEL as SAML Identity Provider
+- [Phase 4: Production Deployment](docs/ZITADEL_SAML_PRODUCTION_DEPLOYMENT.md) - Deploy SAML SSO to production
 
 ### Authentication Configuration
 

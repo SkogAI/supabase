@@ -10,6 +10,8 @@ Complete configuration guide for CI/CD, secrets management, and deployment workf
 - [Local Development](#local-development)
 - [Deployment Process](#deployment-process)
 - [Monitoring & Maintenance](#monitoring--maintenance)
+- [Security Best Practices](#security-best-practices)
+- [SAML SSO Production Deployment](#saml-sso-production-deployment)
 - [AI Agent Integration (MCP)](#ai-agent-integration-mcp)
 
 ---
@@ -387,6 +389,8 @@ gh run view <run-id> --log | grep -i error
 - Use strong database passwords
 - Rotate secrets periodically
 - Enable MFA on GitHub and Supabase accounts
+- Use HTTPS in production environments
+- Enable audit logging for authentication events
 
 ### ❌ DON'T
 
@@ -397,6 +401,69 @@ gh run view <run-id> --log | grep -i error
 - Deploy without reviewing changes
 - Use `--no-verify` flags without reason
 - Share access tokens publicly
+- Use HTTP for production SAML endpoints
+
+---
+
+## SAML SSO Production Deployment
+
+For self-hosted Supabase instances with ZITADEL SAML SSO integration:
+
+### Quick Reference
+
+| Phase | Status | Documentation |
+|-------|--------|---------------|
+| Phase 1: ZITADEL Setup | ✅ Complete | [ZITADEL IdP Setup](docs/ZITADEL_SAML_IDP_SETUP.md) |
+| Phase 2: Supabase Config | ✅ Complete | Issue #70 |
+| Phase 3: Testing | ✅ Complete | Issue #71 |
+| Phase 4: Production | ✅ Complete | [Production Deployment](docs/ZITADEL_SAML_PRODUCTION_DEPLOYMENT.md) |
+
+### Production Deployment Checklist
+
+Before deploying SAML SSO to production:
+
+- [ ] SSL/TLS certificates obtained and configured
+- [ ] Domain name configured with DNS
+- [ ] Production ZITADEL instance configured
+- [ ] SAML private keys generated and secured
+- [ ] Environment variables configured (see `.env.example`)
+- [ ] Firewall rules configured (ports 80, 443)
+- [ ] Reverse proxy (nginx/Traefik) configured
+- [ ] Monitoring and alerting set up
+- [ ] Backup procedures tested
+- [ ] Rollback plan documented
+
+### Key Environment Variables
+
+```bash
+# Required for SAML SSO
+GOTRUE_SAML_ENABLED=true
+GOTRUE_SAML_PRIVATE_KEY=<base64-encoded-key>
+GOTRUE_SITE_URL=https://your-domain.com
+GOTRUE_URI_ALLOW_LIST=https://your-domain.com
+```
+
+### Security Requirements
+
+- **HTTPS Only**: All production SAML endpoints must use HTTPS
+- **Certificate Rotation**: Monitor SAML certificate expiration
+- **Session Timeouts**: Configure appropriate JWT expiration (`GOTRUE_JWT_EXP=3600`)
+- **Rate Limiting**: Enable rate limiting on Kong API Gateway
+- **Audit Logging**: Enable authentication audit logs in ZITADEL
+
+### Complete Guide
+
+See [docs/ZITADEL_SAML_PRODUCTION_DEPLOYMENT.md](docs/ZITADEL_SAML_PRODUCTION_DEPLOYMENT.md) for:
+
+- Infrastructure setup and provisioning
+- SSL/TLS configuration with Let's Encrypt or commercial certificates
+- Nginx reverse proxy configuration
+- Production environment variables
+- Docker Compose production configuration
+- Security hardening procedures
+- Monitoring and alerting setup
+- Deployment and rollback procedures
+- Troubleshooting guide
 
 ---
 
