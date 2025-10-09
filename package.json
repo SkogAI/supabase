@@ -31,6 +31,11 @@
     "test:saml": "./scripts/test_saml.sh",
     "test:saml:endpoints": "./scripts/test_saml_endpoints.sh",
     "test:saml:logs": "./scripts/check_saml_logs.sh",
+    "test:storage": "supabase db execute --file tests/storage_test_suite.sql",
+    "test:connection": "bash scripts/test-connection.sh",
+    "test:db-health": "bash scripts/check-db-health.sh",
+    "diagnose:connection": "supabase db execute --file tests/connection_diagnostics.sql",
+    "diagnose:pool": "supabase db execute --file tests/pool_monitoring.sql",
     "dev": "npm-run-all --parallel db:start functions:serve",
     "setup": "npm run db:start && npm run types:generate"
   },
