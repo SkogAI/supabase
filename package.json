@@ -28,6 +28,8 @@
     "test:realtime": "cd examples/realtime && npm install && npm run test",
     "examples:realtime": "cd examples/realtime && npm install",
     "test:rls": "supabase db execute --file tests/rls_test_suite.sql",
+    "test:profiles": "supabase db execute --file tests/profiles_test_suite.sql",
+    "test:storage-buckets": "supabase db execute --file tests/storage_buckets_test_suite.sql",
     "test:saml": "./scripts/test_saml.sh",
     "test:saml:endpoints": "./scripts/test_saml_endpoints.sh",
     "test:saml:logs": "./scripts/check_saml_logs.sh",

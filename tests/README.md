@@ -32,15 +32,23 @@ This directory contains SQL test scripts and diagnostic tools to validate databa
 
 Tests Row Level Security policies to ensure proper access control.
 
-### 2. Storage Tests (`storage_test_suite.sql`)
+### 2. Profiles Tests (`profiles_test_suite.sql`) 🆕
+
+Comprehensive tests for the profiles table including schema validation, constraints, RLS policies, triggers, and user permissions. Validates profile creation, updates, username uniqueness, and cascade delete behavior.
+
+### 3. Storage Tests (`storage_test_suite.sql`)
 
 Tests storage bucket policies and file access permissions.
 
-### 3. Connection Diagnostics (`connection_diagnostics.sql`)
+### 4. Storage Buckets Tests (`storage_buckets_test_suite.sql`) 🆕
+
+Tests for storage bucket configuration including bucket existence, size limits, MIME type restrictions, and RLS policies. To be used after implementing Issue #142.
+
+### 5. Connection Diagnostics (`connection_diagnostics.sql`)
 
 Comprehensive diagnostic tests for database connectivity and configuration.
 
-### 4. Pool Monitoring (`pool_monitoring.sql`)
+### 6. Pool Monitoring (`pool_monitoring.sql`)
 
 Real-time monitoring of connection pool usage and health.
 
@@ -68,8 +76,14 @@ supabase db execute --file tests/ai_agent_authentication_test.sql
 # Run RLS tests
 npm run test:rls
 
+# Run profiles tests
+npm run test:profiles
+
 # Run storage tests
 npm run test:storage
+
+# Run storage buckets tests (after Issue #142)
+npm run test:storage-buckets
 
 # Run connection diagnostics
 npm run diagnose:connection
@@ -139,6 +153,19 @@ The test suite includes:
 6. **Write Operation Tests** - Verifies anonymous users cannot modify data
 7. **Cross-User Access** - Ensures users can't access other users' private data
 8. **Service Role Bypass** - Confirms admins can perform any operation
+
+### Profiles Tests 🆕
+
+1. **Schema Validation** - Verifies all required columns exist (id, username, full_name, avatar_url, website, updated_at)
+2. **Constraints** - Tests primary key, foreign key to auth.users, username uniqueness, and minimum length
+3. **RLS Enabled** - Verifies RLS is enabled with adequate policies
+4. **Profile Creation Trigger** - Tests handle_new_user function and trigger
+5. **Service Role Access** - Verifies full admin access to all profiles
+6. **Authenticated Permissions** - Tests users can view all but only update own profile
+7. **Anonymous Permissions** - Tests read-only access for unauthenticated users
+8. **Username Constraints** - Tests uniqueness and minimum length enforcement
+9. **Updated Timestamp** - Tests automatic updated_at trigger
+10. **Cascade Delete** - Verifies profiles are deleted when auth.users are deleted
 
 ### Storage Tests
 
