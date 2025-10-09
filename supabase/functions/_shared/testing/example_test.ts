@@ -16,6 +16,12 @@ import {
   testMessages,
   testUrls,
   testUsers,
+  testUsers,
+  testMessages,
+  testHeaders,
+  testUrls,
+  generateTestJWT,
+  retry,
   waitFor,
 } from "./fixtures.ts";
 
@@ -26,6 +32,7 @@ import {
   mockOpenAIResponse,
   mockOpenRouterResponse,
   MockSupabaseClient,
+  createMockResponse,
 } from "./mocks.ts";
 
 // Import helpers
@@ -37,6 +44,13 @@ import {
   testConcurrent,
   testCORS,
   testFetch,
+  testFetch,
+  testCORS,
+  measureResponseTime,
+  testConcurrent,
+  assertJsonStructure,
+  generateTestData,
+  assertResponse,
   testPatterns,
   waitForCondition,
 } from "./helpers.ts";
@@ -61,6 +75,7 @@ Deno.test("example: mock fetch response", async () => {
     "https://api.example.com/data",
     { message: "success", data: [1, 2, 3] },
     200,
+    200
   );
 
   // Use the mock
@@ -76,6 +91,7 @@ Deno.test("example: mock OpenAI API", () => {
   const response = mockOpenAIResponse("Hello, world!") as {
     choices: Array<{ message: { content: string } }>;
   };
+  const response = mockOpenAIResponse("Hello, world!");
 
   assertExists(response.choices);
   assertEquals(response.choices[0].message.content, "Hello, world!");
@@ -100,6 +116,10 @@ Deno.test("example: mock Supabase client", async () => {
 
   assertEquals(error, null);
   assertEquals((data as { name: string }).name, "Alice");
+    .single();
+
+  assertEquals(error, null);
+  assertEquals(data.name, "Alice");
 });
 
 // Example 5: Generate test JWT
@@ -219,6 +239,13 @@ Deno.test("example: retry mechanism", async () => {
     3,
     10,
   );
+  const result = await retry(async () => {
+    attempts++;
+    if (attempts < 2) {
+      throw new Error("Simulated failure");
+    }
+    return "success";
+  }, 3, 10);
 
   assertEquals(result, "success");
   assertEquals(attempts, 2);
@@ -294,6 +321,7 @@ Deno.test({
     const { hasError, errorMessage } = await testPatterns.errorHandling(
       "hello-world",
       { invalid: "data" },
+      { invalid: "data" }
     );
 
     // Verify error is handled gracefully
@@ -330,6 +358,7 @@ Deno.test("example: create custom mock response", () => {
     { custom: "data" },
     201,
     { "X-Custom-Header": "value" },
+    { "X-Custom-Header": "value" }
   );
 
   assertEquals(mockResponse.status, 201);

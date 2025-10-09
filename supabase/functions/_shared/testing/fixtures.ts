@@ -134,6 +134,7 @@ export function generateTestJWT(userId: string): string {
       role: "authenticated",
       exp: Math.floor(Date.now() / 1000) + 3600,
     }),
+    })
   );
   return `${header}.${payload}.test_signature`;
 }
@@ -200,6 +201,7 @@ export const testUrls = {
  * Wait helper for async operations
  */
 export function waitFor(ms: number): Promise<void> {
+export async function waitFor(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
