@@ -1,0 +1,46 @@
+[sqlfluff]
+# SQLFluff configuration for Supabase (PostgreSQL) project
+# See: https://docs.sqlfluff.com/en/stable/configuration.html
+
+# Supabase uses PostgreSQL
+dialect = postgres
+
+# Template settings
+templater = raw
+
+# Rule exclusions
+exclude_rules = L034,L036
+
+# File size limit for large migrations (in bytes)
+# Supabase migrations can be large, especially for schema dumps
+large_file_skip_byte_limit = 50000
+
+# Line length
+max_line_length = 120
+
+# Layout and indentation
+[sqlfluff:indentation]
+indent_unit = space
+tab_space_size = 4
+
+[sqlfluff:layout:type:comma]
+line_position = trailing
+
+# Linter settings
+[sqlfluff:rules]
+capitalisation_policy = lower
+
+[sqlfluff:rules:capitalisation.keywords]
+capitalisation_policy = lower
+
+[sqlfluff:rules:capitalisation.identifiers]
+capitalisation_policy = lower
+
+[sqlfluff:rules:capitalisation.functions]
+capitalisation_policy = lower
+
+[sqlfluff:rules:capitalisation.literals]
+capitalisation_policy = lower
+
+[sqlfluff:rules:capitalisation.types]
+capitalisation_policy = lower

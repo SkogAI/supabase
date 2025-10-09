@@ -84,6 +84,16 @@ npm run test:realtime
 npm run lint:sql
 ```
 
+### Development Dependencies
+
+```bash
+# Install Python development dependencies (sqlfluff for SQL linting)
+pip install -r requirements-dev.txt
+
+# Or install with pipx for isolated environment
+pipx install sqlfluff
+```
+
 ## Architecture
 
 ### Directory Structure

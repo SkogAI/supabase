@@ -65,7 +65,7 @@ The `ci-worktree.sh` script runs the following checks:
 ### 2. SQL Linting
 - Lints all migration files
 - Checks for syntax errors and anti-patterns
-- **Requires:** sqlfluff (`pip install sqlfluff`)
+- **Requires:** sqlfluff (`pip install -r requirements-dev.txt`)
 
 ### 3. Migration Validation
 - Verifies migration file syntax
@@ -313,7 +313,10 @@ npm run ci:worktree
 
 **Solution:**
 ```bash
-# Install sqlfluff
+# Install Python development dependencies
+pip install -r requirements-dev.txt
+
+# Or install sqlfluff directly
 pip install sqlfluff
 
 # Or with pipx
