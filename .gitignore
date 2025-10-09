@@ -103,3 +103,4 @@ docker-compose.override.yml
 *.pid.lock
 tmp
 .dev/worktree
+.claude/data/sessions
