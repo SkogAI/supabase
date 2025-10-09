@@ -10,6 +10,7 @@ supabase/
 ├── migrations/           # Database schema migrations (timestamped SQL files)
 ├── functions/            # Edge Functions (Deno/TypeScript)
 ├── seed.sql             # Development seed data
+├── seed.sql             # Development seed data (this file)
 └── README.md            # This file
 ```
 
@@ -60,6 +61,8 @@ When a user is inserted into `auth.users`, the `handle_new_user()` trigger autom
 3. Links the profile to the auth user via the user's UUID
 
 The `bio` field is then populated via UPDATE statements since it's not stored in metadata. This approach matches production behavior where Supabase Auth creates profiles automatically on signup.
+- User metadata including username and full_name
+- Creation dates spread over 30 days for realistic testing
 
 ### 🧪 Using Test Users for RLS Testing
 
@@ -100,6 +103,8 @@ This will:
 2. Create a fresh database
 3. Run all migrations in order (including trigger creation)
 4. Load the seed data (which triggers profile auto-creation)
+3. Run all migrations in order
+4. Load the seed data
 5. Display a summary of loaded data
 
 ### 📋 Seed Data Verification

@@ -146,6 +146,127 @@ npx supabase bootstrap
 ```
 
 The bootstrap command will guide you through the process of setting up a Supabase project using one of the [starter](https://github.com/supabase-community/supabase-samples/blob/main/samples.json) templates.
+This will:
+- Check all prerequisites
+- Create `.env` file
+- Install dependencies
+- Start Supabase services
+- Generate TypeScript types
+- Show access information
+
+### Manual Setup
+
+1. **Prerequisites**
+   - [Docker Desktop](https://www.docker.com/products/docker-desktop) (must be running)
+   - [Supabase CLI](https://supabase.com/docs/guides/cli/getting-started)
+   - [Node.js 18+](https://nodejs.org/) (optional, for TypeScript types)
+   - [Deno 2.x](https://deno.land/) (optional, for edge functions)
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Setup environment**
+   ```bash
+   cp .env.example .env
+   # Edit .env and add your API keys (optional for local dev)
+   # For OpenAI integration, see OPENAI_SETUP.md
+   ```
+
+4. **Start Supabase**
+   ```bash
+   npm run db:start
+   # OR
+   ./scripts/dev.sh
+   ```
+
+5. **Access local services**
+   - 🎨 **Studio UI**: http://localhost:8000
+   - 🔌 **API**: http://localhost:8000
+   - 🗄️ **Database**: `postgresql://postgres:postgres@localhost:54322/postgres`
+
+## 📁 Project Structure
+
+```
+.
+├── supabase/
+│   ├── README.md                # Supabase directory documentation
+│   ├── config.toml              # Supabase configuration
+│   ├── migrations/              # Database migrations (timestamped SQL)
+│   │   └── 20251005065505_initial_schema.sql
+│   ├── functions/               # Edge functions (Deno/TypeScript)
+│   │   ├── README.md
+│   │   └── hello-world/
+│   │       ├── index.ts         # Function code
+│   │       └── test.ts          # Function tests
+│   └── seed.sql                 # Development seed data (see supabase/README.md)
+├── types/
+│   └── database.ts              # Auto-generated TypeScript types
+├── scripts/
+│   ├── setup.sh                 # Automated setup script
+│   ├── dev.sh                   # Quick dev start
+│   └── reset.sh                 # Database reset
+├── .github/workflows/           # CI/CD pipelines
+│   ├── deploy.yml               # Auto deployment
+│   ├── pr-checks.yml            # PR validation
+│   ├── migrations-validation.yml
+│   ├── edge-functions-test.yml
+│   ├── schema-lint.yml
+│   ├── security-scan.yml
+│   ├── type-generation.yml
+│   ├── performance-test.yml
+│   ├── backup.yml
+│   └── dependency-updates.yml
+├── DEVOPS.md                    # Complete DevOps guide
+├── QUICKSTART_OPENAI.md         # Quick OpenAI setup (5 min)
+├── OPENAI_SETUP.md              # Detailed OpenAI guide
+├── package.json                 # npm scripts
+└── .env.example                 # Environment template
+```
+
+## 🤖 AI Integration
+
+Integrate AI providers with Supabase for AI-powered features:
+
+- **Studio AI Features**: SQL generation, query assistance (OpenAI)
+- **Edge Functions**: Custom AI endpoints (OpenAI, OpenRouter, and more)
+
+**OpenRouter**: Access 100+ AI models (GPT-4, Claude, Gemini, Llama) through one API  
+**Quick Start**: See [QUICKSTART_OPENAI.md](QUICKSTART_OPENAI.md) for 5-minute setup  
+**Full Guide**: See [OPENAI_SETUP.md](OPENAI_SETUP.md) for complete documentation  
+**Examples**: 
+- [openai-chat](supabase/functions/openai-chat) - OpenAI direct integration
+- [openrouter-chat](supabase/functions/openrouter-chat) - OpenRouter for multiple models
+
+## 💻 Development Workflow
+
+### Database Migrations
+
+```bash
+# Create a new migration
+npm run migration:new <migration_name>
+# OR
+supabase migration new <migration_name>
+
+# Apply all migrations (resets database with seed data)
+npm run db:reset
+# OR
+./scripts/reset.sh
+
+# Check migration status
+npm run db:status
+
+# Generate SQL diff of current changes
+npm run db:diff
+```
+
+**📖 Documentation:**
+- **Migrations**: See `supabase/migrations/README.md`
+- **Seed Data**: See `supabase/README.md` (includes test users, credentials, and sample data)
+- **Types**: Run `npm run types:generate` after schema changes
+
+### Edge Functions
 
 ## Docs
 
