@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+
+# Script to delete merged claude/* branches both locally and remotely
+# This helps keep the repository clean by removing branches that have been merged
+
+set -e
+
+main() {
+    echo "🧹 Cleaning up merged claude/* branches..."
+    echo ""
+
+    # Fetch latest remote state and prune deleted branches
+    echo "📡 Fetching latest remote state..."
+    git fetch --prune origin
+
+    # Get the default branch (usually main or master)
+    default_branch=$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)
+    echo "ℹ️  Default branch: $default_branch"
+    echo ""
+
+    # Get all claude/* branches (both local and remote)
+    local_branches=$(git branch --list 'claude/*' --format='%(refname:short)' || true)
+    remote_branches=$(git branch -r --list 'origin/claude/*' --format='%(refname:short)' | sed 's|origin/||' || true)
+
+    # Combine and deduplicate
+    all_branches=$(echo -e "$local_branches\n$remote_branches" | sort -u | grep -v '^$' || true)
+
+    if [ -z "$all_branches" ]; then
+        echo "✨ No claude/* branches found. Repository is already clean!"
+        exit 0
+    fi
+
+    deleted_count=0
+    skipped_count=0
+
+    # Check each branch to see if it's merged
+    while IFS= read -r branch; do
+        [ -z "$branch" ] && continue
+
+        echo "🔍 Checking branch: $branch"
+
+        # Check if branch is merged into default branch
+        # Using git branch --merged is more reliable than git log
+        if git branch -r --merged "origin/$default_branch" | grep -q "origin/$branch"; then
+            echo "  ✓ Branch is merged into $default_branch"
+
+            # Delete local branch if it exists
+            if git show-ref --verify --quiet "refs/heads/$branch"; then
+                echo "  🗑️  Deleting local branch..."
+                git branch -d "$branch" 2>/dev/null || git branch -D "$branch"
+            fi
+
+            # Delete remote branch if it exists
+            if git ls-remote --heads origin "$branch" | grep -q "$branch"; then
+                echo "  🗑️  Deleting remote branch..."
+                git push origin --delete "$branch" 2>/dev/null || echo "  ⚠️  Could not delete remote branch (may already be deleted)"
+            fi
+
+            echo "  ✅ Cleaned up: $branch"
+            ((deleted_count++))
+        else
+            echo "  ⏭️  Skipping (not merged): $branch"
+            ((skipped_count++))
+        fi
+        echo ""
+    done <<< "$all_branches"
+
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "✨ Cleanup complete!"
+    echo "   Deleted: $deleted_count branch(es)"
+    echo "   Skipped: $skipped_count unmerged branch(es)"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+}
+
+main "$@"

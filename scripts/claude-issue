@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# claude-issue: Quick GitHub issue creator with @claude auto-mention
+# Usage: claude-issue "Your issue title/description"
+
+set -e
+
+# Check if gh CLI is installed
+if ! command -v gh &> /dev/null; then
+    echo "Error: GitHub CLI (gh) is not installed."
+    echo "Install it from: https://cli.github.com/"
+    exit 1
+fi
+
+# Check if we're in a git repository
+if ! git rev-parse --git-dir > /dev/null 2>&1; then
+    echo "Error: Not in a git repository."
+    exit 1
+fi
+
+# Get the issue description from arguments
+if [ $# -eq 0 ]; then
+    echo "Usage: claude-issue \"Your issue title/description\""
+    echo ""
+    echo "Example:"
+    echo "  claude-issue \"fix the auth bug in login flow\""
+    echo ""
+    echo "This will create a GitHub issue with @claude mentioned in the body,"
+    echo "which triggers the Claude Code workflow automatically."
+    exit 1
+fi
+
+# Combine all arguments into the issue title
+ISSUE_TITLE="$*"
+
+# Create the issue with @claude in the body
+# The body just contains @claude to trigger the workflow
+# The title contains the actual request
+gh issue create \
+    --title "$ISSUE_TITLE" \
+    --body "@claude
+
+$ISSUE_TITLE"
+
+echo ""
+echo "✓ Issue created with @claude mentioned!"
+echo "The Claude Code workflow will begin processing shortly."

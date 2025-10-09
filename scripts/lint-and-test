@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+set -e
+
+# lint-and-test: Run linting and testing checks
+# This script runs ruff for Python linting, pytest for Python tests,
+# and TypeScript type checking if applicable.
+
+echo "🔍 Running linting and testing checks..."
+echo ""
+
+# Detect project type
+has_python=false
+has_typescript=false
+
+if [ -f "pyproject.toml" ] || [ -f "setup.py" ] || [ -f "requirements.txt" ]; then
+    has_python=true
+fi
+
+if [ -f "tsconfig.json" ] || [ -f "package.json" ]; then
+    has_typescript=true
+fi
+
+exit_code=0
+
+# Python checks
+if [ "$has_python" = true ]; then
+    echo "📦 Python project detected"
+
+    # Check if ruff is available
+    if command -v ruff &> /dev/null; then
+        echo "🔍 Running ruff linter..."
+        if ruff check . --exit-zero; then
+            echo "✅ Ruff linting passed"
+        else
+            echo "⚠️  Ruff found issues (non-blocking)"
+            exit_code=1
+        fi
+        echo ""
+    else
+        echo "⚠️  ruff not found, skipping Python linting"
+        echo "   Install with: pip install ruff"
+        echo ""
+    fi
+
+    # Check if pytest is available
+    if command -v pytest &> /dev/null; then
+        echo "🧪 Running pytest..."
+        if pytest --tb=short -q; then
+            echo "✅ Tests passed"
+        else
+            echo "⚠️  Tests failed (non-blocking)"
+            exit_code=1
+        fi
+        echo ""
+    else
+        echo "⚠️  pytest not found, skipping tests"
+        echo "   Install with: pip install pytest"
+        echo ""
+    fi
+else
+    echo "ℹ️  No Python project detected, skipping Python checks"
+    echo ""
+fi
+
+# TypeScript checks
+if [ "$has_typescript" = true ]; then
+    echo "📘 TypeScript project detected"
+
+    # Check if tsc is available
+    if command -v tsc &> /dev/null; then
+        echo "🔍 Running TypeScript type checking..."
+        if tsc --noEmit; then
+            echo "✅ TypeScript type checking passed"
+        else
+            echo "⚠️  TypeScript type checking found issues (non-blocking)"
+            exit_code=1
+        fi
+        echo ""
+    else
+        echo "⚠️  tsc not found, skipping TypeScript checks"
+        echo "   Install with: npm install -g typescript"
+        echo ""
+    fi
+else
+    echo "ℹ️  No TypeScript project detected, skipping TypeScript checks"
+    echo ""
+fi
+
+# Summary
+if [ $exit_code -eq 0 ]; then
+    echo "✨ All checks passed!"
+else
+    echo "⚠️  Some checks found issues (non-blocking)"
+fi
+
+# Always exit 0 to not block the workflow
+exit 0

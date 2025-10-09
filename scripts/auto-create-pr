@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+#
+# Auto-create PR for Claude branches
+#
+# This script demonstrates the pattern for automatically creating PRs
+# when Claude finishes tasks. It should be integrated into the centralized
+# workflow at SkogAI/.github/.github/workflows/claude-workflow-manager.yml
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+info() {
+  echo -e "${GREEN}[INFO]${NC} $*"
+}
+
+warn() {
+  echo -e "${YELLOW}[WARN]${NC} $*"
+}
+
+error() {
+  echo -e "${RED}[ERROR]${NC} $*"
+}
+
+# Get current branch
+BRANCH=$(git branch --show-current)
+
+# Check if we're on a claude/* branch
+if [[ ! $BRANCH =~ ^claude/ ]]; then
+  warn "Not on a claude/* branch (current: $BRANCH)"
+  warn "Skipping auto-PR creation"
+  exit 0
+fi
+
+info "On branch: $BRANCH"
+
+# Check if there are any commits (branch exists remotely)
+if ! git rev-parse --verify "origin/$BRANCH" &>/dev/null; then
+  warn "Branch $BRANCH has not been pushed to remote"
+  warn "Skipping PR creation"
+  exit 0
+fi
+
+# Check if PR already exists for this branch
+if gh pr view &>/dev/null; then
+  PR_URL=$(gh pr view --json url -q .url)
+  PR_NUMBER=$(gh pr view --json number -q .number)
+  info "PR already exists: #$PR_NUMBER"
+  info "URL: $PR_URL"
+  echo "$PR_URL"
+  exit 0
+fi
+
+info "No existing PR found, creating new PR..."
+
+# Extract issue number from branch name (claude/issue-123-timestamp)
+ISSUE_NUM=$(echo "$BRANCH" | sed -n 's/claude\/issue-\([0-9]*\)-.*/\1/p')
+
+if [[ -z "$ISSUE_NUM" ]]; then
+  warn "Could not extract issue number from branch name: $BRANCH"
+  ISSUE_TITLE="Updates from Claude"
+  PR_BODY="## Summary
+Automated changes from Claude Code
+
+---
+Generated with [Claude Code](https://claude.ai/code)"
+else
+  info "Extracted issue number: #$ISSUE_NUM"
+
+  # Get issue title for PR title
+  ISSUE_TITLE=$(gh issue view "$ISSUE_NUM" --json title -q .title 2>/dev/null || echo "Updates from Claude")
+  info "Issue title: $ISSUE_TITLE"
+
+  # Create PR body with issue reference
+  PR_BODY="## Summary
+Changes made by Claude Code to address issue #${ISSUE_NUM}
+
+## Related Issue
+Closes #${ISSUE_NUM}
+
+---
+Generated with [Claude Code](https://claude.ai/code)"
+fi
+
+# Create the PR
+info "Creating PR with title: $ISSUE_TITLE"
+
+PR_URL=$(gh pr create \
+  --title "$ISSUE_TITLE" \
+  --body "$PR_BODY" \
+  --json url -q .url)
+
+if [[ -n "$PR_URL" ]]; then
+  info "Successfully created PR!"
+  info "URL: $PR_URL"
+  echo "$PR_URL"
+  exit 0
+else
+  error "Failed to create PR"
+  exit 1
+fi
