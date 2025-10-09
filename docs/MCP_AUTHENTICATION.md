@@ -723,6 +723,7 @@ async function queryWithRetry(query, maxRetries = 3) {
 - [MCP Server Architecture](./MCP_SERVER_ARCHITECTURE.md)
 - [MCP Server Configuration](./MCP_SERVER_CONFIGURATION.md)
 - [MCP Connection Examples](./MCP_CONNECTION_EXAMPLES.md)
+- [SSL/TLS Security Guide](./MCP_SSL_TLS_SECURITY.md) - **Critical for Production**
 - [Row Level Security Policies](./RLS_POLICIES.md)
 
 ---

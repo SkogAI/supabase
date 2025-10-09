@@ -20,6 +20,19 @@ private_key.der
 private_key.base64
 private_key*.txt
 *.der
+# SSL/TLS Certificates
+certs/*.crt
+certs/*.pem
+certs/*.key
+certs/*.cer
+certs/*.der
+certs/*.p7b
+certs/*.p12
+certs/*.pfx
+certs/backup/
+# Allow certificate documentation
+!certs/README.md
+!certs/.gitignore
 
 # OS
 .DS_Store

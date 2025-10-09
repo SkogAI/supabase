@@ -1,0 +1,20 @@
+# SSL/TLS Certificates
+# Never commit actual certificates to version control
+
+# Certificate files
+*.crt
+*.pem
+*.key
+*.cer
+*.der
+*.p7b
+*.p12
+*.pfx
+
+# Certificate backups
+*.bak
+backup/
+
+# Allow documentation
+!README.md
+!.gitignore

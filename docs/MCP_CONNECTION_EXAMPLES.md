@@ -973,6 +973,7 @@ const { data } = await supabase
 - [MCP Server Architecture](./MCP_SERVER_ARCHITECTURE.md)
 - [MCP Server Configuration](./MCP_SERVER_CONFIGURATION.md)
 - [MCP Authentication Strategies](./MCP_AUTHENTICATION.md)
+- [SSL/TLS Security Guide](./MCP_SSL_TLS_SECURITY.md) - **Critical for Production**
 
 ---
 
