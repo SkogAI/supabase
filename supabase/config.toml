@@ -82,17 +82,9 @@ enabled = true
 # The maximum length in bytes of HTTP request headers. (default: 4096)
 # max_header_length = 4096
 
-# Rate limiting for realtime connections
-# Maximum number of concurrent connections per client IP
-max_connections = 100
-# Maximum number of channels per connection
-max_channels_per_client = 100
-# Maximum number of joins per second per client
-max_joins_per_second = 500
-# Maximum number of messages per second per client
-max_messages_per_second = 1000
-# Maximum number of events per second per channel
-max_events_per_second = 100
+# Note: Rate limiting configuration moved to Supabase Dashboard (Cloud)
+# or environment variables (Self-hosted). Not supported in config.toml for CLI v2.34.3
+# See: https://supabase.com/docs/guides/realtime/rate-limits
 
 [studio]
 enabled = true
@@ -319,14 +311,8 @@ enabled = false
 # Obtain from https://clerk.com/setup/supabase
 # domain = "example.clerk.accounts.dev"
 
-# OAuth server configuration
-[auth.oauth_server]
-# Enable OAuth server functionality
-enabled = false
-# Path for OAuth consent flow UI
-authorization_url_path = "/oauth/consent"
-# Allow dynamic client registration
-allow_dynamic_registration = false
+# Note: OAuth server configuration not supported in CLI v2.34.3
+# Configure OAuth via Supabase Dashboard or upgrade CLI to v2.48+
 
 [edge_runtime]
 enabled = true
