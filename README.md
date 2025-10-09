@@ -468,6 +468,8 @@ User → Supabase → ZITADEL (IdP) → Authentication → User Profile in Supab
 - Register ZITADEL as trusted Identity Provider via Admin API
 - Configure Supabase Auth with SAML provider
 - Import ZITADEL SAML metadata
+- Configure GoTrue (Supabase Auth) with SAML support
+- Register ZITADEL as trusted Identity Provider
 - Test SSO authentication flow
 
 **📖 Complete Guides**: 
@@ -487,6 +489,9 @@ User → Supabase → ZITADEL (IdP) → Authentication → User Profile in Supab
 **📖 Documentation**:
 - [Phase 1: ZITADEL IdP Setup](docs/ZITADEL_SAML_IDP_SETUP.md) - Configure ZITADEL as SAML Identity Provider
 - [Phase 4: Production Deployment](docs/ZITADEL_SAML_PRODUCTION_DEPLOYMENT.md) - Deploy SAML SSO to production
+**📖 Complete Guides**:
+- **Phase 1**: [docs/ZITADEL_SAML_IDP_SETUP.md](docs/ZITADEL_SAML_IDP_SETUP.md) - Configure ZITADEL as Identity Provider
+- **Phase 2**: [docs/SUPABASE_SAML_CONFIGURATION.md](docs/SUPABASE_SAML_CONFIGURATION.md) - Configure Supabase to use SAML SSO
 
 ### Authentication Configuration
 
