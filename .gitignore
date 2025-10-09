@@ -105,4 +105,4 @@ tmp
 .dev/worktree
 .claude/data/sessions
 node_modules/.package-lock.json
-node_modules
+node_modules/.bin
