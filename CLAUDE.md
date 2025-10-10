@@ -2,6 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Quick Links
+
+- **[Quickstart Testing Guide](QUICKSTART_TESTING.md)** - Verify all basic features work correctly
+- **[Creating Test Issues](docs/CREATING_TEST_ISSUES.md)** - Create GitHub issues for unit tests
+
 ## Project Overview
 
 Production-ready Supabase backend with PostgreSQL database, Row Level Security (RLS), Edge Functions (Deno), Storage buckets, Realtime subscriptions, and comprehensive CI/CD pipeline. The project includes MCP (Model Context Protocol) server infrastructure for AI agent integration.
