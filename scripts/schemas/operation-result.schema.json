@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/SkogAI/supabase/schemas/operation-result",
+  "title": "Operation Result",
+  "description": "Standardized result structure for all script operations",
+  "type": "object",
+  "required": ["result"],
+  "properties": {
+    "result": {
+      "type": "object",
+      "required": ["success", "operation", "data", "error", "warnings", "metadata"],
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Whether the operation succeeded"
+        },
+        "operation": {
+          "type": ["string", "null"],
+          "description": "Name of the operation performed (null for errors)"
+        },
+        "data": {
+          "type": "object",
+          "description": "Operation-specific data (empty object for errors)"
+        },
+        "error": {
+          "oneOf": [
+            {
+              "type": "null",
+              "description": "No error (for successful operations)"
+            },
+            {
+              "type": "object",
+              "required": ["type", "message"],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "Error type identifier",
+                  "enum": [
+                    "missing_dependencies",
+                    "invalid_repository",
+                    "invalid_git_repo",
+                    "invalid_argument",
+                    "issue_not_found",
+                    "issue_create_failed",
+                    "pr_not_found",
+                    "pr_create_failed",
+                    "network_error",
+                    "permission_denied",
+                    "validation_error",
+                    "conflict_error",
+                    "unknown_error"
+                  ]
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Human-readable error message"
+                },
+                "suggestions": {
+                  "type": "array",
+                  "description": "Suggested actions to resolve the error",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "warnings": {
+          "type": "array",
+          "description": "Non-fatal warnings",
+          "items": {
+            "type": "string"
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Operation metadata",
+          "required": ["timestamp"],
+          "properties": {
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ISO 8601 timestamp of operation completion"
+            },
+            "duration": {
+              "type": "number",
+              "description": "Operation duration in seconds"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,162 @@
+#!/usr/bin/env bash
+# claude-quick-v2: Reference implementation using structured I/O
+#
+# Intelligent wrapper that creates issue OR PR based on git state
+# - If unstaged/uncommitted changes exist → create issue
+# - If clean branch → create PR
+#
+# This is a rewrite of claude-quick using the new structured I/O architecture.
+# It demonstrates:
+# - Using shared context library
+# - Outputting structured results
+# - Supporting multiple output formats (--format flag)
+# - Proper error handling with typed errors
+
+set -euo pipefail
+
+# Get the script directory for relative path resolution
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Source the structured I/O libraries
+source "$SCRIPT_DIR/lib/colors.sh"
+source "$SCRIPT_DIR/lib/context.sh"
+source "$SCRIPT_DIR/lib/result.sh"
+source "$SCRIPT_DIR/lib/format.sh"
+source "$SCRIPT_DIR/lib/gh-api.sh"
+
+# Parse format arguments first
+parse_format_args "$@"
+
+# Show usage
+show_usage() {
+    cat << EOF
+Usage: claude-quick-v2 [OPTIONS] "task description"
+
+Intelligently creates either an issue or PR based on git state:
+  • Unstaged/uncommitted changes → Creates issue
+  • Clean branch → Creates PR
+
+OPTIONS:
+  --format=FORMAT    Output format: json, compact, human, table (default: auto-detect)
+  --help             Show this help message
+
+EXAMPLES:
+  claude-quick-v2 "fix authentication bug"
+  claude-quick-v2 --format=json "review this refactoring"
+  claude-quick-v2 --format=compact "add new feature"
+
+OUTPUT:
+  When stdout is a TTY: human-readable output (default)
+  When stdout is piped: JSON output (default)
+  Use --format to override auto-detection
+
+EOF
+}
+
+# Parse arguments
+DESCRIPTION=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --help|-h)
+            show_usage
+            exit 0
+            ;;
+        --format=*|--format)
+            # Already handled by parse_format_args
+            if [[ "$1" == "--format" ]]; then
+                shift
+            fi
+            shift
+            ;;
+        *)
+            DESCRIPTION="$*"
+            break
+            ;;
+    esac
+done
+
+# Validate description
+if [ -z "$DESCRIPTION" ]; then
+    result=$(error_result "invalid_argument" \
+        "No task description provided" \
+        '{}' \
+        '["Run with --help for usage information"]')
+    format_output "$result"
+    exit 1
+fi
+
+# Get execution context
+ctx=$(get_context)
+if [ $? -ne 0 ]; then
+    format_output "$ctx"
+    exit 1
+fi
+
+# Extract context values
+current_branch=$(get_current_branch "$ctx")
+is_clean=$(get_is_clean "$ctx")
+default_branch=$(get_default_branch "$ctx")
+
+# Determine action based on git state
+ACTION=""
+REASON=""
+
+if [ "$is_clean" = "false" ]; then
+    ACTION="create_issue"
+    REASON="Detected unstaged/uncommitted changes"
+elif [ "$current_branch" = "$default_branch" ]; then
+    ACTION="create_issue"
+    REASON="On default branch ($default_branch) with clean state"
+else
+    ACTION="create_pr"
+    REASON="Clean working tree on feature branch ($current_branch)"
+fi
+
+# Perform the action
+case "$ACTION" in
+    create_issue)
+        # Create issue with @claude mention
+        issue_body="@claude
+
+$DESCRIPTION"
+
+        issue_json=$(gh_create_issue "$DESCRIPTION" "$issue_body")
+
+        if [ $? -ne 0 ]; then
+            format_output "$issue_json"
+            exit 1
+        fi
+
+        result=$(success_result "create_issue" "$issue_json")
+        result=$(add_warning "$result" "$REASON")
+        format_output "$result"
+        ;;
+
+    create_pr)
+        # Create PR body with context
+        pr_body="## Description
+
+$DESCRIPTION
+
+## Branch
+\`$current_branch\`
+
+---
+
+@claude
+
+Generated with [Claude Code](https://claude.ai/code)"
+
+        pr_json=$(gh_create_pr "$DESCRIPTION" "$pr_body" "$default_branch")
+
+        if [ $? -ne 0 ]; then
+            format_output "$pr_json"
+            exit 1
+        fi
+
+        result=$(success_result "create_pr" "$pr_json")
+        result=$(add_warning "$result" "$REASON")
+        format_output "$result"
+        ;;
+esac

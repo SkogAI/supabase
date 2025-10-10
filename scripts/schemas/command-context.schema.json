@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/SkogAI/supabase/schemas/command-context",
+  "title": "Command Context",
+  "description": "Execution context for Claude workflow scripts including repository, git, and environment information",
+  "type": "object",
+  "required": ["context"],
+  "properties": {
+    "context": {
+      "type": "object",
+      "required": ["repository", "git", "environment"],
+      "properties": {
+        "repository": {
+          "type": "object",
+          "description": "GitHub repository information",
+          "required": ["owner", "name", "fullName", "defaultBranch"],
+          "properties": {
+            "owner": {
+              "type": "string",
+              "description": "Repository owner (username or organization)"
+            },
+            "name": {
+              "type": "string",
+              "description": "Repository name"
+            },
+            "fullName": {
+              "type": "string",
+              "description": "Full repository name (owner/name)"
+            },
+            "defaultBranch": {
+              "type": "string",
+              "description": "Default branch name (usually main or master)"
+            }
+          }
+        },
+        "git": {
+          "type": "object",
+          "description": "Git repository state",
+          "required": ["currentBranch", "isClean", "hasUncommitted", "rootPath"],
+          "properties": {
+            "currentBranch": {
+              "type": "string",
+              "description": "Currently checked out branch"
+            },
+            "isClean": {
+              "type": "boolean",
+              "description": "Whether the working tree is clean (no uncommitted changes)"
+            },
+            "hasUncommitted": {
+              "type": "boolean",
+              "description": "Whether there are uncommitted changes"
+            },
+            "rootPath": {
+              "type": "string",
+              "description": "Absolute path to git repository root"
+            }
+          }
+        },
+        "environment": {
+          "type": "object",
+          "description": "Environment and tool availability",
+          "required": ["hasGhCli", "hasJq"],
+          "properties": {
+            "hasGhCli": {
+              "type": "boolean",
+              "description": "Whether GitHub CLI (gh) is installed"
+            },
+            "hasJq": {
+              "type": "boolean",
+              "description": "Whether jq JSON processor is installed"
+            },
+            "ghVersion": {
+              "type": "string",
+              "description": "GitHub CLI version"
+            }
+          }
+        }
+      }
+    }
+  }
+}

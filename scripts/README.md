@@ -15,6 +15,38 @@ Command-line tools and utility scripts for managing the Supabase project, includ
 | **Git Worktrees** | `create-all-worktrees.sh`, `create-all-worktrees-minimal.sh` |
 | **Testing** | `create-test-issues.sh`, `verify_npm_scripts.sh` |
 
+## Architecture
+
+These scripts are being migrated to a **structured I/O architecture** that provides:
+
+- **Standardized Context**: Consistent environment and repository validation
+- **Typed Results**: JSON-based result objects with proper error handling
+- **Multiple Formats**: JSON, compact, human-readable, and table outputs
+- **Composability**: Scripts can easily pipe data to each other
+- **Testability**: Mock structured data instead of complex bash output
+
+### Library Documentation
+
+See [`lib/README.md`](lib/README.md) for detailed documentation on:
+- Shared libraries (`context.sh`, `result.sh`, `format.sh`, `gh-api.sh`, `colors.sh`)
+- JSON schemas for data structures
+- Migration guide for converting scripts
+- Usage patterns and best practices
+
+### Reference Implementation
+
+`claude-quick-v2` demonstrates the new architecture:
+```bash
+# Human-readable output (TTY)
+./scripts/claude-quick-v2 "fix bug"
+
+# JSON output for piping
+./scripts/claude-quick-v2 --format=json "fix bug" | jq .
+
+# Compose with other tools
+./scripts/claude-quick-v2 --format=json "task" | jq '.result.data.number'
+```
+
 ## Installation
 
 Make scripts executable:
