@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/SkogAI/supabase/schemas/issue-pr",
+  "title": "Issue or Pull Request",
+  "description": "GitHub issue or pull request data",
+  "type": "object",
+  "required": ["number", "title", "state", "url", "author"],
+  "properties": {
+    "number": {
+      "type": "integer",
+      "description": "Issue or PR number"
+    },
+    "title": {
+      "type": "string",
+      "description": "Issue or PR title"
+    },
+    "body": {
+      "type": "string",
+      "description": "Issue or PR body content"
+    },
+    "state": {
+      "type": "string",
+      "enum": ["OPEN", "CLOSED", "MERGED"],
+      "description": "Current state"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "GitHub URL"
+    },
+    "author": {
+      "type": "object",
+      "required": ["login"],
+      "properties": {
+        "login": {
+          "type": "string",
+          "description": "Author username"
+        }
+      }
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    },
+    "headRefName": {
+      "type": "string",
+      "description": "Source branch name (PRs only)"
+    },
+    "baseRefName": {
+      "type": "string",
+      "description": "Target branch name (PRs only)"
+    },
+    "mergeable": {
+      "type": "string",
+      "enum": ["MERGEABLE", "CONFLICTING", "UNKNOWN"],
+      "description": "Merge status (PRs only)"
+    }
+  }
+}
