@@ -7,7 +7,7 @@ project_id = "SkogAI"
 [api]
 enabled = true
 # Port to use for the API URL.
-port = 8000
+port = 54321
 # Schemas to expose in your API. Tables, views and stored procedures in this schema will get API
 # endpoints. `public` and `graphql_public` schemas are included by default.
 # To expose additional schemas, add them to this list: schemas = ["public", "graphql_public", "my_schema"]
@@ -116,7 +116,7 @@ enabled = false
 # sender_name = "Admin"
 
 [storage]
-enabled = true
+enabled = false  # Temporarily disabled due to CLI v2.34.3 compatibility issue
 # The maximum file size allowed (e.g. "5MB", "500KB").
 file_size_limit = "50MiB"
 

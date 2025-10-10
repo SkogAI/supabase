@@ -73,9 +73,6 @@ INSERT INTO auth.users (
         '{"provider":"email","providers":["email"]}',
         '{"username":"alice","full_name":"Alice Johnson","avatar_url":"https://api.dicebear.com/7.x/avataaars/svg?seed=Alice"}',
         NOW() - INTERVAL '30 days',
-        '{"provider": "email", "providers": ["email"]}',
-        '{"username": "alice", "full_name": "Alice Johnson", "avatar_url": "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice"}',
-        false,
         NOW() - INTERVAL '30 days',
         '',
         '',
@@ -95,9 +92,6 @@ INSERT INTO auth.users (
         '{"provider":"email","providers":["email"]}',
         '{"username":"bob","full_name":"Bob Smith","avatar_url":"https://api.dicebear.com/7.x/avataaars/svg?seed=Bob"}',
         NOW() - INTERVAL '25 days',
-        '{"provider": "email", "providers": ["email"]}',
-        '{"username": "bob", "full_name": "Bob Smith", "avatar_url": "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob"}',
-        false,
         NOW() - INTERVAL '25 days',
         '',
         '',
@@ -117,9 +111,6 @@ INSERT INTO auth.users (
         '{"provider":"email","providers":["email"]}',
         '{"username":"charlie","full_name":"Charlie Davis","avatar_url":"https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie"}',
         NOW() - INTERVAL '20 days',
-        '{"provider": "email", "providers": ["email"]}',
-        '{"username": "charlie", "full_name": "Charlie Davis", "avatar_url": "https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie"}',
-        false,
         NOW() - INTERVAL '20 days',
         '',
         '',
@@ -128,17 +119,6 @@ INSERT INTO auth.users (
     )
 ON CONFLICT (id) DO NOTHING;
 
--- Update profile bios (profiles are already created by trigger, just add bio field)
-UPDATE public.profiles 
-SET bio = 'Software engineer and open source enthusiast. Love building with Supabase!'
-WHERE id = '00000000-0000-0000-0000-000000000001';
-
-UPDATE public.profiles 
-SET bio = 'Full-stack developer passionate about web technologies.'
-WHERE id = '00000000-0000-0000-0000-000000000002';
-
-UPDATE public.profiles 
-SET bio = 'Designer and developer hybrid. Creating beautiful UX.'
 -- Update profiles with additional bio information
 -- The profiles should have been created by the trigger, but we'll update them with more details
 UPDATE public.profiles SET
