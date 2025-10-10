@@ -182,8 +182,9 @@ USING (
 -- COMMENTS
 -- ============================================================================
 
-COMMENT ON TABLE storage.buckets IS 'Storage buckets for organizing uploaded files';
-COMMENT ON TABLE storage.objects IS 'Metadata for files stored in buckets';
+-- Note: COMMENT statements require ownership of storage.* tables
+-- These tables are owned by supabase_storage_admin, not accessible in migrations
+-- Table documentation available in Supabase docs instead
 
 -- Log migration completion
 DO $$
