@@ -1,0 +1,139 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Issue or Pull Request",
+  "description": "GitHub issue or pull request information",
+  "type": "object",
+  "oneOf": [
+    {
+      "required": ["issue"],
+      "properties": {
+        "issue": {
+          "$ref": "#/definitions/issue"
+        }
+      }
+    },
+    {
+      "required": ["pullRequest"],
+      "properties": {
+        "pullRequest": {
+          "$ref": "#/definitions/pullRequest"
+        }
+      }
+    }
+  ],
+  "definitions": {
+    "issue": {
+      "type": "object",
+      "required": ["number", "title", "state", "url"],
+      "properties": {
+        "number": {
+          "type": "integer",
+          "description": "Issue number"
+        },
+        "title": {
+          "type": "string",
+          "description": "Issue title"
+        },
+        "state": {
+          "type": "string",
+          "enum": ["OPEN", "CLOSED"],
+          "description": "Issue state"
+        },
+        "body": {
+          "type": "string",
+          "description": "Issue body text"
+        },
+        "author": {
+          "type": "object",
+          "properties": {
+            "login": {
+              "type": "string"
+            }
+          }
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Issue URL"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pullRequest": {
+      "type": "object",
+      "required": ["number", "title", "state", "url"],
+      "properties": {
+        "number": {
+          "type": "integer",
+          "description": "PR number"
+        },
+        "title": {
+          "type": "string",
+          "description": "PR title"
+        },
+        "state": {
+          "type": "string",
+          "enum": ["OPEN", "CLOSED", "MERGED"],
+          "description": "PR state"
+        },
+        "body": {
+          "type": "string",
+          "description": "PR body text"
+        },
+        "author": {
+          "type": "object",
+          "properties": {
+            "login": {
+              "type": "string"
+            }
+          }
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "PR URL"
+        },
+        "baseRefName": {
+          "type": "string",
+          "description": "Base branch name"
+        },
+        "headRefName": {
+          "type": "string",
+          "description": "Head branch name"
+        },
+        "mergeable": {
+          "type": "string",
+          "enum": ["MERGEABLE", "CONFLICTING", "UNKNOWN"],
+          "description": "Whether PR can be merged"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

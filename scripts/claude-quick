@@ -3,90 +3,187 @@
 # claude-quick: Intelligent wrapper that creates issue OR PR based on git state
 # - If unstaged/uncommitted changes exist → create issue
 # - If clean branch → create PR
+#
+# Structured I/O version with JSON output support
 
 set -e
 
 # Get the script directory for relative path resolution
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+# Load shared libraries
+# shellcheck source=lib/context.sh
+source "$SCRIPT_DIR/lib/context.sh"
+# shellcheck source=lib/result.sh
+source "$SCRIPT_DIR/lib/result.sh"
+# shellcheck source=lib/format.sh
+source "$SCRIPT_DIR/lib/format.sh"
+# shellcheck source=lib/gh-api.sh
+source "$SCRIPT_DIR/lib/gh-api.sh"
 
-# Check if gh CLI is installed
-if ! command -v gh &> /dev/null; then
-    echo -e "${RED}Error: GitHub CLI (gh) is not installed.${NC}"
-    echo "Please install it from: https://cli.github.com/"
-    exit 1
-fi
+# Parse command-line arguments
+FORMAT="auto"
+DESCRIPTION=""
 
-# Check if we're in a git repository
-if ! git rev-parse --is-inside-work-tree &> /dev/null; then
-    echo -e "${RED}Error: Not in a git repository.${NC}"
-    exit 1
-fi
+parse_args() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --format)
+                FORMAT="$2"
+                shift 2
+                ;;
+            --format=*)
+                FORMAT="${1#*=}"
+                shift
+                ;;
+            --help|-h)
+                show_help
+                exit 0
+                ;;
+            *)
+                DESCRIPTION="$*"
+                break
+                ;;
+        esac
+    done
+}
 
-# Get the task description from arguments
-if [ $# -eq 0 ]; then
-    echo -e "${RED}Error: No task description provided.${NC}"
-    echo ""
-    echo "Usage: claude-quick \"your task description\""
-    echo ""
-    echo "Examples:"
-    echo "  claude-quick \"fix authentication bug\""
-    echo "  claude-quick \"review this refactoring\""
-    echo ""
-    echo "This tool intelligently creates either an issue or PR based on git state:"
-    echo "  • Unstaged/uncommitted changes → Creates issue"
-    echo "  • Clean branch → Creates PR"
-    exit 1
-fi
+show_help() {
+    cat << EOF
+Usage: claude-quick [OPTIONS] "task description"
 
-DESCRIPTION="$*"
+Intelligently creates either an issue or PR based on git state:
+  • Unstaged/uncommitted changes → Creates issue
+  • Clean branch → Creates PR
 
-# Get the current branch
-CURRENT_BRANCH=$(git branch --show-current)
+OPTIONS:
+  --format=MODE    Output format: json, compact, human, table (default: auto)
+  -h, --help       Show this help message
 
-if [ -z "$CURRENT_BRANCH" ]; then
-    echo -e "${RED}Error: Detached HEAD state detected.${NC}"
-    echo "Please checkout a branch first."
-    exit 1
-fi
+EXAMPLES:
+  claude-quick "fix authentication bug"
+  claude-quick --format=json "review this refactoring"
 
-# Check git status for changes
-# --porcelain gives machine-readable output
-# If output is empty, working tree is clean
-GIT_STATUS=$(git status --porcelain)
+OUTPUT FORMATS:
+  auto      Detect based on TTY (JSON for non-TTY, human for TTY)
+  json      Pretty-printed JSON
+  compact   Single-line JSON
+  human     Human-readable text with colors
+  table     Tabular format (for list operations)
+EOF
+}
 
-if [ -n "$GIT_STATUS" ]; then
-    # There are unstaged/uncommitted changes
-    echo -e "${BLUE}📝 Detected unstaged/uncommitted changes${NC}"
-    echo -e "${YELLOW}Creating issue with @claude mention...${NC}"
-    echo ""
+# Main execution
+main() {
+    parse_args "$@"
 
-    # Use the claude-issue script
-    "$SCRIPT_DIR/claude-issue" "$DESCRIPTION"
-
-else
-    # Working tree is clean
-    echo -e "${BLUE}✨ Working tree is clean${NC}"
-
-    # Check if we're on main/master
-    if [ "$CURRENT_BRANCH" = "main" ] || [ "$CURRENT_BRANCH" = "master" ]; then
-        echo -e "${YELLOW}⚠️  On main/master branch with clean state${NC}"
-        echo -e "${YELLOW}Creating issue instead of PR...${NC}"
-        echo ""
-
-        # Use the claude-issue script
-        "$SCRIPT_DIR/claude-issue" "$DESCRIPTION"
-    else
-        echo -e "${YELLOW}Creating PR from ${CURRENT_BRANCH}...${NC}"
-        echo ""
-
-        # Use the claude-pr script
-        "$SCRIPT_DIR/claude-pr" "$DESCRIPTION"
+    # Validate description
+    if [ -z "$DESCRIPTION" ]; then
+        if [ "$FORMAT" = "human" ] || is_tty; then
+            format_error "No task description provided"
+            echo ""
+            echo "Usage: claude-quick \"your task description\""
+            echo ""
+            echo "Run 'claude-quick --help' for more information."
+        else
+            result=$(error_result "create_task" "No task description provided" "validation")
+            format_output "$result" "$FORMAT"
+        fi
+        exit 1
     fi
-fi
+
+    # Get context
+    ctx=$(get_context)
+    if [ $? -ne 0 ]; then
+        result=$(error_result "get_context" "Failed to initialize context" "environment")
+        format_output "$result" "$FORMAT"
+        exit 1
+    fi
+
+    # Extract context fields
+    CURRENT_BRANCH=$(echo "$ctx" | jq -r '.context.git.currentBranch')
+    IS_CLEAN=$(echo "$ctx" | jq -r '.context.git.isClean')
+    DEFAULT_BRANCH=$(echo "$ctx" | jq -r '.context.repository.defaultBranch')
+
+    # Check for detached HEAD
+    if [ -z "$CURRENT_BRANCH" ] || [ "$CURRENT_BRANCH" = "null" ]; then
+        result=$(error_result "check_branch" "Detached HEAD state detected. Please checkout a branch first." "validation")
+        format_output "$result" "$FORMAT"
+        exit 1
+    fi
+
+    # Determine action based on git state
+    if [ "$IS_CLEAN" = "false" ]; then
+        # There are unstaged/uncommitted changes
+        if is_tty && [ "$FORMAT" = "auto" ]; then
+            echo -e "${BLUE}${SYMBOL_EDIT} Detected unstaged/uncommitted changes${NC}"
+            echo -e "${YELLOW}Creating issue with @claude mention...${NC}"
+            echo ""
+        fi
+
+        # Create issue
+        issue_data=$(gh_create_issue "$DESCRIPTION" "@claude
+
+$DESCRIPTION")
+
+        if [ $? -eq 0 ]; then
+            result=$(success_result "create_issue" "$issue_data")
+            format_output "$result" "$FORMAT"
+        else
+            result=$(error_result "create_issue" "Failed to create issue" "network")
+            format_output "$result" "$FORMAT"
+            exit 1
+        fi
+
+    else
+        # Working tree is clean
+        if [ "$CURRENT_BRANCH" = "main" ] || [ "$CURRENT_BRANCH" = "master" ] || [ "$CURRENT_BRANCH" = "$DEFAULT_BRANCH" ]; then
+            # On main/master branch with clean state
+            if is_tty && [ "$FORMAT" = "auto" ]; then
+                echo -e "${YELLOW}${SYMBOL_WARNING} On $CURRENT_BRANCH branch with clean state${NC}"
+                echo -e "${YELLOW}Creating issue instead of PR...${NC}"
+                echo ""
+            fi
+
+            # Create issue
+            issue_data=$(gh_create_issue "$DESCRIPTION" "@claude
+
+$DESCRIPTION")
+
+            if [ $? -eq 0 ]; then
+                result=$(success_result "create_issue" "$issue_data")
+                result=$(echo "$result" | add_warning "Created issue instead of PR because on $CURRENT_BRANCH branch")
+                format_output "$result" "$FORMAT"
+            else
+                result=$(error_result "create_issue" "Failed to create issue" "network")
+                format_output "$result" "$FORMAT"
+                exit 1
+            fi
+
+        else
+            # Not on main/master, create PR
+            if is_tty && [ "$FORMAT" = "auto" ]; then
+                echo -e "${BLUE}${SYMBOL_CLEAN} Working tree is clean${NC}"
+                echo -e "${YELLOW}Creating PR from ${CURRENT_BRANCH}...${NC}"
+                echo ""
+            fi
+
+            # Create PR
+            pr_data=$(gh_create_pr "$DESCRIPTION" "@claude
+
+$DESCRIPTION" "$DEFAULT_BRANCH")
+
+            if [ $? -eq 0 ]; then
+                result=$(success_result "create_pr" "$pr_data")
+                format_output "$result" "$FORMAT"
+            else
+                result=$(error_result "create_pr" "Failed to create PR" "network")
+                format_output "$result" "$FORMAT"
+                exit 1
+            fi
+        fi
+    fi
+}
+
+# Run main
+main "$@"

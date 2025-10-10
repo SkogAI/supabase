@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Command Context",
+  "description": "Execution context for Claude workflow scripts",
+  "type": "object",
+  "required": ["context"],
+  "properties": {
+    "context": {
+      "type": "object",
+      "required": ["repository", "git", "environment"],
+      "properties": {
+        "repository": {
+          "type": "object",
+          "required": ["owner", "name", "fullName", "defaultBranch"],
+          "properties": {
+            "owner": {
+              "type": "string",
+              "description": "Repository owner username or organization"
+            },
+            "name": {
+              "type": "string",
+              "description": "Repository name"
+            },
+            "fullName": {
+              "type": "string",
+              "description": "Full repository name (owner/name)"
+            },
+            "defaultBranch": {
+              "type": "string",
+              "description": "Default branch name (e.g., main, master)"
+            }
+          }
+        },
+        "git": {
+          "type": "object",
+          "required": ["currentBranch", "isClean", "hasUncommitted", "rootPath"],
+          "properties": {
+            "currentBranch": {
+              "type": "string",
+              "description": "Current git branch name"
+            },
+            "isClean": {
+              "type": "boolean",
+              "description": "Whether working tree is clean (no changes)"
+            },
+            "hasUncommitted": {
+              "type": "boolean",
+              "description": "Whether there are uncommitted changes"
+            },
+            "rootPath": {
+              "type": "string",
+              "description": "Git repository root path"
+            }
+          }
+        },
+        "environment": {
+          "type": "object",
+          "required": ["hasGhCli", "hasJq"],
+          "properties": {
+            "hasGhCli": {
+              "type": "boolean",
+              "description": "Whether GitHub CLI is installed"
+            },
+            "hasJq": {
+              "type": "boolean",
+              "description": "Whether jq JSON processor is installed"
+            },
+            "ghVersion": {
+              "type": "string",
+              "description": "GitHub CLI version number"
+            }
+          }
+        }
+      }
+    }
+  }
+}

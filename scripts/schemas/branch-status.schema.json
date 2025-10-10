@@ -1,0 +1,93 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Branch Status",
+  "description": "Status information for a git branch",
+  "type": "object",
+  "required": ["branch"],
+  "properties": {
+    "branch": {
+      "type": "object",
+      "required": ["name", "status"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Branch name"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["claude", "feature", "bugfix", "hotfix", "release", "other"],
+          "description": "Branch type classification"
+        },
+        "issueNumber": {
+          "type": "integer",
+          "description": "Associated issue number (if applicable)"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Branch creation timestamp"
+        },
+        "status": {
+          "type": "object",
+          "required": ["existsLocally", "existsRemotely"],
+          "properties": {
+            "existsLocally": {
+              "type": "boolean",
+              "description": "Whether branch exists in local repository"
+            },
+            "existsRemotely": {
+              "type": "boolean",
+              "description": "Whether branch exists on remote"
+            },
+            "isMerged": {
+              "type": "boolean",
+              "description": "Whether branch has been merged"
+            },
+            "hasConflicts": {
+              "type": "boolean",
+              "description": "Whether branch has merge conflicts"
+            },
+            "behindMain": {
+              "type": "integer",
+              "description": "Number of commits behind main branch"
+            },
+            "aheadOfMain": {
+              "type": "integer",
+              "description": "Number of commits ahead of main branch"
+            }
+          }
+        },
+        "associatedPR": {
+          "description": "Associated pull request information",
+          "oneOf": [
+            {
+              "type": "object",
+              "required": ["number", "state", "url"],
+              "properties": {
+                "number": {
+                  "type": "integer",
+                  "description": "PR number"
+                },
+                "state": {
+                  "type": "string",
+                  "enum": ["OPEN", "CLOSED", "MERGED"],
+                  "description": "PR state"
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "PR URL"
+                },
+                "title": {
+                  "type": "string",
+                  "description": "PR title"
+                }
+              }
+            },
+            { "type": "null" }
+          ]
+        }
+      }
+    }
+  }
+}

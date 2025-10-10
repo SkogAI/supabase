@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Workflow Run",
+  "description": "GitHub Actions workflow run information",
+  "type": "object",
+  "required": ["workflowRun"],
+  "properties": {
+    "workflowRun": {
+      "type": "object",
+      "required": ["id", "name", "status", "conclusion", "url"],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Workflow run ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Workflow name"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["queued", "in_progress", "completed"],
+          "description": "Workflow run status"
+        },
+        "conclusion": {
+          "type": "string",
+          "enum": ["success", "failure", "cancelled", "skipped", "timed_out", "action_required", null],
+          "description": "Workflow run conclusion (null if not completed)"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Workflow run URL"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the workflow run was created"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the workflow run was last updated"
+        },
+        "branch": {
+          "type": "string",
+          "description": "Branch the workflow ran on"
+        },
+        "commit": {
+          "type": "string",
+          "description": "Commit SHA"
+        }
+      }
+    }
+  }
+}

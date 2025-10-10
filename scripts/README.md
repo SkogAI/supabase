@@ -2,6 +2,33 @@
 
 Command-line tools for working with Claude Code through GitHub issues and pull requests.
 
+## Architecture
+
+These scripts are built on a **structured I/O architecture** that provides:
+
+- **Standardized JSON output** - All scripts support `--format` flag for machine-readable output
+- **Composability** - Scripts can be chained together with proper data flow
+- **Shared libraries** - Common functionality (context, formatting, GitHub API) in `lib/`
+- **Type safety** - JSON schemas in `schemas/` define all data structures
+- **Backward compatibility** - Auto-detects TTY for human-friendly vs JSON output
+
+### Shared Libraries
+
+All scripts use shared libraries in `scripts/lib/`:
+
+- **`context.sh`** - Environment and repository context (git status, GitHub repo info)
+- **`result.sh`** - Standardized result objects with success/error states
+- **`format.sh`** - Output formatting (JSON, human-readable, compact, table)
+- **`gh-api.sh`** - Structured GitHub API wrappers
+- **`colors.sh`** - Centralized color and formatting constants
+
+See `scripts/lib/README.md` for detailed API documentation.
+
+### Migration Status
+
+- ✅ **Migrated:** `claude-quick` (reference implementation)
+- 🔄 **Pending:** See `scripts/MIGRATION_GUIDE.md` for migration instructions
+
 ## Installation
 
 Make scripts executable:
@@ -24,7 +51,7 @@ Or use directly:
 
 - [GitHub CLI (gh)](https://cli.github.com/) - installed and authenticated
 - Git repository with remote access
-- `jq` (for claude-status only)
+- `jq` - JSON processor (required for all structured I/O scripts)
 
 ## Tools
 
@@ -86,19 +113,34 @@ claude-on-pr 42 "check if this handles edge cases properly"
 
 ---
 
-### claude-quick
+### claude-quick ✨ (Structured I/O)
 
 Intelligent wrapper that automatically chooses between creating an issue or PR based on your git state.
 
+**Migration Status:** ✅ **Fully migrated** - Reference implementation for structured I/O
+
 **Usage:**
 ```bash
+# Auto-detect output format (human for TTY, JSON otherwise)
 claude-quick "your task description"
+
+# Explicit JSON output for scripting
+claude-quick --format=json "fix authentication bug"
+
+# Explicit human output
+claude-quick --format=human "review this refactoring"
 ```
 
 **Behavior:**
-- **Unstaged/uncommitted changes exist** → Creates issue with `claude-issue`
-- **Clean branch (not main/master)** → Creates PR with `claude-pr`
-- **Clean branch (on main/master)** → Creates issue with `claude-issue`
+- **Unstaged/uncommitted changes exist** → Creates issue
+- **Clean branch (not main/master)** → Creates PR
+- **Clean branch (on main/master)** → Creates issue
+
+**Output Formats:**
+- `auto` - Auto-detect (JSON for non-TTY, human for TTY)
+- `json` - Pretty-printed JSON
+- `compact` - Single-line JSON
+- `human` - Human-readable text with colors
 
 **Examples:**
 ```bash
@@ -108,11 +150,33 @@ claude-quick "fix authentication bug"
 # On clean feature branch - creates PR
 claude-quick "review this refactoring"
 
-# On main with clean state - creates issue
-claude-quick "add new feature"
+# Get JSON output for scripting
+claude-quick --format=json "add feature" | jq '.result.data.number'
+
+# Pipe to other tools
+claude-quick --format=compact "task" | jq -r '.result.data.url'
 ```
 
-This tool makes it easy to quickly trigger Claude without thinking about whether you need an issue or PR.
+**JSON Output Example:**
+```json
+{
+  "result": {
+    "success": true,
+    "operation": "create_issue",
+    "data": {
+      "number": 123,
+      "url": "https://github.com/owner/repo/issues/123"
+    },
+    "error": null,
+    "warnings": [],
+    "metadata": {
+      "timestamp": "2025-10-10T12:00:00Z"
+    }
+  }
+}
+```
+
+This tool makes it easy to quickly trigger Claude without thinking about whether you need an issue or PR. The structured I/O support enables scripting and automation.
 
 ---
 
