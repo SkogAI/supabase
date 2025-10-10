@@ -86,7 +86,7 @@ npm run lint:sql
 
 ### Development Dependencies
 
-```bash
+````bash
 # Install Python development dependencies (sqlfluff for SQL linting)
 pip install -r requirements-dev.txt
 
@@ -126,7 +126,7 @@ docker logs supabase-auth 2>&1 | grep -i saml | tail -50
 
 # Health check
 curl http://localhost:8000/auth/v1/sso/saml/metadata
-```
+````
 
 ## Architecture
 
@@ -178,12 +178,14 @@ examples/
 - **Seed data**: Contains 3 test users with fixed UUIDs for RLS testing (see `supabase/seed.sql`)
 
 Current tables:
+
 - `profiles` - User profiles with comprehensive RLS policies
 - `posts` - User-generated content with publish/draft states
 
 ### Row Level Security (RLS)
 
 **Critical**: All public tables MUST have RLS enabled with policies for:
+
 - Service role (full admin access)
 - Authenticated users (own data + public data)
 - Anonymous users (read-only published content)
@@ -201,6 +203,7 @@ Current tables:
 ### Storage Buckets
 
 Pre-configured buckets with RLS policies:
+
 - `avatars` - Public, 5MB limit, images only
 - `public-assets` - Public, 10MB limit, images/PDFs
 - `user-files` - Private, 50MB limit, user documents
@@ -212,12 +215,14 @@ Files must be organized in user-scoped paths: `{bucket}/{user_id}/filename.ext`
 Enabled for tables: `profiles`, `posts`
 
 Enable realtime on new tables:
+
 ```sql
 ALTER PUBLICATION supabase_realtime ADD TABLE your_table;
 ALTER TABLE your_table REPLICA IDENTITY FULL;
 ```
 
 Rate limits (configurable in `config.toml`):
+
 - 100 concurrent connections per client
 - 100 channels per connection
 - 500 joins/sec, 1000 messages/sec
@@ -234,6 +239,7 @@ Rate limits (configurable in `config.toml`):
 6. **Commit** migration file and updated types
 
 **Migration naming**: Use snake_case with clear action verbs:
+
 - `add_<table>_table` - New tables
 - `add_<table>_<column>` - New columns
 - `enable_rls_<table>` - Security policies
@@ -251,11 +257,13 @@ Rate limits (configurable in `config.toml`):
 ### Seed Data for Testing
 
 Test users (password: `password123`):
-- Alice: `00000000-0000-0000-0000-000000000001` (alice@example.com)
-- Bob: `00000000-0000-0000-0000-000000000002` (bob@example.com)
-- Charlie: `00000000-0000-0000-0000-000000000003` (charlie@example.com)
+
+- Alice: `00000000-0000-0000-0000-000000000001` (<alice@example.com>)
+- Bob: `00000000-0000-0000-0000-000000000002` (<bob@example.com>)
+- Charlie: `00000000-0000-0000-0000-000000000003` (<charlie@example.com>)
 
 Use these fixed UUIDs in RLS tests:
+
 ```sql
 SET request.jwt.claim.sub = '00000000-0000-0000-0000-000000000001';
 ```
@@ -263,10 +271,12 @@ SET request.jwt.claim.sub = '00000000-0000-0000-0000-000000000001';
 ## CI/CD Integration
 
 Workflows in `.github/workflows/`:
+
 - `claude-code-review.yml` - AI-powered PR reviews
 - `claude-general.yml` - General Claude Code integration
 
 **Required GitHub Secrets** (set in repository settings):
+
 - `SUPABASE_ACCESS_TOKEN` - From Supabase Dashboard → Account → Access Tokens
 - `SUPABASE_PROJECT_ID` - From Supabase Dashboard → Project Settings → Reference ID
 - `SUPABASE_DB_PASSWORD` - From Supabase Dashboard → Database settings
@@ -279,6 +289,7 @@ Workflows in `.github/workflows/`:
 This project includes Model Context Protocol (MCP) server infrastructure for AI agents.
 
 **Connection types**:
+
 - Direct IPv6 (port 5432) - Persistent agents, full PostgreSQL features
 - Supavisor Session (port 5432) - IPv4 persistent agents
 - Supavisor Transaction (port 6543) - Serverless/Edge agents with auto-cleanup
@@ -288,11 +299,11 @@ This project includes Model Context Protocol (MCP) server infrastructure for AI 
 
 ## Local Development URLs
 
-- **Studio UI**: http://localhost:8000
-- **API**: http://localhost:54321
+- **Studio UI**: <http://localhost:8000>
+- **API**: <http://localhost:54321>
 - **Database**: `postgresql://postgres:postgres@localhost:54322/postgres`
-- **Edge Functions**: http://localhost:54321/functions/v1/<function-name>
-- **Deno Inspector**: http://localhost:8083
+- **Edge Functions**: <http://localhost:54321/functions/v1/><function-name>
+- **Deno Inspector**: <http://localhost:8083>
 
 ## Common Patterns
 
@@ -341,11 +352,13 @@ ALTER TABLE public.my_table REPLICA IDENTITY FULL;
 ### Testing RLS Policies
 
 Run the comprehensive test suite after any RLS changes:
+
 ```bash
 npm run test:rls
 ```
 
 Expected output includes PASS/FAIL for:
+
 - RLS enabled on all tables
 - Service role access
 - Authenticated user permissions
@@ -355,11 +368,13 @@ Expected output includes PASS/FAIL for:
 ## Troubleshooting
 
 **Docker not running**:
+
 ```bash
 docker info  # Verify Docker is running
 ```
 
 **Port conflicts**:
+
 ```bash
 supabase stop
 lsof -i :8000
@@ -367,11 +382,13 @@ lsof -i :54322
 ```
 
 **Migration errors**:
+
 ```bash
 supabase db reset --debug
 ```
 
 **Function deployment fails**:
+
 ```bash
 supabase functions logs <function-name>
 supabase functions serve <function-name>  # Test locally first
@@ -390,12 +407,13 @@ Ensure Supabase is running: `npm run db:start` then `npm run types:generate`
 ## Documentation References
 
 Core documentation in repository:
-- `README.md` - Quick start and feature overview
-- `CONTRIBUTING.md` - Complete contributor guide with code guidelines and PR process
-- `WORKFLOWS.md` - Detailed development workflows and common procedures
-- `TROUBLESHOOTING.md` - Comprehensive troubleshooting guide for all common issues
-- `ARCHITECTURE.md` - System architecture overview and design decisions
-- `DEVOPS.md` - Complete CI/CD and deployment guide
+
+- `docs/README.md` - Quick start and feature overview
+- `docs/CONTRIBUTING.md` - Complete contributor guide with code guidelines and PR process
+- `docs/WORKFLOWS.md` - Detailed development workflows and common procedures
+- `docs/TROUBLESHOOTING.md` - Comprehensive troubleshooting guide for all common issues
+- `docs/ARCHITECTURE.md` - System architecture overview and design decisions
+- `docs/DEVOPS.md` - Complete CI/CD and deployment guide
 - `docs/RLS_POLICIES.md` - RLS patterns and best practices
 - `docs/STORAGE.md` - Storage bucket configuration and usage
 - `docs/MCP_*.md` - AI agent integration guides
