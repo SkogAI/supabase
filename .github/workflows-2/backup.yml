@@ -1,0 +1,88 @@
+name: Database Backup
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      backup_name:
+        description: 'Custom backup name (optional)'
+        required: false
+        default: ''
+
+jobs:
+  backup-database:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Link Supabase project
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          if [ -n "$SUPABASE_ACCESS_TOKEN" ] && [ -n "$SUPABASE_PROJECT_ID" ]; then
+            supabase link --project-ref $SUPABASE_PROJECT_ID
+          else
+            echo "⚠️  Supabase credentials not configured. Skipping backup."
+            exit 0
+          fi
+
+      - name: Generate backup
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          BACKUP_NAME="${{ github.event.inputs.backup_name }}"
+          if [ -z "$BACKUP_NAME" ]; then
+            BACKUP_NAME="backup-$(date +%Y%m%d-%H%M%S)"
+          fi
+
+          echo "Creating backup: $BACKUP_NAME"
+
+          # Create backup directory
+          mkdir -p backups
+
+          # Dump schema
+          supabase db dump --schema public --data-only -f "backups/${BACKUP_NAME}.sql"
+
+          echo "Backup created: backups/${BACKUP_NAME}.sql"
+
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-backup-${{ github.run_number }}
+          path: backups/*.sql
+          retention-days: 30
+
+      - name: Analyze backup and generate summary with Claude Code
+        uses: anthropics/claude-code-action@v1
+        continue-on-error: true
+        with:
+          github_token: ${{ github.token }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Analyze the database backup and generate a comprehensive summary to $GITHUB_STEP_SUMMARY:
+            1. Review the backup file in backups/
+            2. Analyze backup contents:
+               - Database size and statistics
+               - Tables included
+               - Data volume per table
+            3. Verify backup integrity
+            4. Document restoration procedures
+            5. Calculate retention and storage recommendations
+            6. Provide backup best practices checklist
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Backup failed!"
+          echo "Please check the workflow logs for details."

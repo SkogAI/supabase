@@ -1,0 +1,87 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pr-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Analyze PR title with Claude Code
+        uses: anthropics/claude-code-action@v1
+        continue-on-error: true
+        with:
+          github_token: ${{ github.token }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Analyze this PR title and provide feedback: "${{ github.event.pull_request.title }}"
+            - Check if it follows conventional commit format
+            - Suggest improvements if needed
+            - Verify it's clear and descriptive
+            - Write feedback as GitHub step output
+
+      - name: Check for migration changes
+        id: migration-check
+        run: |
+          MIGRATION_CHANGES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep "supabase/migrations/" || true)
+
+          if [ -n "$MIGRATION_CHANGES" ]; then
+            echo "has_migrations=true" >> $GITHUB_OUTPUT
+            echo "Migration files changed:"
+            echo "$MIGRATION_CHANGES"
+          else
+            echo "has_migrations=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check for config changes
+        id: config-check
+        run: |
+          CONFIG_CHANGES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep "supabase/config.toml" || true)
+
+          if [ -n "$CONFIG_CHANGES" ]; then
+            echo "has_config_changes=true" >> $GITHUB_OUTPUT
+            echo "⚠️  Configuration file changed - review carefully!"
+          else
+            echo "has_config_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check for secrets in code
+        run: |
+          echo "Scanning for potential secrets..."
+
+          # Check for common secret patterns
+          if git diff ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep -E "(password|secret|api[_-]?key|token|private[_-]?key)" | grep -v "env(" | grep -v ".example"; then
+            echo "⚠️  WARNING: Potential secrets detected in changes!"
+            echo "Please ensure sensitive data uses environment variables"
+            exit 1
+          fi
+
+      - name: Generate comprehensive PR analysis with Claude Code
+        uses: anthropics/claude-code-action@v1
+        continue-on-error: true
+        with:
+          github_token: ${{ github.token }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Analyze this pull request and generate a comprehensive summary to $GITHUB_STEP_SUMMARY:
+
+            PR Details:
+            - Has migrations: ${{ steps.migration-check.outputs.has_migrations }}
+            - Has config changes: ${{ steps.config-check.outputs.has_config_changes }}
+            - Base SHA: ${{ github.event.pull_request.base.sha }}
+            - Head SHA: ${{ github.sha }}
+
+            Tasks:
+            1. Analyze all changed files using git diff
+            2. Categorize changes (migrations, config, functions, etc.)
+            3. Identify potential risks or areas needing review
+            4. Provide a risk assessment (low/medium/high)
+            5. Suggest reviewers based on changed components
+            6. Generate actionable review checklist

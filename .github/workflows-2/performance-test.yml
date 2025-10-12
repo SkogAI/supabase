@@ -1,0 +1,159 @@
+name: Performance Testing
+
+on:
+  pull_request:
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/functions/**'
+  schedule:
+    # Run weekly on Friday at 1 AM UTC
+    - cron: '0 1 * * 5'
+  workflow_dispatch:
+
+jobs:
+  database-performance:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase
+        run: supabase start
+
+      - name: Run performance analysis
+        run: |
+          echo "Running database performance analysis..."
+
+          # Check for missing indexes
+          supabase db execute "
+            SELECT
+              schemaname,
+              tablename,
+              attname,
+              n_distinct,
+              correlation
+            FROM pg_stats
+            WHERE schemaname = 'public'
+            AND n_distinct > 100
+            AND correlation < 0.1
+            ORDER BY n_distinct DESC
+          " --format json > potential-index-candidates.json
+
+          # Check for slow queries (if pg_stat_statements is enabled)
+          supabase db execute "
+            SELECT
+              datname,
+              count(*) as query_count
+            FROM pg_stat_activity
+            WHERE state = 'active'
+            GROUP BY datname
+          " --format json > active-queries.json || echo "pg_stat_statements not available"
+
+          # Check table sizes
+          supabase db execute "
+            SELECT
+              schemaname,
+              tablename,
+              pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS total_size,
+              pg_size_pretty(pg_relation_size(schemaname||'.'||tablename)) AS table_size,
+              pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename) - pg_relation_size(schemaname||'.'||tablename)) AS indexes_size
+            FROM pg_tables
+            WHERE schemaname = 'public'
+            ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC
+          "
+
+      - name: Generate performance report with Claude Code
+        uses: anthropics/claude-code-action@v1
+        continue-on-error: true
+        with:
+          github_token: ${{ github.token }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Analyze the performance data files and generate a comprehensive report:
+            - Review potential-index-candidates.json for indexing opportunities
+            - Analyze active-queries.json for query patterns
+            - Provide specific, actionable recommendations
+            - Write the report to $GITHUB_STEP_SUMMARY in markdown format
+
+      - name: Upload performance artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-analysis-${{ github.run_number }}
+          path: |
+            potential-index-candidates.json
+            active-queries.json
+
+      - name: Stop Supabase
+        if: always()
+        run: supabase stop --no-backup
+
+  edge-functions-benchmark:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v2.x
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+
+      - name: Start Supabase
+        run: supabase start
+
+      - name: Benchmark edge functions
+        run: |
+          if [ -d "supabase/functions" ] && [ -n "$(ls -A supabase/functions 2>/dev/null)" ]; then
+            echo "Benchmarking edge functions..."
+
+            # Serve functions
+            supabase functions serve --no-verify-jwt &
+            SERVE_PID=$!
+            sleep 10
+
+            # Basic benchmarking (install and use autocannon or similar)
+            cd supabase/functions
+            for dir in */; do
+              FUNC_NAME="${dir%/}"
+              echo "Benchmarking $FUNC_NAME..."
+
+              # Simple curl timing (replace with proper benchmarking tool)
+              for i in {1..10}; do
+                curl -w "@-" -o /dev/null -s http://localhost:54321/functions/v1/$FUNC_NAME \
+                  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0" <<'EOF'
+              time_total: %{time_total}s\n
+EOF
+              done || true
+            done
+
+            kill $SERVE_PID || true
+          else
+            echo "No edge functions to benchmark"
+          fi
+
+      - name: Generate benchmark summary with Claude Code
+        uses: anthropics/claude-code-action@v1
+        continue-on-error: true
+        with:
+          github_token: ${{ github.token }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Analyze the edge function benchmark results and create a summary report.
+            Write a comprehensive benchmark report to $GITHUB_STEP_SUMMARY including:
+            - Performance metrics for each function
+            - Comparison of response times
+            - Recommendations for optimization
+
+      - name: Stop Supabase
+        if: always()
+        run: supabase stop --no-backup
