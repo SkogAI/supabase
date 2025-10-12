@@ -223,7 +223,7 @@ Requirements:
   - Authenticated to GitHub
 ```
 
-### `.github/create-labels.sh` (86 lines)
+### `scripts/setup/create-labels.sh` (86 lines)
 ```bash
 Purpose:
   - Creates all repository labels
@@ -231,7 +231,7 @@ Purpose:
   - Updates existing labels
 
 Usage:
-  ./.github/create-labels.sh
+  ./scripts/setup/create-labels.sh
 
 Requirements:
   - GitHub CLI (gh) installed
@@ -296,7 +296,7 @@ Covers:
 
 ```bash
 # 1. Create all repository labels
-./.github/create-labels.sh
+./scripts/setup/create-labels.sh
 
 # 2. Create project tracking issues
 ./scripts/create-issues.sh
