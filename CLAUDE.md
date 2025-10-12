@@ -404,10 +404,10 @@ Ensure Supabase is running: `npm run db:start` then `npm run types:generate`
 
 ## Key Configuration Files
 
-- **supabase/config.toml**: All Supabase settings (ports, database version, realtime limits, storage)
-- **.env.example**: Template for local environment variables (copy to `.env`, never commit `.env`)
-- **package.json**: npm scripts for all common operations
-- **types/database.ts**: Auto-generated, regenerate after schema changes
+- **@supabase/config.toml**: All Supabase settings (ports, database version, realtime limits, storage)
+- **@.env.example**: Template for local environment variables (copy to `.env`, never commit `.env`)
+- **@package.json**: npm scripts for all common operations
+- **@types/database.ts**: Auto-generated, regenerate after schema changes
 
 ## Documentation References
 

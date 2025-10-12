@@ -1,0 +1,111 @@
+name: Database Schema Linting
+
+on:
+  pull_request:
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/**/*.sql'
+  push:
+    branches:
+      - master
+      - main
+
+jobs:
+  lint-schema:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase local
+        run: supabase start
+
+      - name: Check schema diff
+        id: schema-diff
+        run: |
+          # Generate schema diff and save to file
+          supabase db diff --schema public --use-migra > schema-diff.txt || true
+
+          if [ -s schema-diff.txt ]; then
+            echo "has_diff=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_diff=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Validate RLS policies
+        run: |
+          echo "Checking for tables without RLS policies..."
+          TABLES_WITHOUT_RLS=$(supabase db execute "
+            SELECT schemaname, tablename
+            FROM pg_tables
+            WHERE schemaname = 'public'
+            AND tablename NOT IN (
+              SELECT tablename
+              FROM pg_policies
+              WHERE schemaname = 'public'
+            )
+            AND rowsecurity = false
+          " --format json)
+
+          if [ "$TABLES_WITHOUT_RLS" != "[]" ] && [ -n "$TABLES_WITHOUT_RLS" ]; then
+            echo "⚠️  Warning: The following tables do not have RLS enabled:"
+            echo "$TABLES_WITHOUT_RLS"
+          fi
+
+      - name: Check for indexes
+        run: |
+          echo "Analyzing tables for missing indexes..."
+          # This is a basic check - extend as needed
+          supabase db execute "
+            SELECT
+              schemaname,
+              tablename,
+              pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS size
+            FROM pg_tables
+            WHERE schemaname = 'public'
+            ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC
+          "
+
+      - name: SQL Formatting Check
+        run: |
+          echo "Checking SQL file formatting..."
+          # Check for common SQL anti-patterns
+          if grep -r "SELECT \*" supabase/migrations/ 2>/dev/null; then
+            echo "⚠️  Warning: SELECT * found in migrations (consider explicit column names)"
+          fi
+
+      - name: Generate comprehensive schema analysis with Claude Code
+        if: github.event_name == 'pull_request'
+        uses: anthropics/claude-code-action@v1
+        continue-on-error: true
+        with:
+          github_token: ${{ github.token }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Perform comprehensive database schema analysis and write to $GITHUB_STEP_SUMMARY:
+
+            Context:
+            - Schema diff available: ${{ steps.schema-diff.outputs.has_diff }}
+            - Schema diff file: schema-diff.txt (if exists)
+
+            Tasks:
+            1. Analyze schema changes in detail
+            2. Review RLS policies for security
+            3. Check indexing strategy
+            4. Validate foreign key relationships
+            5. Identify potential N+1 query issues
+            6. Check for SQL anti-patterns
+            7. Suggest performance optimizations
+            8. Verify naming conventions
+            9. Check for missing constraints
+            10. Generate migration risk assessment
+
+      - name: Stop Supabase
+        if: always()
+        run: supabase stop --no-backup

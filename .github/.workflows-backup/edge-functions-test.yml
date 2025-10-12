@@ -1,0 +1,127 @@
+name: Edge Functions Testing
+
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/**'
+  push:
+    branches:
+      - master
+      - main
+    paths:
+      - 'supabase/functions/**'
+
+jobs:
+  test-functions:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v2.x
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Verify edge functions
+        run: supabase functions list || echo "No functions found"
+
+      - name: Check Deno formatting
+        run: |
+          if [ -d "supabase/functions" ] && [ -n "$(ls -A supabase/functions 2>/dev/null)" ]; then
+            cd supabase/functions
+            deno fmt --check || {
+              echo "❌ Edge functions are not formatted correctly"
+              echo "Run 'deno fmt' to fix formatting"
+              exit 1
+            }
+          fi
+
+      - name: Lint edge functions
+        run: |
+          if [ -d "supabase/functions" ] && [ -n "$(ls -A supabase/functions 2>/dev/null)" ]; then
+            cd supabase/functions
+            for dir in */; do
+              if [ -f "${dir}index.ts" ] || [ -f "${dir}index.js" ]; then
+                echo "Linting ${dir}..."
+                deno lint "${dir}" || true
+              fi
+            done
+          fi
+
+      - name: Type check edge functions
+        run: |
+          if [ -d "supabase/functions" ] && [ -n "$(ls -A supabase/functions 2>/dev/null)" ]; then
+            cd supabase/functions
+            for dir in */; do
+              if [ -f "${dir}index.ts" ]; then
+                echo "Type checking ${dir}..."
+                deno check "${dir}index.ts"
+              fi
+            done
+          fi
+
+      - name: Run edge function tests
+        run: |
+          if [ -d "supabase/functions" ] && [ -n "$(ls -A supabase/functions 2>/dev/null)" ]; then
+            cd supabase/functions
+            # Run any test files found
+            if compgen -G "**/test.ts" > /dev/null; then
+              deno test --allow-all
+            else
+              echo "No test files found"
+            fi
+          fi
+
+      - name: Start Supabase and test functions
+        run: |
+          supabase start
+          # Serve functions in background
+          supabase functions serve --no-verify-jwt &
+          SERVE_PID=$!
+          sleep 10
+
+          # Test each function endpoint (if any exist)
+          if [ -d "supabase/functions" ] && [ -n "$(ls -A supabase/functions 2>/dev/null)" ]; then
+            cd supabase/functions
+            for dir in */; do
+              FUNC_NAME="${dir%/}"
+              echo "Testing function: $FUNC_NAME"
+              # Basic health check - adjust as needed
+              curl -i --fail http://localhost:54321/functions/v1/$FUNC_NAME \
+                -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0" \
+                || echo "⚠️  Function $FUNC_NAME health check failed (this may be expected)"
+            done
+          fi
+
+          kill $SERVE_PID || true
+
+      - name: Generate comprehensive test report with Claude Code
+        if: github.event_name == 'pull_request'
+        uses: anthropics/claude-code-action@v1
+        continue-on-error: true
+        with:
+          github_token: ${{ github.token }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Analyze the edge functions and generate a comprehensive test report to $GITHUB_STEP_SUMMARY:
+            1. Review all functions in supabase/functions/
+            2. Analyze test coverage and quality
+            3. Review each function's:
+               - Code quality and structure
+               - Error handling
+               - Security considerations
+               - Performance characteristics
+            4. Identify missing tests or edge cases
+            5. Provide recommendations for improvements
+            6. Check for common Deno/edge function anti-patterns
+
+      - name: Stop Supabase
+        if: always()
+        run: supabase stop --no-backup

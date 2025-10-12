@@ -1,0 +1,90 @@
+name: Dependency Updates
+
+on:
+  schedule:
+    # Run weekly on Monday at 9 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  update-supabase-cli:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for Supabase CLI updates
+        id: check-cli
+        run: |
+          # Get latest Supabase CLI version
+          LATEST=$(curl -s https://api.github.com/repos/supabase/cli/releases/latest | grep -o '"tag_name": "v[^"]*"' | cut -d'"' -f4 | sed 's/v//')
+          echo "latest_version=$LATEST" >> $GITHUB_OUTPUT
+          echo "Latest Supabase CLI version: $LATEST"
+
+      - name: Generate update report with Claude Code
+        uses: anthropics/claude-code-action@v1
+        continue-on-error: true
+        with:
+          github_token: ${{ github.token }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Generate a Supabase CLI update report and write to $GITHUB_STEP_SUMMARY:
+            - Latest version: ${{ steps.check-cli.outputs.latest_version }}
+            - Include upgrade instructions
+            - Check if any breaking changes exist in the latest version
+            - Provide recommendations for when to upgrade
+
+  update-deno:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for Deno updates
+        id: check-deno
+        run: |
+          LATEST=$(curl -s https://api.github.com/repos/denoland/deno/releases/latest | grep -o '"tag_name": "v[^"]*"' | cut -d'"' -f4)
+          echo "latest_version=$LATEST" >> $GITHUB_OUTPUT
+          echo "Latest Deno version: $LATEST"
+
+      - name: Read current Deno version
+        id: current-deno
+        run: |
+          CURRENT=$(grep "deno_version" supabase/config.toml | grep -o '[0-9]*' || echo "2")
+          echo "current_version=$CURRENT" >> $GITHUB_OUTPUT
+
+      - name: Generate Deno update report with Claude Code
+        uses: anthropics/claude-code-action@v1
+        continue-on-error: true
+        with:
+          github_token: ${{ github.token }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Generate a Deno version update report and write to $GITHUB_STEP_SUMMARY:
+            - Current version: ${{ steps.current-deno.outputs.current_version }}
+            - Latest available: ${{ steps.check-deno.outputs.latest_version }}
+            - Analyze if upgrade is recommended
+            - Note any breaking changes or migration steps needed
+
+  check-github-actions:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Analyze GitHub Actions with Claude Code
+        uses: anthropics/claude-code-action@v1
+        continue-on-error: true
+        with:
+          github_token: ${{ github.token }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Analyze all GitHub Actions used in .github/workflows/ and write a report to $GITHUB_STEP_SUMMARY:
+            - List all actions currently in use with their versions
+            - Check which actions have newer versions available
+            - Identify any deprecated actions
+            - Provide upgrade recommendations with priority levels
+            - Note any security advisories for used actions
