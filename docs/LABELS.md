@@ -90,10 +90,10 @@ Run all label creation commands at once:
 
 ```bash
 # Make script executable
-chmod +x .github/create-labels.sh
+chmod +x scripts/setup/create-labels.sh
 
 # Run script
-./.github/create-labels.sh
+./scripts/setup/create-labels.sh
 ```
 
 ## Label Usage Guidelines
@@ -121,5 +121,5 @@ chmod +x .github/create-labels.sh
 
 ---
 
-**Last Updated**: 2025-01-05  
-**See Also**: [ISSUE_MANAGEMENT.md](../docs/ISSUE_MANAGEMENT.md)
+**Last Updated**: 2025-01-05
+**See Also**: [ISSUE_MANAGEMENT.md](./ISSUE_MANAGEMENT.md)
