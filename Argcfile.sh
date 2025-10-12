@@ -2,7 +2,7 @@
 
 set -e
 # @env WORKTREE_BASE=/home/skogix/dev/supabase/.dev/worktrees
-# @env PARSE_TEMPLATE=/home/skogix/dev/supabase/.git/info/sparse-checkout
+# @env PARSE_TEMPLATE=/home/skogix/dev/supabase/.github/sparse-checkouts/default.txt
 
 # @cmd skogix test
 # @arg name!  Name of the new worktree
