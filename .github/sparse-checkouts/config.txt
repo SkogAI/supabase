@@ -8,5 +8,3 @@
 /deno.lock
 /requirements-dev.txt
 /uv.lock
-Argcfile.sh
-/skogai/

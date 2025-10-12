@@ -1,5 +1,6 @@
-*.md
-Argcfile.sh
 /.github/
-/scripts/
-/skogai/
+/CLAUDE.md
+/docs/CI_WORKTREE.md
+/docs/CI_WORKTREE_INTEGRATION.md
+/docs/WORKFLOWS.md
+/docs/WORKTREES.md
