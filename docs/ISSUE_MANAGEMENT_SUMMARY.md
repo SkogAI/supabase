@@ -88,7 +88,7 @@ Automated script to create 12 comprehensive project tracking issues:
 
 ### 3. Label Management System
 
-#### Label Creation Script (`.github/create-labels.sh`)
+#### Label Creation Script (`scripts/setup/create-labels.sh`)
 Automated script to create all repository labels with consistent colors and descriptions.
 
 #### Label Reference (`.github/LABELS.md`)
@@ -171,7 +171,7 @@ gh issue create \
 
 ```bash
 # Create all repository labels
-./.github/create-labels.sh
+./scripts/setup/create-labels.sh
 
 # Requires: gh CLI installed and authenticated
 ```
@@ -226,7 +226,7 @@ gh issue create \
 
 ### Immediate Actions
 1. ✅ Run `./scripts/create-issues.sh` to create tracking issues
-2. ✅ Run `./.github/create-labels.sh` to set up labels
+2. ✅ Run `./scripts/setup/create-labels.sh` to set up labels
 3. ✅ Review and triage created issues
 4. ✅ Assign team members to high-priority issues
 5. ✅ Set up GitHub Project board (optional)
