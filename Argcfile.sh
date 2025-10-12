@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
-# @env WORKTREE_BASE=/home/skogix/dev/supabase/.dev/worktrees
+# @env WORKTREE_BASE=/home/skogix/dev/supabase/.dev/worktree
 # @env PARSE_TEMPLATE=/home/skogix/dev/supabase/.github/sparse-checkouts/default.txt
 
 # @cmd skogix test
@@ -9,8 +9,8 @@ set -e
 skogix() {
   # Step 1: Build the worktree path
   local WORKTREE_PATH="${WORKTREE_BASE}/${argc_name}"
-  # Step 2: Create worktree and checkout branch
-  git worktree add "$WORKTREE_PATH" -b "${argc_name}"
+  # Step 2: Create worktree and the last part of the path as branch
+  git worktree add "$WORKTREE_PATH"
   # Step 3: Change into the worktree
   cd "$WORKTREE_PATH"
   # Step 4: Enable sparse-checkout mode
