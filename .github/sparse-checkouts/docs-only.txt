@@ -1,5 +1,12 @@
-*.md
+/*.md
+/docs/
 /skogai/
-/Argcfile.sh
-/scripts/
-/tests/
+/examples/**/*.md
+/supabase/README.md
+/supabase/functions/README.md
+/supabase/MIGRATIONS.md
+/tests/README.md
+/scripts/README.md
+/certs/README.md
+/test_results/README.md
+/vendor/zitadel/*.md
