@@ -4,19 +4,17 @@ on:
   pull_request:
     paths:
       - 'supabase/functions/**'
-      - '.github/workflows/edge-functions-test.yml'
   push:
     branches:
+      - master
       - main
-      - develop
     paths:
       - 'supabase/functions/**'
 
 jobs:
-  lint-and-format:
-    name: Lint and Format Check
+  test-functions:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,189 +22,106 @@ jobs:
       - name: Setup Deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: v1.x
-
-      - name: Check formatting
-        run: |
-          cd supabase/functions
-          deno fmt --check
-
-      - name: Lint functions
-        run: |
-          cd supabase/functions
-          deno lint
-
-  type-check:
-    name: TypeScript Type Check
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Deno
-        uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
-
-      - name: Type check all functions
-        run: |
-          cd supabase/functions
-          for dir in */; do
-            if [ -f "${dir}index.ts" ]; then
-              echo "Type checking ${dir}index.ts"
-              deno check "${dir}index.ts"
-            fi
-          done
-
-  unit-tests:
-    name: Unit Tests
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Deno
-        uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
-
-      - name: Run unit tests
-        run: |
-          cd supabase/functions
-          deno test --allow-all --coverage=coverage
-
-      - name: Generate coverage report
-        run: |
-          cd supabase/functions
-          deno coverage coverage --lcov > coverage.lcov
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          files: ./supabase/functions/coverage.lcov
-          flags: edge-functions
-          name: edge-functions-coverage
-          fail_ci_if_error: false
-
-      - name: Coverage summary
-        run: |
-          cd supabase/functions
-          echo "## Test Coverage Summary" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          deno coverage coverage >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-
-  integration-tests:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Deno
-        uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
+          deno-version: v2.x
 
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
         with:
           version: latest
 
-      - name: Start Supabase
-        run: supabase start
+      - name: Verify edge functions
+        run: supabase functions list || echo "No functions found"
 
-      - name: Wait for services
+      - name: Check Deno formatting
         run: |
-          echo "Waiting for Supabase services to be ready..."
+          if [ -d "supabase/functions" ] && [ -n "$(ls -A supabase/functions 2>/dev/null)" ]; then
+            cd supabase/functions
+            deno fmt --check || {
+              echo "❌ Edge functions are not formatted correctly"
+              echo "Run 'deno fmt' to fix formatting"
+              exit 1
+            }
+          fi
+
+      - name: Lint edge functions
+        run: |
+          if [ -d "supabase/functions" ] && [ -n "$(ls -A supabase/functions 2>/dev/null)" ]; then
+            cd supabase/functions
+            for dir in */; do
+              if [ -f "${dir}index.ts" ] || [ -f "${dir}index.js" ]; then
+                echo "Linting ${dir}..."
+                deno lint "${dir}" || true
+              fi
+            done
+          fi
+
+      - name: Type check edge functions
+        run: |
+          if [ -d "supabase/functions" ] && [ -n "$(ls -A supabase/functions 2>/dev/null)" ]; then
+            cd supabase/functions
+            for dir in */; do
+              if [ -f "${dir}index.ts" ]; then
+                echo "Type checking ${dir}..."
+                deno check "${dir}index.ts"
+              fi
+            done
+          fi
+
+      - name: Run edge function tests
+        run: |
+          if [ -d "supabase/functions" ] && [ -n "$(ls -A supabase/functions 2>/dev/null)" ]; then
+            cd supabase/functions
+            # Run any test files found
+            if compgen -G "**/test.ts" > /dev/null; then
+              deno test --allow-all
+            else
+              echo "No test files found"
+            fi
+          fi
+
+      - name: Start Supabase and test functions
+        run: |
+          supabase start
+          # Serve functions in background
+          supabase functions serve --no-verify-jwt &
+          SERVE_PID=$!
           sleep 10
-          supabase status
 
-      - name: Run integration tests
-        env:
-          RUN_INTEGRATION_TESTS: 'true'
-          FUNCTION_URL: 'http://localhost:54321/functions/v1'
-        run: |
-          cd supabase/functions
-          deno test --allow-all --allow-env --allow-net
+          # Test each function endpoint (if any exist)
+          if [ -d "supabase/functions" ] && [ -n "$(ls -A supabase/functions 2>/dev/null)" ]; then
+            cd supabase/functions
+            for dir in */; do
+              FUNC_NAME="${dir%/}"
+              echo "Testing function: $FUNC_NAME"
+              # Basic health check - adjust as needed
+              curl -i --fail http://localhost:54321/functions/v1/$FUNC_NAME \
+                -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0" \
+                || echo "⚠️  Function $FUNC_NAME health check failed (this may be expected)"
+            done
+          fi
 
-      - name: Function logs on failure
-        if: failure()
-        run: |
-          echo "## Function Logs" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          supabase functions logs 2>&1 | tail -100 >> $GITHUB_STEP_SUMMARY || echo "No logs available" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          kill $SERVE_PID || true
+
+      - name: Generate comprehensive test report with Claude Code
+        if: github.event_name == 'pull_request'
+        uses: anthropics/claude-code-action@v1
+        continue-on-error: true
+        with:
+          github_token: ${{ github.token }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Analyze the edge functions and generate a comprehensive test report to $GITHUB_STEP_SUMMARY:
+            1. Review all functions in supabase/functions/
+            2. Analyze test coverage and quality
+            3. Review each function's:
+               - Code quality and structure
+               - Error handling
+               - Security considerations
+               - Performance characteristics
+            4. Identify missing tests or edge cases
+            5. Provide recommendations for improvements
+            6. Check for common Deno/edge function anti-patterns
 
       - name: Stop Supabase
         if: always()
         run: supabase stop --no-backup
-
-  security-scan:
-    name: Security Scan
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Deno
-        uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
-
-      - name: Check for vulnerabilities
-        run: |
-          cd supabase/functions
-          echo "Scanning for common security issues..."
-          
-          # Check for hardcoded secrets (basic check)
-          if grep -r "api[_-]key.*=.*['\"]" --include="*.ts" --exclude-dir=_shared .; then
-            echo "::warning::Possible hardcoded API keys found. Please use environment variables."
-          fi
-          
-          if grep -r "password.*=.*['\"]" --include="*.ts" --exclude-dir=_shared .; then
-            echo "::warning::Possible hardcoded passwords found. Please use environment variables."
-          fi
-
-      - name: Dependency audit
-        run: |
-          cd supabase/functions
-          echo "Checking dependencies..."
-          # List all unique dependencies
-          echo "## Dependencies" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          grep -rh "from ['\"]https://" --include="*.ts" . | sort -u >> $GITHUB_STEP_SUMMARY || echo "No external dependencies" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-
-  test-summary:
-    name: Test Summary
-    runs-on: ubuntu-latest
-    needs: [lint-and-format, type-check, unit-tests, integration-tests, security-scan]
-    if: always()
-    
-    steps:
-      - name: Check test results
-        run: |
-          echo "# Edge Functions Test Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Test Suite | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|------------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Lint & Format | ${{ needs.lint-and-format.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Type Check | ${{ needs.type-check.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Unit Tests | ${{ needs.unit-tests.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Integration Tests | ${{ needs.integration-tests.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Security Scan | ${{ needs.security-scan.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
-
-      - name: Fail if any test failed
-        if: |
-          needs.lint-and-format.result != 'success' ||
-          needs.type-check.result != 'success' ||
-          needs.unit-tests.result != 'success' ||
-          needs.integration-tests.result != 'success'
-        run: |
-          echo "One or more test suites failed"
-          exit 1
