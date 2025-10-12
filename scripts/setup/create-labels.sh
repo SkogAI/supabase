@@ -34,7 +34,7 @@ create_label() {
     local name="$1"
     local color="$2"
     local description="$3"
-    
+
     echo "Creating label: $name"
     if gh label list --repo "$REPO" --json name --jq '.[] | .name' | grep -Fxq "$name"; then
         gh label edit "$name" \

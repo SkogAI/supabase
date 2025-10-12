@@ -2,6 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Quick Links
+
+- **[Quickstart Testing Guide](QUICKSTART_TESTING.md)** - Verify all basic features work correctly
+- **[Creating Test Issues](docs/CREATING_TEST_ISSUES.md)** - Create GitHub issues for unit tests
+
 ## Project Overview
 
 Production-ready Supabase backend with PostgreSQL database, Row Level Security (RLS), Edge Functions (Deno), Storage buckets, Realtime subscriptions, and comprehensive CI/CD pipeline. The project includes MCP (Model Context Protocol) server infrastructure for AI agent integration.
@@ -175,7 +180,7 @@ examples/
 - **Custom schemas**: Additional schemas can be added via `config.toml` `api.schemas` array (currently: `public`, `graphql_public`)
 - **Search path**: `public` and `extensions` schemas in search path
 - **Migrations**: All migrations in `supabase/migrations/` with format `YYYYMMDDHHMMSS_description.sql`
-- **Seed data**: Contains 3 test users with fixed UUIDs for RLS testing (see `supabase/seed.sql`)
+- **Seed data**: Contains 3 test users with fixed UUIDs for RLS testing (see **supabase/seed.sql**)
 
 Current tables:
 
@@ -295,7 +300,7 @@ This project includes Model Context Protocol (MCP) server infrastructure for AI 
 - Supavisor Transaction (port 6543) - Serverless/Edge agents with auto-cleanup
 - Dedicated Pooler - High-performance isolated resources
 
-**Documentation**: See `docs/MCP_*.md` files for complete implementation guides
+**Documentation**: See **docs/MCP_*.md** files for complete implementation guides
 
 ## Local Development URLs
 
@@ -408,20 +413,32 @@ Ensure Supabase is running: `npm run db:start` then `npm run types:generate`
 
 Core documentation in repository:
 
-- `docs/README.md` - Quick start and feature overview
-- `docs/CONTRIBUTING.md` - Complete contributor guide with code guidelines and PR process
-- `docs/WORKFLOWS.md` - Detailed development workflows and common procedures
-- `docs/TROUBLESHOOTING.md` - Comprehensive troubleshooting guide for all common issues
-- `docs/ARCHITECTURE.md` - System architecture overview and design decisions
-- `docs/DEVOPS.md` - Complete CI/CD and deployment guide
-- `docs/RLS_POLICIES.md` - RLS patterns and best practices
-- `docs/STORAGE.md` - Storage bucket configuration and usage
-- `docs/MCP_*.md` - AI agent integration guides
-- `docs/AUTH_ZITADEL_SAML_SELF_HOSTED.md` - Complete SAML SSO integration guide
-- `docs/SAML_ADMIN_API.md` - SAML provider management API reference
-- `docs/USER_GUIDE_SAML.md` - End-user SAML authentication guide
-- `docs/ZITADEL_SAML_IDP_SETUP.md` - ZITADEL Identity Provider setup
-- `docs/runbooks/saml-troubleshooting-self-hosted.md` - SAML troubleshooting operations
-- `supabase/README.md` - Seed data and configuration details
-- `supabase/migrations/README.md` - Migration guidelines and naming conventions
-- `supabase/functions/README.md` - Edge function development guide
+- **skogai/BASIC_CLI_REFERENCE.md** - Quick reference map of Supabase CLI structure and commands
+- **skogai/TEMPLATE.md** - Template for creating consistent command documentation
+- **docs/** - Complete official documentation directory (see subdirectories below)
+- **docs/README.md** - Quick start and feature overview
+- **docs/CONTRIBUTING.md** - Complete contributor guide with code guidelines and PR process
+- **docs/WORKFLOWS.md** - Detailed development workflows and common procedures
+- **docs/TROUBLESHOOTING.md** - Comprehensive troubleshooting guide for all common issues
+- **docs/ARCHITECTURE.md** - System architecture overview and design decisions
+- **docs/DEVOPS.md** - Complete CI/CD and deployment guide
+- **docs/RLS_POLICIES.md** - RLS patterns and best practices
+- **docs/STORAGE.md** - Storage bucket configuration and usage
+- **docs/MCP_*.md** - AI agent integration guides
+- **docs/AUTH_ZITADEL_SAML_SELF_HOSTED.md** - Complete SAML SSO integration guide
+- **docs/SAML_ADMIN_API.md** - SAML provider management API reference
+- **docs/USER_GUIDE_SAML.md** - End-user SAML authentication guide
+- **docs/ZITADEL_SAML_IDP_SETUP.md** - ZITADEL Identity Provider setup
+- **docs/runbooks/saml-troubleshooting-self-hosted.md** - SAML troubleshooting operations
+- **supabase/README.md** - Seed data and configuration details
+- **supabase/migrations/README.md** - Migration guidelines and naming conventions
+- **supabase/functions/README.md** - Edge function development guide
+
+### Knowledge Base Structure
+
+The **skogai/** directory contains a personal knowledge base that mirrors the Supabase CLI command structure:
+- CLI commands map directly to documentation (e.g., `supabase db reset` → `skogai/db/reset.md`)
+- **docs/** contains official project documentation for contributors
+- **skogai/** contains practical command reference and personal learnings
+- See **skogai/BASIC_CLI_REFERENCE.md** for complete structure and navigation guide
+- See GitHub Issue #160 for ongoing documentation organization efforts

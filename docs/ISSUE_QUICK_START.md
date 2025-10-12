@@ -6,7 +6,7 @@
 
 ```bash
 # Create repository labels
-./.github/create-labels.sh
+./scripts/setup/create-labels.sh
 
 # Create initial tracking issues
 ./scripts/create-issues.sh
@@ -148,9 +148,9 @@ Related to #789
 
 ## 📚 More Information
 
-- **Full Guide**: [docs/ISSUE_MANAGEMENT.md](../docs/ISSUE_MANAGEMENT.md)
+- **Full Guide**: [ISSUE_MANAGEMENT.md](./ISSUE_MANAGEMENT.md)
 - **Label Reference**: [LABELS.md](./LABELS.md)
-- **Project Setup**: [SETUP_COMPLETE.md](../SETUP_COMPLETE.md)
+- **Project Setup**: [../SETUP_COMPLETE.md](../SETUP_COMPLETE.md)
 
 ## 🆘 Need Help?
 
