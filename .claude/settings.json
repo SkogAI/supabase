@@ -69,33 +69,5 @@
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": ["context7", "sequential-thinking"],
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash|Grep|Glob|Read|Edit|MultiEdit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "uv run /home/skogix/.claude/hooks/tool_validator.py",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "uv run /home/skogix/.claude/hooks/task_hard_prep_hook.py"
-          }
-        ]
-      }
-    ]
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "bun x ccusage statusline"
-  }
+  "hooks": {}
 }
-
