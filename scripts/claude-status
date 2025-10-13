@@ -1,13 +1,59 @@
 #!/usr/bin/env bash
 
-# claude-status - View Claude's current activity and status across the repo
+# claude-status - View branch activity and status by prefix across the repo
 #
 # This tool shows:
-# - Recent issues/PRs where @claude was mentioned
-# - All claude/* branches and their status
+# - Recent issues/PRs where @claude was mentioned (always shown)
+# - All branches by prefix and their status
 # - What's in progress vs completed
+#
+# Usage: claude-status [--prefix PREFIX]
+# Example: claude-status --prefix copilot/
 
 set -euo pipefail
+
+# Optional prefix filter (empty means all branches)
+PREFIX=""
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -p|--prefix)
+            PREFIX="$2"
+            shift 2
+            ;;
+        -h|--help)
+            cat << EOF
+Usage: claude-status [OPTIONS]
+
+View branch activity and status across the repository.
+
+OPTIONS:
+    -p, --prefix PREFIX    Optional: Only show branches with this prefix
+    -h, --help            Show this help message
+
+EXAMPLES:
+    # Show all branches
+    claude-status
+
+    # Show only claude/* branches
+    claude-status --prefix claude/
+
+    # Show only copilot/* branches
+    claude-status --prefix copilot/
+
+NOTE: Always shows @claude mentions in issues/PRs regardless of prefix.
+
+EOF
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+done
 
 # Colors for output
 readonly RED='\033[0;31m'
@@ -39,22 +85,39 @@ if [ -z "$REPO" ]; then
 fi
 
 echo -e "${BOLD}${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BOLD}${CYAN}   Claude Activity Status for ${REPO}${NC}"
+echo -e "${BOLD}${CYAN}   Branch Activity Status for ${REPO}${NC}"
+if [ -n "$PREFIX" ]; then
+    echo -e "${BOLD}${CYAN}   Filter: ${PREFIX}*${NC}"
+else
+    echo -e "${BOLD}${CYAN}   Showing: All branches${NC}"
+fi
 echo -e "${BOLD}${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
-# Section 1: Claude Branches
-echo -e "${BOLD}${BLUE}📌 Claude Branches${NC}"
+# Section 1: Branches
+if [ -n "$PREFIX" ]; then
+    echo -e "${BOLD}${BLUE}📌 ${PREFIX}* Branches${NC}"
+else
+    echo -e "${BOLD}${BLUE}📌 All Branches${NC}"
+fi
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
 # Fetch latest from remote
 git fetch --quiet origin 2>/dev/null || true
 
-# Get all claude/* branches (both local and remote)
-BRANCHES=$(git branch -a | grep -E '(^|\s+)claude/' | sed 's/^[* ]*//; s/remotes\/origin\///' | sort -u)
+# Get branches, optionally filtered by prefix
+if [ -n "$PREFIX" ]; then
+    # Escape special regex characters in PREFIX
+    ESCAPED_PREFIX=$(echo "$PREFIX" | sed 's|/|\\/|g')
+    BRANCHES=$(git branch -a | rg "(^|\\s+)${ESCAPED_PREFIX}" | sed 's/^[* ]*//; s/remotes\/origin\///' | sort -u)
+else
+    # Get all branches except master/main
+    default_branch=$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5 2>/dev/null || echo "master")
+    BRANCHES=$(git branch -a | sed 's/^[* ]*//; s/remotes\/origin\///' | grep -v "^${default_branch}$" | grep -v "^HEAD" | sort -u)
+fi
 
 if [ -z "$BRANCHES" ]; then
-    echo -e "${YELLOW}  No claude/* branches found${NC}"
+    echo -e "${YELLOW}  No branches found${NC}"
 else
     while IFS= read -r branch; do
         # Get the last commit on this branch
@@ -144,7 +207,11 @@ OPEN_PRS=$(echo "$PRS" | jq '[.[] | select(.state == "OPEN")] | length' 2>/dev/n
 OPEN_ISSUES=$(echo "$ISSUES" | jq '[.[] | select(.state == "OPEN")] | length' 2>/dev/null || echo "0")
 
 echo -e "${BOLD}Summary:${NC}"
-echo -e "  • Claude branches: ${BOLD}${TOTAL_BRANCHES}${NC}"
-echo -e "  • Open issues: ${BOLD}${OPEN_ISSUES}${NC}"
-echo -e "  • Open PRs: ${BOLD}${OPEN_PRS}${NC}"
+if [ -n "$PREFIX" ]; then
+    echo -e "  • ${PREFIX}* branches: ${BOLD}${TOTAL_BRANCHES}${NC}"
+else
+    echo -e "  • Total branches: ${BOLD}${TOTAL_BRANCHES}${NC}"
+fi
+echo -e "  • Open @claude issues: ${BOLD}${OPEN_ISSUES}${NC}"
+echo -e "  • Open @claude PRs: ${BOLD}${OPEN_PRS}${NC}"
 echo -e "${BOLD}${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"

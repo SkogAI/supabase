@@ -1,12 +1,56 @@
 #!/usr/bin/env bash
 #
-# Auto-create PR for Claude branches
+# Auto-create PR for bot/automated branches
 #
 # This script demonstrates the pattern for automatically creating PRs
-# when Claude finishes tasks. It should be integrated into the centralized
+# when automated tasks finish. It should be integrated into the centralized
 # workflow at SkogAI/.github/.github/workflows/claude-workflow-manager.yml
+#
+# Usage: auto-create-pr [--prefix PREFIX]
+# Example: auto-create-pr --prefix copilot/
 
 set -e
+
+# Optional prefix filter (empty means any branch with issue number pattern)
+PREFIX=""
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -p|--prefix)
+            PREFIX="$2"
+            shift 2
+            ;;
+        -h|--help)
+            cat << 'EOF'
+Usage: auto-create-pr [OPTIONS]
+
+Automatically create PR for current branch if it doesn't exist.
+
+OPTIONS:
+    -p, --prefix PREFIX    Optional: Only create PR if branch has this prefix
+    -h, --help            Show this help message
+
+EXAMPLES:
+    # Create PR for any branch
+    auto-create-pr
+
+    # Create PR only if on claude/* branch
+    auto-create-pr --prefix claude/
+
+    # Create PR only if on copilot/* branch
+    auto-create-pr --prefix copilot/
+
+EOF
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+done
 
 # Colors for output
 RED='\033[0;31m'
@@ -29,11 +73,13 @@ error() {
 # Get current branch
 BRANCH=$(git branch --show-current)
 
-# Check if we're on a claude/* branch
-if [[ ! $BRANCH =~ ^claude/ ]]; then
-  warn "Not on a claude/* branch (current: $BRANCH)"
-  warn "Skipping auto-PR creation"
-  exit 0
+# Check if prefix filter is specified
+if [ -n "$PREFIX" ]; then
+  if [[ ! $BRANCH =~ ^${PREFIX} ]]; then
+    warn "Not on a ${PREFIX}* branch (current: $BRANCH)"
+    warn "Skipping auto-PR creation"
+    exit 0
+  fi
 fi
 
 info "On branch: $BRANCH"
@@ -57,33 +103,33 @@ fi
 
 info "No existing PR found, creating new PR..."
 
-# Extract issue number from branch name (claude/issue-123-timestamp)
-ISSUE_NUM=$(echo "$BRANCH" | sed -n 's/claude\/issue-\([0-9]*\)-.*/\1/p')
+# Extract issue number from branch name (prefix/issue-123-timestamp or issue-123-description)
+ISSUE_NUM=$(echo "$BRANCH" | sed -n 's/.*issue-\([0-9]*\).*/\1/p')
 
 if [[ -z "$ISSUE_NUM" ]]; then
   warn "Could not extract issue number from branch name: $BRANCH"
-  ISSUE_TITLE="Updates from Claude"
+  ISSUE_TITLE="Automated updates"
   PR_BODY="## Summary
-Automated changes from Claude Code
+Automated changes from bot workflow
 
 ---
-Generated with [Claude Code](https://claude.ai/code)"
+Generated with automation"
 else
   info "Extracted issue number: #$ISSUE_NUM"
 
   # Get issue title for PR title
-  ISSUE_TITLE=$(gh issue view "$ISSUE_NUM" --json title -q .title 2>/dev/null || echo "Updates from Claude")
+  ISSUE_TITLE=$(gh issue view "$ISSUE_NUM" --json title -q .title 2>/dev/null || echo "Updates for issue #$ISSUE_NUM")
   info "Issue title: $ISSUE_TITLE"
 
   # Create PR body with issue reference
   PR_BODY="## Summary
-Changes made by Claude Code to address issue #${ISSUE_NUM}
+Automated changes to address issue #${ISSUE_NUM}
 
 ## Related Issue
 Closes #${ISSUE_NUM}
 
 ---
-Generated with [Claude Code](https://claude.ai/code)"
+Generated with automation"
 fi
 
 # Create the PR
