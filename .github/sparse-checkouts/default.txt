@@ -1,2 +1,25 @@
+# Core project files
 /README.md
+/CLAUDE.md
+/QUICKSTART_TESTING.md
 /Argcfile.sh
+
+# Project configuration
+/.env.example
+/.envrc
+/.gitignore
+/.mcp.json
+/.sqlfluff
+/package.json
+/package-lock.json
+/deno.lock
+/requirements-dev.txt
+/uv.lock
+
+# Main directories
+/docs/
+/supabase/
+/scripts/
+/tests/
+/types/
+/examples/
