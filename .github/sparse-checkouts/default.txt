@@ -1,19 +1,23 @@
-*.md
-Argcfile.sh
+# Core project files
+/README.md
+/CLAUDE.md
+/QUICKSTART_TESTING.md
+/Argcfile.sh
 
-/.env
+# Project configuration
+/.env.example
 /.envrc
 /.gitignore
 /.mcp.json
+/.sqlfluff
 /package.json
 /package-lock.json
 /deno.lock
 /requirements-dev.txt
 /uv.lock
-/.github/
 
 # Main directories
-/skogai/
+/docs/
 /supabase/
 /scripts/
 /tests/
