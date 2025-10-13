@@ -1,8 +1,9 @@
+*.md
+Argcfile.sh
 /.env.example
 /supabase/config.toml
 /supabase/functions/
 /types/database.ts
 /deno.lock
 /package.json
-/docs/NPM_SCRIPTS_REFERENCE.md
-/supabase/functions/README.md
+/skogai/
