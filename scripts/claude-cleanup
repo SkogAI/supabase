@@ -1,12 +1,60 @@
 #!/usr/bin/env bash
 
-# Script to delete merged claude/* branches both locally and remotely
+# Script to delete merged branches by prefix both locally and remotely
 # This helps keep the repository clean by removing branches that have been merged
+#
+# Usage: claude-cleanup [--prefix PREFIX]
+# Example: claude-cleanup --prefix copilot/
 
 set -e
 
+# Optional prefix filter (empty means all branches)
+PREFIX=""
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -p|--prefix)
+            PREFIX="$2"
+            shift 2
+            ;;
+        -h|--help)
+            cat << EOF
+Usage: claude-cleanup [OPTIONS]
+
+Delete merged branches both locally and remotely.
+
+OPTIONS:
+    -p, --prefix PREFIX    Optional: Only clean branches with this prefix
+    -h, --help            Show this help message
+
+EXAMPLES:
+    # Clean up all merged branches
+    claude-cleanup
+
+    # Clean up only claude/* branches
+    claude-cleanup --prefix claude/
+
+    # Clean up only copilot/* branches
+    claude-cleanup --prefix copilot/
+
+EOF
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+done
+
 main() {
-    echo "🧹 Cleaning up merged claude/* branches..."
+    if [ -n "$PREFIX" ]; then
+        echo "🧹 Cleaning up merged ${PREFIX}* branches..."
+    else
+        echo "🧹 Cleaning up all merged branches..."
+    fi
     echo ""
 
     # Fetch latest remote state and prune deleted branches
@@ -18,15 +66,24 @@ main() {
     echo "ℹ️  Default branch: $default_branch"
     echo ""
 
-    # Get all claude/* branches (both local and remote)
-    local_branches=$(git branch --list 'claude/*' --format='%(refname:short)' || true)
-    remote_branches=$(git branch -r --list 'origin/claude/*' --format='%(refname:short)' | sed 's|origin/||' || true)
+    # Get all branches (both local and remote), optionally filtered by prefix
+    if [ -n "$PREFIX" ]; then
+        local_branches=$(git branch --list "${PREFIX}*" --format='%(refname:short)' || true)
+        remote_branches=$(git branch -r --list "origin/${PREFIX}*" --format='%(refname:short)' | sed 's|origin/||' || true)
+    else
+        local_branches=$(git branch --format='%(refname:short)' | grep -v "^${default_branch}$" || true)
+        remote_branches=$(git branch -r --format='%(refname:short)' | sed 's|origin/||' | grep -v "^${default_branch}$" || true)
+    fi
 
     # Combine and deduplicate
     all_branches=$(echo -e "$local_branches\n$remote_branches" | sort -u | grep -v '^$' || true)
 
     if [ -z "$all_branches" ]; then
-        echo "✨ No claude/* branches found. Repository is already clean!"
+        if [ -n "$PREFIX" ]; then
+            echo "✨ No ${PREFIX}* branches found. Repository is already clean!"
+        else
+            echo "✨ No branches found. Repository is already clean!"
+        fi
         exit 0
     fi
 
