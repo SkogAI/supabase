@@ -118,35 +118,48 @@ This tool makes it easy to quickly trigger Claude without thinking about whether
 
 ### auto-create-pr
 
-Automatically create a PR for the current Claude branch.
+Automatically create a PR for automated branches when changes are pushed.
 
 **Usage:**
 ```bash
+# Create PR for any branch
 auto-create-pr
+
+# Create PR only if on claude/* branch
+auto-create-pr --prefix claude/
+
+# Create PR only if on copilot/* branch
+auto-create-pr --prefix copilot/
 ```
 
-**Behavior:**
-- Checks if current branch is a `claude/*` branch
-- Verifies branch has been pushed to remote
+**Options:**
+- `--prefix PREFIX`: Optional filter to only create PR if branch has specific prefix
+
+**Requirements:**
+- Branch must be pushed to remote
+- GitHub CLI (gh) must be installed and authenticated
+
+**What it does:**
+- Checks if you're on a matching branch (if prefix specified)
+- Verifies branch exists on remote
 - Checks if PR already exists (skips if yes)
-- Extracts issue number from branch name
-- Creates PR with proper title and body
-- Links PR to original issue (if applicable)
+- Extracts issue number from branch name pattern (issue-123-*)
+- Creates PR with issue reference
+- Links PR to original issue with "Closes #N"
 
-**Output:**
-- PR URL on success
-- Warning messages if PR creation is skipped
-- Error if PR creation fails
+**Note:** Works on any branch by default. Use `--prefix` to filter to specific branch patterns.
 
-**Example:**
-```bash
-# After Claude pushes code to claude/issue-123-20251009-1010
-git checkout claude/issue-123-20251009-1010
-./scripts/auto-create-pr
-# Creates PR titled with issue #123's title, linking back to the issue
+**Integration:**
+
+Add to `.github/workflows/*.yml`:
+
+```yaml
+- name: Create PR automatically
+  if: github.ref != 'refs/heads/master'
+  run: ./scripts/auto-create-pr
+  env:
+    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
-
-This script is designed to be integrated into the Claude workflow to automatically create PRs when tasks are completed. See [../docs/auto-pr-implementation.md](../docs/auto-pr-implementation.md) for integration details.
 
 ---
 
@@ -199,69 +212,113 @@ This script is also integrated into the `.github/workflows/auto-merge.yml` workf
 
 ### claude-status
 
-View all Claude activity in the repository.
+View branch activity and status across the repository.
 
 **Usage:**
 ```bash
+# Show all branches
 claude-status
+
+# Show only claude/* branches
+claude-status --prefix claude/
+
+# Show only copilot/* branches
+claude-status --prefix copilot/
 ```
 
+**Options:**
+- `--prefix PREFIX`: Optional filter to show only branches with specific prefix
+
 Shows:
-- All `claude/*` branches and their status
+- All branches (or filtered by prefix) and their status
 - Recent issues with @claude mentions
 - Recent PRs with @claude mentions
 - Summary statistics
+
+**Note:** Works on all branches by default. Use `--prefix` to filter to specific branch patterns.
 
 ---
 
 ### claude-sync
 
-Sync all `claude/*` branches with the main branch (master or main) to prevent merge conflicts.
+Sync branches with the main branch (master or main) to prevent merge conflicts.
 
 **Usage:**
 ```bash
+# Sync all branches
 claude-sync
+
+# Sync only claude/* branches
+claude-sync --prefix claude/
+
+# Sync only copilot/* branches
+claude-sync --prefix copilot/
 ```
+
+**Options:**
+- `--prefix PREFIX`: Optional filter to sync only branches with specific prefix
 
 What it does:
 - Detects whether your repo uses `main` or `master`
 - Fetches latest changes from remote
-- Finds all local `claude/*` branches
-- Merges the main branch into each claude branch
+- Finds all local branches (or filtered by prefix)
+- Merges the main branch into each branch
 - Reports any conflicts that need manual resolution
 
-This helps keep all Claude-created branches up to date with the latest changes, preventing conflicts when creating pull requests.
+**Note:** Works on all branches by default. Use `--prefix` to filter to specific branch patterns.
 
 ---
 
 ### claude-cleanup
 
-Delete merged `claude/*` branches locally and remotely to keep repository clean.
+Delete merged branches locally and remotely to keep repository clean.
 
 **Usage:**
 ```bash
+# Clean up all merged branches
 claude-cleanup
+
+# Clean up only claude/* merged branches
+claude-cleanup --prefix claude/
+
+# Clean up only copilot/* merged branches
+claude-cleanup --prefix copilot/
 ```
+
+**Options:**
+- `--prefix PREFIX`: Optional filter to clean only branches with specific prefix
+
+What it does:
+- Fetches latest remote state
+- Checks which branches are merged into main/master
+- Deletes merged branches locally and remotely
+- Skips unmerged branches
+
+**Note:** Works on all branches by default. Use `--prefix` to filter to specific branch patterns.
 
 ---
 
 ### claude-watch
 
-Monitor Claude workflow runs with real-time status updates.
+Monitor workflow runs with real-time status updates.
 
 **Usage:**
 ```bash
-# Watch latest Claude workflow run
+# Watch latest workflow run
 claude-watch
+
+# Watch latest copilot.yml workflow
+claude-watch --workflow copilot.yml
 
 # Watch specific run with logs
 claude-watch --logs 12345678
 
-# Compact mode for CI/scripts
-claude-watch --compact
+# Watch specific workflow in compact mode
+claude-watch --workflow feature.yml --compact
 ```
 
 **Options:**
+- `--workflow NAME`: Optional filter to watch specific workflow file
 - `--logs`: Follow job logs in real-time after completion
 - `--compact`: Use compact output mode (less verbose)
 
@@ -272,6 +329,130 @@ claude-watch --compact
 - Job-level progress tracking
 - Automatic completion detection
 - Optional log following
+
+**Note:** Watches latest workflow run by default. Use `--workflow` to filter to specific workflow file.
+
+---
+
+### check-db-health.sh
+
+[TODO: Add description for database health checking script]
+
+---
+
+### check-mergeable
+
+[TODO: Add description for PR merge conflict checking script]
+
+---
+
+### check_saml_logs.sh
+
+[TODO: Add description for SAML authentication logs checking script]
+
+---
+
+### create-all-worktrees-minimal.sh
+
+[TODO: Add description for minimal worktree creation script]
+
+---
+
+### create-all-worktrees.sh
+
+[TODO: Add description for comprehensive worktree creation script]
+
+---
+
+### create-test-issues.sh
+
+[TODO: Add description for test issue creation script]
+
+---
+
+### dev.sh
+
+[TODO: Add description for development startup script]
+
+---
+
+### generate-saml-key.sh
+
+[TODO: Add description for SAML key generation script]
+
+---
+
+### lint-and-test
+
+[TODO: Add description for linting and testing script]
+
+---
+
+### monitor-session-pool.sh
+
+[TODO: Add description for database session pool monitoring script]
+
+---
+
+### reset.sh
+
+[TODO: Add description for database reset script]
+
+---
+
+### rotate-ssl-cert.sh
+
+[TODO: Add description for SSL certificate rotation script]
+
+---
+
+### saml-setup.sh
+
+[TODO: Add description for SAML setup automation script]
+
+---
+
+### setup.sh
+
+[TODO: Add description for project setup script]
+
+---
+
+### test-connection.sh
+
+[TODO: Add description for database connection testing script]
+
+---
+
+### test_saml_endpoints.sh
+
+[TODO: Add description for SAML endpoint testing script]
+
+---
+
+### test_saml.sh
+
+[TODO: Add description for SAML integration testing script]
+
+---
+
+### validate_saml_attributes.sh
+
+[TODO: Add description for SAML attribute validation script]
+
+---
+
+### verify_npm_scripts.sh
+
+[TODO: Add description for npm scripts verification script]
+
+---
+
+### verify-ssl-connection.sh
+
+[TODO: Add description for SSL connection verification script]
+
+---
 
 ## How It Works
 

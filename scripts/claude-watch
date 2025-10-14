@@ -1,14 +1,20 @@
 #!/usr/bin/env bash
 
-# claude-watch - Monitor Claude workflow runs with real-time status updates
+# claude-watch - Monitor workflow runs with real-time status updates
 #
-# This tool provides real-time feedback on Claude's progress by:
+# This tool provides real-time feedback on workflow progress by:
 # - Watching the latest or specific workflow runs
 # - Auto-updating terminal with status changes
 # - Showing job progress and logs
 # - Notifying on completion
+#
+# Usage: claude-watch [--workflow WORKFLOW] [RUN_ID]
+# Example: claude-watch --workflow copilot.yml
 
 set -euo pipefail
+
+# Optional workflow filter (empty means latest workflow)
+WORKFLOW=""
 
 # Colors for output
 readonly RED='\033[0;31m'
@@ -56,34 +62,42 @@ COMPACT=false
 
 usage() {
     cat << EOF
-${BOLD}claude-watch${NC} - Monitor Claude workflow runs with real-time updates
+${BOLD}claude-watch${NC} - Monitor workflow runs with real-time updates
 
 ${BOLD}USAGE:${NC}
     claude-watch [OPTIONS] [RUN_ID]
 
 ${BOLD}OPTIONS:${NC}
-    -l, --logs       Follow job logs in real-time
-    -c, --compact    Compact output (less verbose)
-    -h, --help       Show this help message
+    -w, --workflow NAME  Optional: Specific workflow file to monitor
+    -l, --logs          Follow job logs in real-time
+    -c, --compact       Compact output (less verbose)
+    -h, --help          Show this help message
 
 ${BOLD}ARGUMENTS:${NC}
-    RUN_ID           Specific workflow run ID to watch (default: latest)
+    RUN_ID              Specific workflow run ID to watch (default: latest)
 
 ${BOLD}EXAMPLES:${NC}
-    # Watch latest Claude workflow run
+    # Watch latest workflow run
     claude-watch
+
+    # Watch latest copilot.yml workflow run
+    claude-watch --workflow copilot.yml
 
     # Watch specific run with logs
     claude-watch --logs 12345678
 
-    # Compact mode for CI/scripts
-    claude-watch --compact
+    # Watch specific workflow in compact mode
+    claude-watch --workflow feature.yml --compact
 
 EOF
 }
 
 while [[ $# -gt 0 ]]; do
     case $1 in
+        -w|--workflow)
+            WORKFLOW="$2"
+            shift 2
+            ;;
         -l|--logs)
             FOLLOW_LOGS=true
             shift
@@ -103,13 +117,20 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Function to get the latest Claude workflow run
+# Function to get the latest workflow run
 get_latest_run() {
-    gh run list \
-        --workflow="claude.yml" \
-        --limit 1 \
-        --json databaseId,status,conclusion,displayTitle,headBranch,createdAt \
-        --jq '.[0]'
+    if [ -n "$WORKFLOW" ]; then
+        gh run list \
+            --workflow="$WORKFLOW" \
+            --limit 1 \
+            --json databaseId,status,conclusion,displayTitle,headBranch,createdAt \
+            --jq '.[0]'
+    else
+        gh run list \
+            --limit 1 \
+            --json databaseId,status,conclusion,displayTitle,headBranch,createdAt \
+            --jq '.[0]'
+    fi
 }
 
 # Function to get specific run details
@@ -168,7 +189,11 @@ display_run_header() {
 
     if [ "$COMPACT" = false ]; then
         echo -e "${BOLD}${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-        echo -e "${BOLD}${ROCKET} Watching Claude Workflow Run #${run_id}${NC}"
+        if [ -n "$WORKFLOW" ]; then
+            echo -e "${BOLD}${ROCKET} Watching Workflow Run #${run_id} (${WORKFLOW})${NC}"
+        else
+            echo -e "${BOLD}${ROCKET} Watching Workflow Run #${run_id}${NC}"
+        fi
         echo -e "${BOLD}${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
         echo -e "${BOLD}Title:${NC}   $title"
         echo -e "${BOLD}Branch:${NC}  $branch"
@@ -233,7 +258,7 @@ watch_run() {
             display_run_header "$run_data"
 
             if [ "$current_status" = "in_progress" ]; then
-                echo -e "${BLUE}${SPINNER[$spinner_idx]} Claude is working...${NC}"
+                echo -e "${BLUE}${SPINNER[$spinner_idx]} Workflow in progress...${NC}"
                 echo ""
             fi
 
@@ -283,11 +308,19 @@ watch_run() {
 main() {
     # Determine which run to watch
     if [ -z "$RUN_ID" ]; then
-        echo -e "${BLUE}Fetching latest Claude workflow run...${NC}"
+        if [ -n "$WORKFLOW" ]; then
+            echo -e "${BLUE}Fetching latest ${WORKFLOW} workflow run...${NC}"
+        else
+            echo -e "${BLUE}Fetching latest workflow run...${NC}"
+        fi
         local latest_run=$(get_latest_run)
 
         if [ -z "$latest_run" ] || [ "$latest_run" = "null" ]; then
-            echo -e "${YELLOW}No Claude workflow runs found${NC}"
+            if [ -n "$WORKFLOW" ]; then
+                echo -e "${YELLOW}No ${WORKFLOW} workflow runs found${NC}"
+            else
+                echo -e "${YELLOW}No workflow runs found${NC}"
+            fi
             exit 0
         fi
 

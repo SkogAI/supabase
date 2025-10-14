@@ -2,7 +2,51 @@
 
 set -e
 
-# claude-sync - Sync all claude/* branches with main/master
+# claude-sync - Sync branches by prefix with main/master
+#
+# Usage: claude-sync [--prefix PREFIX]
+# Example: claude-sync --prefix copilot/
+
+# Optional prefix filter (empty means all branches)
+PREFIX=""
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -p|--prefix)
+            PREFIX="$2"
+            shift 2
+            ;;
+        -h|--help)
+            cat << EOF
+Usage: claude-sync [OPTIONS]
+
+Sync all branches to main/master branch.
+
+OPTIONS:
+    -p, --prefix PREFIX    Optional: Only sync branches with this prefix
+    -h, --help            Show this help message
+
+EXAMPLES:
+    # Sync all branches
+    claude-sync
+
+    # Sync only claude/* branches
+    claude-sync --prefix claude/
+
+    # Sync only copilot/* branches
+    claude-sync --prefix copilot/
+
+EOF
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+done
 
 # Colors for output
 RED='\033[0;31m'
@@ -39,16 +83,22 @@ git fetch origin "${main_branch}:${main_branch}" 2>/dev/null || {
     echo -e "${YELLOW}Note: Could not update local ${main_branch} (might be checked out)${NC}"
 }
 
-# Find all local claude/* branches
-claude_branches=$(git for-each-ref --format='%(refname:short)' refs/heads/claude/)
+# Find all local branches, optionally filtered by prefix
+if [ -n "$PREFIX" ]; then
+    branches_to_sync=$(git for-each-ref --format='%(refname:short)' "refs/heads/${PREFIX}" 2>/dev/null || echo "")
+    filter_desc="${PREFIX}*"
+else
+    branches_to_sync=$(git for-each-ref --format='%(refname:short)' refs/heads/ | grep -v "^${main_branch}$" || echo "")
+    filter_desc="all"
+fi
 
-if [ -z "$claude_branches" ]; then
-    echo -e "${YELLOW}No claude/* branches found${NC}"
+if [ -z "$branches_to_sync" ]; then
+    echo -e "${YELLOW}No branches found${NC}"
     exit 0
 fi
 
-echo -e "\n${GREEN}Found claude/* branches:${NC}"
-echo "$claude_branches"
+echo -e "\n${GREEN}Found ${filter_desc} branches:${NC}"
+echo "$branches_to_sync"
 
 # Track success/failure
 success_count=0
@@ -57,7 +107,7 @@ failed_branches=""
 
 # Sync each branch
 echo -e "\n${GREEN}Syncing branches with ${main_branch}...${NC}"
-for branch in $claude_branches; do
+for branch in $branches_to_sync; do
     echo -e "\n${GREEN}Processing: ${branch}${NC}"
 
     # Checkout the branch
