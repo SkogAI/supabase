@@ -2,7 +2,7 @@
 # https://supabase.com/docs/guides/local-development/cli/config
 # A string used to distinguish different Supabase projects on the same host. Defaults to the
 # working directory name when running `supabase init`.
-project_id = "SkogAI"
+project_id = "supabase"
 
 [api]
 enabled = true
@@ -10,11 +10,8 @@ enabled = true
 port = 54321
 # Schemas to expose in your API. Tables, views and stored procedures in this schema will get API
 # endpoints. `public` and `graphql_public` schemas are included by default.
-# To expose additional schemas, add them to this list: schemas = ["public", "graphql_public", "my_schema"]
-# See: SCHEMA_ORGANIZATION.md for schema organization and custom types documentation
 schemas = ["public", "graphql_public"]
 # Extra schemas to add to the search_path of every request.
-# This allows referencing objects without schema qualification.
 extra_search_path = ["public", "extensions"]
 # The maximum number of rows returns from a view, table, or stored procedure. Limits payload size
 # for accidental or malicious requests.
@@ -22,7 +19,7 @@ max_rows = 1000
 
 [api.tls]
 # Enable HTTPS endpoints locally using a self-signed certificate.
-enabled = true
+enabled = false
 # Paths to self-signed certificate pair.
 # cert_path = "../certs/my-cert.pem"
 # key_path = "../certs/my-key.pem"
@@ -49,14 +46,14 @@ default_pool_size = 20
 max_client_conn = 100
 
 # [db.vault]
-# secret_key = "UpNVntn3cDxHJpq99YMc1T1AQgQpc8kfYTuRgBiYa15BLrx8etQoXz3gZv1/u2oq"
+# secret_key = "env(SECRET_VALUE)"
 
 [db.migrations]
 # If disabled, migrations will be skipped during a db push or reset.
 enabled = true
 # Specifies an ordered list of schema files that describe your database.
 # Supports glob patterns relative to supabase directory: "./schemas/*.sql"
-schema_paths = ["./migrations/*.sql"]
+schema_paths = []
 
 [db.seed]
 # If enabled, seeds the database after migrations during a db reset.
@@ -82,25 +79,21 @@ enabled = true
 # The maximum length in bytes of HTTP request headers. (default: 4096)
 # max_header_length = 4096
 
-# Note: Rate limiting configuration moved to Supabase Dashboard (Cloud)
-# or environment variables (Self-hosted). Not supported in config.toml for CLI v2.34.3
-# See: https://supabase.com/docs/guides/realtime/rate-limits
-
 [studio]
 enabled = true
 # Port to use for Supabase Studio.
-port = 8000
+port = 54323
 # External URL of the API server that frontend connects to.
-api_url = "https://tavern.skogai.se"
+api_url = "http://127.0.0.1"
 # OpenAI API Key to use for Supabase AI in the Supabase Studio.
 openai_api_key = "env(OPENAI_API_KEY)"
 
 # Email testing server. Emails sent with the local dev setup are not actually sent - rather, they
 # are monitored, and you can view the emails that would have been sent from the web interface.
 [inbucket]
-enabled = false
+enabled = true
 # Port to use for the email testing server web interface.
-#port = 54324
+port = 54324
 # Uncomment to expose additional ports for testing user applications that send emails.
 # smtp_port = 54325
 # pop3_port = 54326
@@ -108,7 +101,7 @@ enabled = false
 # sender_name = "Admin"
 
 [storage]
-enabled = false # Temporarily disabled due to CLI v2.34.3 compatibility issue
+enabled = true
 # The maximum file size allowed (e.g. "5MB", "500KB").
 file_size_limit = "50MiB"
 
@@ -127,7 +120,7 @@ file_size_limit = "50MiB"
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-site_url = "https://tavern.skogai.se"
+site_url = "http://127.0.0.1:3000"
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
 additional_redirect_urls = ["https://127.0.0.1:3000"]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
@@ -175,7 +168,7 @@ web3 = 30
 
 [auth.email]
 # Allow/disallow new user signups via email to your project.
-enable_signup = false
+enable_signup = true
 # If enabled, a user will be required to confirm any email change on both the old, and new email
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true
@@ -270,8 +263,8 @@ max_frequency = "5s"
 # Use an external OAuth provider. The full list of providers are: `apple`, `azure`, `bitbucket`,
 # `discord`, `facebook`, `github`, `gitlab`, `google`, `keycloak`, `linkedin_oidc`, `notion`, `twitch`,
 # `twitter`, `slack`, `spotify`, `workos`, `zoom`.
-[auth.external.github]
-enabled = true
+[auth.external.apple]
+enabled = false
 client_id = ""
 # DO NOT commit your OAuth provider secret to git. Use environment variable substitution instead:
 secret = "env(SUPABASE_AUTH_EXTERNAL_APPLE_SECRET)"
@@ -282,6 +275,8 @@ redirect_uri = ""
 url = ""
 # If enabled, the nonce check will be skipped. Required for local sign in with Google auth.
 skip_nonce_check = false
+# If enabled, it will allow the user to successfully authenticate when the provider does not return an email address.
+email_optional = false
 
 # Allow Solana wallet holders to sign in to your project via the Sign in with Solana (SIWS, EIP-4361) standard.
 # You can configure "web3" rate limit in the [auth.rate_limit] section and set up [auth.captcha] if self-hosting.
@@ -311,8 +306,14 @@ enabled = false
 # Obtain from https://clerk.com/setup/supabase
 # domain = "example.clerk.accounts.dev"
 
-# Note: OAuth server configuration not supported in CLI v2.34.3
-# Configure OAuth via Supabase Dashboard or upgrade CLI to v2.48+
+# OAuth server configuration
+[auth.oauth_server]
+# Enable OAuth server functionality
+enabled = false
+# Path for OAuth consent flow UI
+authorization_url_path = "/oauth/consent"
+# Allow dynamic client registration
+allow_dynamic_registration = false
 
 [edge_runtime]
 enabled = true

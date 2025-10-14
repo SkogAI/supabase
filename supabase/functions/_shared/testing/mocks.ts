@@ -49,7 +49,6 @@ export class MockFetch {
     const response = this.responses.get(urlString);
     if (!response) {
       return Promise.reject(
-        new Error(`No mock response configured for: ${urlString}`),
         new Error(`No mock response configured for: ${urlString}`)
       );
     }
@@ -169,8 +168,6 @@ export function mockOpenRouterResponse(
 export class MockSupabaseClient {
   private mockData: Map<string, unknown[]> = new Map();
   private queries: Array<{ table: string; operation: string; params: unknown }> = [];
-  private queries: Array<{ table: string; operation: string; params: unknown }> =
-    [];
 
   /**
    * Set mock data for a table
@@ -332,7 +329,6 @@ export function createMockRequest(
 /**
  * Simulate network delay
  */
-export function simulateDelay(ms: number): Promise<void> {
 export async function simulateDelay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
