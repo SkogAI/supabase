@@ -86,7 +86,7 @@ All configuration settings, environment variables, and their locations for this 
 ### Studio (`[studio]`)
 - **`studio.enabled`** - Enable Supabase Studio web interface (default: true).
 - **`studio.port`** - Studio web interface port (default: 8000).
-- **`studio.api_url`** - External API URL for frontend connections (current: "https://tavern.skogai.se"). Used for production API references.
+- **`studio.api_url`** - External API URL for frontend connections (current: "https://supabase.skogai.se"). Used for production API references.
 - **`studio.OPENAI_API_KEY`** - OpenAI API key for AI features in Studio (format: `env(OPENAI_API_KEY)`). Reads from environment variable.
 
 ### Email Testing (`[inbucket]`)
@@ -102,7 +102,7 @@ All configuration settings, environment variables, and their locations for this 
 
 ### Auth (`[auth]`)
 - **`auth.enabled`** - Enable authentication service (default: true).
-- **`auth.site_url`** - Base website URL for redirects and email link construction (current: "https://tavern.skogai.se"). Used as redirect allowlist.
+- **`auth.site_url`** - Base website URL for redirects and email link construction (current: "https://supabase.skogai.se"). Used as redirect allowlist.
 - **`auth.additional_redirect_urls`** - Exact URLs permitted for post-authentication redirects (current: ["https://127.0.0.1:3000"]).
 - **`auth.jwt_expiry`** - Token validity duration in seconds (default: 3600 = 1 hour, max: 604800 = 1 week).
 - **`auth.enable_refresh_token_rotation`** - Tokens reissued on refresh (default: true). Improves security by limiting token lifetime.
