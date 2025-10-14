@@ -11,46 +11,46 @@ import {
 // Import fixtures
 import {
   generateTestJWT,
-  retry,
-  testHeaders,
-  testMessages,
-  testUrls,
-  testUsers,
-  testUsers,
-  testMessages,
-  testHeaders,
-  testUrls,
   generateTestJWT,
   retry,
+  retry,
+  testHeaders,
+  testHeaders,
+  testMessages,
+  testMessages,
+  testUrls,
+  testUrls,
+  testUsers,
+  testUsers,
   waitFor,
 } from "./fixtures.ts";
 
 // Import mocks
 import {
   createMockResponse,
+  createMockResponse,
   MockFetch,
   mockOpenAIResponse,
   mockOpenRouterResponse,
   MockSupabaseClient,
-  createMockResponse,
 } from "./mocks.ts";
 
 // Import helpers
 import {
   assertJsonStructure,
-  assertResponse,
-  generateTestData,
-  measureResponseTime,
-  testConcurrent,
-  testCORS,
-  testFetch,
-  testFetch,
-  testCORS,
-  measureResponseTime,
-  testConcurrent,
   assertJsonStructure,
-  generateTestData,
   assertResponse,
+  assertResponse,
+  generateTestData,
+  generateTestData,
+  measureResponseTime,
+  measureResponseTime,
+  testConcurrent,
+  testConcurrent,
+  testCORS,
+  testCORS,
+  testFetch,
+  testFetch,
   testPatterns,
   waitForCondition,
 } from "./helpers.ts";
@@ -75,7 +75,7 @@ Deno.test("example: mock fetch response", async () => {
     "https://api.example.com/data",
     { message: "success", data: [1, 2, 3] },
     200,
-    200
+    200,
   );
 
   // Use the mock
@@ -235,13 +235,17 @@ Deno.test("example: retry mechanism", async () => {
     3,
     10,
   );
-  const result = await retry(async () => {
-    attempts++;
-    if (attempts < 2) {
-      throw new Error("Simulated failure");
-    }
-    return "success";
-  }, 3, 10);
+  const result = await retry(
+    async () => {
+      attempts++;
+      if (attempts < 2) {
+        throw new Error("Simulated failure");
+      }
+      return "success";
+    },
+    3,
+    10,
+  );
 
   assertEquals(result, "success");
   assertEquals(attempts, 2);
@@ -317,7 +321,7 @@ Deno.test({
     const { hasError, errorMessage } = await testPatterns.errorHandling(
       "hello-world",
       { invalid: "data" },
-      { invalid: "data" }
+      { invalid: "data" },
     );
 
     // Verify error is handled gracefully
@@ -354,7 +358,7 @@ Deno.test("example: create custom mock response", () => {
     { custom: "data" },
     201,
     { "X-Custom-Header": "value" },
-    { "X-Custom-Header": "value" }
+    { "X-Custom-Header": "value" },
   );
 
   assertEquals(mockResponse.status, 201);
