@@ -116,10 +116,6 @@ Deno.test("example: mock Supabase client", async () => {
 
   assertEquals(error, null);
   assertEquals((data as { name: string }).name, "Alice");
-    .single();
-
-  assertEquals(error, null);
-  assertEquals(data.name, "Alice");
 });
 
 // Example 5: Generate test JWT
