@@ -1,2 +1,21 @@
-/README.md
-/Argcfile.sh
+*.md
+Argcfile.sh
+
+/.env
+/.envrc
+/.gitignore
+/.mcp.json
+/package.json
+/package-lock.json
+/deno.lock
+/requirements-dev.txt
+/uv.lock
+/.github/
+
+# Main directories
+/skogai/
+/supabase/
+/scripts/
+/tests/
+/types/
+/examples/

@@ -1,0 +1,11 @@
+*.sql
+/.env
+/supabase/config.toml
+/supabase/migrations/
+/types/
+/tests/
+/package.json
+/requirements-dev.txt
+/.sqlfluff
+/skogai/
+Argcfile.sh

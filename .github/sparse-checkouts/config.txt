@@ -1,0 +1,12 @@
+/.env.example
+/.envrc
+/.gitignore
+/.mcp.json
+/.sqlfluff
+/supabase/config.toml
+/package.json
+/deno.lock
+/requirements-dev.txt
+/uv.lock
+Argcfile.sh
+/skogai/

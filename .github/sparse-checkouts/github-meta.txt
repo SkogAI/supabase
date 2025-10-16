@@ -1,0 +1,5 @@
+*.md
+Argcfile.sh
+/.github/
+/scripts/
+/skogai/
