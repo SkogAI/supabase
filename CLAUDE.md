@@ -93,10 +93,8 @@ npm run lint:sql
 
 ````bash
 # Install Python development dependencies (sqlfluff for SQL linting)
-pip install -r requirements-dev.txt
+uv pip install -r requirements-dev.txt
 
-# Or install with pipx for isolated environment
-pipx install sqlfluff
 ### SAML SSO Operations
 
 ```bash
@@ -300,7 +298,7 @@ This project includes Model Context Protocol (MCP) server infrastructure for AI 
 - Supavisor Transaction (port 6543) - Serverless/Edge agents with auto-cleanup
 - Dedicated Pooler - High-performance isolated resources
 
-**Documentation**: See **docs/MCP_*.md** files for complete implementation guides
+**Documentation**: See **docs/MCP\_\*.md** files for complete implementation guides
 
 ## Local Development URLs
 
@@ -424,7 +422,7 @@ Core documentation in repository:
 - **docs/DEVOPS.md** - Complete CI/CD and deployment guide
 - **docs/RLS_POLICIES.md** - RLS patterns and best practices
 - **docs/STORAGE.md** - Storage bucket configuration and usage
-- **docs/MCP_*.md** - AI agent integration guides
+- **docs/MCP\_\*.md** - AI agent integration guides
 - **docs/AUTH_ZITADEL_SAML_SELF_HOSTED.md** - Complete SAML SSO integration guide
 - **docs/SAML_ADMIN_API.md** - SAML provider management API reference
 - **docs/USER_GUIDE_SAML.md** - End-user SAML authentication guide
@@ -437,6 +435,7 @@ Core documentation in repository:
 ### Knowledge Base Structure
 
 The **skogai/** directory contains a personal knowledge base that mirrors the Supabase CLI command structure:
+
 - CLI commands map directly to documentation (e.g., `supabase db reset` → `skogai/db/reset.md`)
 - **docs/** contains official project documentation for contributors
 - **skogai/** contains practical command reference and personal learnings
