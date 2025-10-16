@@ -1,19 +1,3 @@
----
-title: Template Command Documentation
-type: command
-permalink: supabase/template
-tags:
-  - "template"
-  - "documentation"
-  - "example"
-  - "lifecycle"
-  - "management"
-  - "supabase"
-project: supabase
-created: YYYY-MM-DD
-updated: YYYY-MM-DD
----
-
 # supabase [command] [subcommand]
 
 **CLI Version:** v2.34.3
@@ -41,23 +25,19 @@ supabase command subcommand [flags]
 ## Your Project Context
 
 How this command behaves specifically in YOUR setup:
-
 - What it does to your specific tables/schemas
 - How long it typically takes
 - What data it affects
 - Any project-specific configuration that influences behavior
 
 Example:
-
 > In this project, `db reset` drops all tables in the `public` schema, runs 6 migrations from `supabase/migrations/`, and creates 3 test users (alice, bob, charlie) with 8 sample posts. Takes ~5 seconds.
 
 ## Common Use Cases
 
 ### 1. Use Case Name
-
 **When:** Describe when you'd use this
 **Steps:**
-
 ```bash
 # Commands with actual output examples
 supabase command subcommand
@@ -66,10 +46,8 @@ supabase command subcommand
 **Result:** What happens after running this
 
 ### 2. Another Use Case
-
 **When:** Another scenario
 **Steps:**
-
 ```bash
 supabase command subcommand --flag
 ```
@@ -87,14 +65,12 @@ Include progress indicators
 ### Issue: Error message or problem description
 
 **Symptoms:**
-
 - What you see when this happens
 - Error messages
 
 **Cause:** Why this happens
 
 **Solution:**
-
 ```bash
 # Steps to fix
 command to fix
@@ -109,13 +85,11 @@ command to fix
 ## Integration with Your Workflow
 
 Describe how this command fits into your daily workflow:
-
 - What you typically run before this command
 - What you typically run after
 - What other commands this pairs with
 
 Example:
-
 > After pulling new migrations from git, run `supabase db reset` to apply them locally, then `npm run types:generate` to update TypeScript types, and finally `npm run test:rls` to verify RLS policies.
 
 ## Related Commands
@@ -128,7 +102,6 @@ Example:
 ## Additional Notes
 
 Any other important information:
-
 - Performance considerations
 - Security implications
 - Version-specific behavior

@@ -157,7 +157,7 @@ Deno.test("openai-chat: mock - successful API response", () => {
 
   mockFetch.addJsonMock(
     "https://api.openai.com/v1/chat/completions",
-    mockResponse,
+    mockResponse
   );
 
   // Verify mock is set up correctly
@@ -171,7 +171,7 @@ Deno.test("openai-chat: mock - API error response", () => {
   mockFetch.addErrorMock(
     "https://api.openai.com/v1/chat/completions",
     401,
-    JSON.stringify(mockError),
+    JSON.stringify(mockError)
   );
 
   // Verify mock error is set up correctly

@@ -1,16 +1,3 @@
----
-title: Quick Reference - Supabase CLI Basics
-type: index
-permalink: supabase/quick-reference
-tags:
-  - "reference"
-  - "documentation"
-  - "cli"
-  - "overview"
-  - "supabase"
-project: supabase
----
-
 # Supabase CLI Basics - Quick Reference
 
 **CLI Version:** v2.34.3 | **Last Updated:** 2025-10-10
@@ -76,7 +63,6 @@ skogai/
 ## Essential Commands at a Glance
 
 ### Daily Development
-
 ```bash
 supabase start          # Start everything
 supabase status         # Check what's running
@@ -86,7 +72,6 @@ supabase functions serve # Local function testing
 ```
 
 ### Migration Workflow
-
 ```bash
 supabase migration new add_feature  # Create migration
 supabase db reset                   # Apply locally
@@ -94,13 +79,11 @@ supabase db push                    # Deploy to remote
 ```
 
 ### Type Generation
-
 ```bash
 supabase gen types typescript --local > types/database.ts
 ```
 
 ### Edge Functions
-
 ```bash
 supabase functions new my-function   # Create
 supabase functions serve            # Test locally
@@ -136,12 +119,12 @@ Functions:  http://127.0.0.1:54321/functions/v1/<name>
 
 ## Quick Troubleshooting
 
-| Problem                   | Solution                                       |
-| ------------------------- | ---------------------------------------------- |
-| Docker not running        | `docker info` to verify, start Docker Desktop  |
-| Port conflicts            | `supabase stop`, check with `lsof -i :8000`    |
-| Migration errors          | `supabase db reset --debug`                    |
-| Type generation fails     | Ensure Supabase running: `supabase status`     |
+| Problem | Solution |
+|---------|----------|
+| Docker not running | `docker info` to verify, start Docker Desktop |
+| Port conflicts | `supabase stop`, check with `lsof -i :8000` |
+| Migration errors | `supabase db reset --debug` |
+| Type generation fails | Ensure Supabase running: `supabase status` |
 | Function deployment fails | Test locally first: `supabase functions serve` |
 
 ## Next Steps
