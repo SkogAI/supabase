@@ -1,5 +1,9 @@
 ---
+<<<<<<< HEAD
 title: RLS Policy Complete Guide
+=======
+title: RLS Policy Guide
+>>>>>>> heutonasueno
 type: note
 permalink: guides/security/rls-policy-guide
 tags:
@@ -8,6 +12,7 @@ tags:
 - policies
 - postgresql
 - access-control
+<<<<<<< HEAD
 - testing
 - implementation
 - consolidated
@@ -16,6 +21,13 @@ tags:
 # RLS Policy Complete Guide
 
 Complete guide to Row Level Security policies with patterns, best practices, implementation details, and comprehensive testing strategies.
+=======
+---
+
+# RLS Policy Guide
+
+Complete guide to Row Level Security policies with patterns, best practices, and testing strategies.
+>>>>>>> heutonasueno
 
 ## Overview
 
@@ -154,6 +166,7 @@ Complete guide to Row Level Security policies with patterns, best practices, imp
 [migration] 20251005065505_initial_schema.sql created initial RLS policies for profiles and posts #history #database
 [migration] 20251005053101_enhanced_rls_policies.sql enhanced with role-specific policies #history #database
 
+<<<<<<< HEAD
 ## Implementation Summary
 
 [summary] Comprehensive RLS implementation with 12 policies across 2 tables #implementation #overview
@@ -276,6 +289,8 @@ Complete guide to Row Level Security policies with patterns, best practices, imp
 [takeaway] Clear patterns and examples for adding new tables #documentation #scalability
 [takeaway] Defense in depth with multiple validation layers #security #architecture
 
+=======
+>>>>>>> heutonasueno
 ## Related Documentation
 
 - [[Row Level Security]] - Core RLS concept
@@ -284,6 +299,7 @@ Complete guide to Row Level Security policies with patterns, best practices, imp
 - [[Storage Architecture]] - Storage bucket security
 - [[PostgreSQL Database]] - Database configuration
 - [[Authentication System]] - User authentication
+<<<<<<< HEAD
 
 ## Source Files Consolidated
 
@@ -293,3 +309,5 @@ This guide consolidates information from:
 - RLS_TESTING.md (591 lines) - Testing guidelines, test suite details, CI/CD integration
 
 All source files have been merged into this comprehensive semantic guide.
+=======
+>>>>>>> heutonasueno

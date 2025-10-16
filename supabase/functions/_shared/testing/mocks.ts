@@ -49,7 +49,11 @@ export class MockFetch {
     const response = this.responses.get(urlString);
     if (!response) {
       return Promise.reject(
+<<<<<<< HEAD
         new Error(`No mock response configured for: ${urlString}`)
+=======
+        new Error(`No mock response configured for: ${urlString}`),
+>>>>>>> heutonasueno
       );
     }
 

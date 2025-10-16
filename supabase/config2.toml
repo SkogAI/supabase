@@ -91,7 +91,11 @@ enabled = true
 # Port to use for Supabase Studio.
 port = 8000
 # External URL of the API server that frontend connects to.
+<<<<<<< HEAD
 api_url = "https://tavern.skogai.se"
+=======
+api_url = "https://supabase.skogai.se"
+>>>>>>> heutonasueno
 # OpenAI API Key to use for Supabase AI in the Supabase Studio.
 OPENAI_API_KEY = "env(OPENAI_API_KEY)"
 
@@ -127,7 +131,11 @@ objects_path = "./images"
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
+<<<<<<< HEAD
 site_url = "https://tavern.skogai.se"
+=======
+site_url = "https://supabase.skogai.se"
+>>>>>>> heutonasueno
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
 additional_redirect_urls = ["https://127.0.0.1:3000"]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).

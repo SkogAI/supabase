@@ -1,5 +1,9 @@
 ---
+<<<<<<< HEAD
 title: Storage Configuration Complete Guide
+=======
+title: Storage Configuration Guide
+>>>>>>> heutonasueno
 type: note
 permalink: guides/storage/storage-configuration-guide
 tags:
@@ -8,6 +12,7 @@ tags:
 - buckets
 - uploads
 - security
+<<<<<<< HEAD
 - rls
 - testing
 - consolidated
@@ -23,6 +28,13 @@ Comprehensive guide for Supabase Storage buckets with access control, file organ
 [implementation] Migration 20251006095457_configure_storage_buckets.sql created storage configuration #migration #database
 [testing] Comprehensive test suite at tests/storage_test_suite.sql validates all functionality #testing #validation
 [documentation] Complete implementation with 12 RLS policies across three buckets #security #comprehensive
+=======
+---
+
+# Storage Configuration Guide
+
+Complete guide for Supabase Storage buckets with access control, file organization, and best practices.
+>>>>>>> heutonasueno
 
 ## Bucket Overview
 
@@ -243,6 +255,7 @@ Comprehensive guide for Supabase Storage buckets with access control, file organ
 ## Debugging Storage
 
 [query] View bucket settings: `SELECT id, name, public, file_size_limit, allowed_mime_types FROM storage.buckets` #sql #inspection
+<<<<<<< HEAD
 [query] View storage policies: `SELECT schemaname, tablename, policyname, cmd, qual FROM pg_policies WHERE schemaname = 'storage'` #sql #inspection
 [query] View all storage objects: `SELECT * FROM storage.objects WHERE bucket_id = 'user-files'` #sql #data
 [test] Test policy as specific user: `SET request.jwt.claims.sub = 'user-uuid-here'` #sql #simulation
@@ -328,6 +341,16 @@ Comprehensive guide for Supabase Storage buckets with access control, file organ
 [source] STORAGE_CHECKLIST.md - 272 lines with testing procedures #consolidation #origin
 [consolidated] All three source files merged into this comprehensive guide #consolidation #complete
 [date] Consolidation completed as part of Issue #182 documentation organization #consolidation #tracking
+=======
+[query] View storage policies: `SELECT * FROM pg_policies WHERE schemaname = 'storage'` #sql #inspection
+[test] Test policy as specific user: `SET request.jwt.claims.sub = 'user-uuid'` #sql #simulation
+[test] Query files: `SELECT * FROM storage.objects WHERE bucket_id = 'user-files'` #sql #data
+
+## Migration History
+
+[migration] 20251006095457_configure_storage_buckets.sql created initial storage configuration #history #database
+[migration] Initial migration included three buckets with complete RLS policies #history #feature
+>>>>>>> heutonasueno
 
 ## Related Documentation
 
@@ -336,5 +359,8 @@ Comprehensive guide for Supabase Storage buckets with access control, file organ
 - [[Contributing Guide]] - Development guidelines
 - [[Development Workflows]] - Workflow procedures
 - [[Authentication System]] - User authentication
+<<<<<<< HEAD
 - [[Migration 20251006095457]] - Storage configuration migration
 - [[Storage Test Suite]] - Automated testing
+=======
+>>>>>>> heutonasueno

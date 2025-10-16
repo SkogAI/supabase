@@ -3,9 +3,9 @@
 // Or with integration tests: RUN_INTEGRATION_TESTS=1 deno test --allow-all
 
 import {
+  assert,
   assertEquals,
   assertExists,
-  assert,
 } from "https://deno.land/std@0.168.0/testing/asserts.ts";
 
 // Test configuration

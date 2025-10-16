@@ -133,7 +133,11 @@ export function generateTestJWT(userId: string): string {
       aud: "authenticated",
       role: "authenticated",
       exp: Math.floor(Date.now() / 1000) + 3600,
+<<<<<<< HEAD
     })
+=======
+    }),
+>>>>>>> heutonasueno
   );
   return `${header}.${payload}.test_signature`;
 }
