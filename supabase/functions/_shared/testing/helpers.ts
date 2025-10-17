@@ -236,7 +236,11 @@ export async function assertResponse(
       }
     } catch (error) {
       errors.push(
+<<<<<<< HEAD
+        `Failed to parse JSON response: ${error instanceof Error ? error.message : String(error)}`
+=======
         `Failed to parse JSON response: ${error instanceof Error ? error.message : String(error)}`,
+>>>>>>> heutonasueno
       );
     }
   }
@@ -279,7 +283,13 @@ export function withTimeout<T>(
 ): Promise<T> {
   return Promise.race([
     promise,
+<<<<<<< HEAD
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(errorMessage)), timeoutMs)
+    ),
+=======
     new Promise<T>((_, reject) => setTimeout(() => reject(new Error(errorMessage)), timeoutMs)),
+>>>>>>> heutonasueno
   ]);
 }
 
