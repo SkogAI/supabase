@@ -1,5 +1,17 @@
 {
   "mcpServers": {
+    "supabase-claude": {
+      "env": {
+        "SUPABASE_SERVICE_ROLE_KEY": "",
+        "SUPABASE_URL": "",
+        "MCP_API_KEY": "",
+        "SUPABASE_ANON_KEY": ""
+      },
+      "args": ["-y", "supabase-mcp", "supabase-mcp-claude"],
+      "description": "Enables Claude and other LLMs to interact with Supabase databases and Edge Functions through a secure API for performing CRUD operations and invoking custom payloads without requiring integration code.",
+      "type": "stdio",
+      "command": "npx"
+    },
     "context7": {
       "command": "npx",
       "args": ["-y", "@upstash/context7-mcp"],
