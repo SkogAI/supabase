@@ -1,0 +1,26 @@
+# Minimal Supabase Configuration - PostgreSQL Only
+# Phase 0: Database foundation
+
+project_id = "supabase_postgres_only"
+
+[db]
+port = 54322
+major_version = 15
+
+[api]
+enabled = false
+
+[studio]
+enabled = false
+
+[auth]
+enabled = false
+
+[storage]
+enabled = false
+
+[realtime]
+enabled = false
+
+[inbucket]
+enabled = false

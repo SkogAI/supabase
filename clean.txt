@@ -1,0 +1,89 @@
+- #39879: chore: storage settings entitlements (`chore/storage-settings-entitlements`) - Cleanly mergeable
+- #39873: docs: add example for handling OAuth redirects in SvelteKit SSR guide (`docs/sveltekit-oauth-example`) - Cleanly mergeable
+- #39868: feat: steal the auth lock if it was not completed in 10s (`hf/steal-auth-lock-after-10s`) - Cleanly mergeable
+- #39866: types are broken (`hf/itsbroken`) - Cleanly mergeable
+- #39860: fix: cmdk event naming and description (`fix/cmdk-event-naming-and-description`) - Cleanly mergeable
+- #39854: feat: Add event tracking for table quickstart experiment (`feat/table-quickstart-tracking-v2`) - Cleanly mergeable
+- #39853: chore(deps): bump hono from 4.9.7 to 4.10.3 in /examples/auth/hono (`dependabot/npm_and_yarn/examples/auth/hono/hono-4.10.3`) - Cleanly mergeable
+- #39852: feat: auth advanced page renamed to performance, support for percent db connections (`hf/auth-performance-tuning-page`) - Cleanly mergeable
+- #39849: fix: restrict access to mcp server in self-hosted (`self-hosted/restrict-mcp`) - Cleanly mergeable
+- #39848: Chore: Compute Instances entitlements (`chore/compute-instances-entitlements`) - Cleanly mergeable
+- #39846: feat: rewrite auth audit logs toggle to be in the positive sense (`hf/audit-logs-positive-sense`) - Cleanly mergeable
+- #39843: chore(deps): bump vite from 7.0.6 to 7.1.12 in /examples/user-management/svelte-user-management (`dependabot/npm_and_yarn/examples/user-management/svelte-user-management/vite-7.1.12`) - Cleanly mergeable
+- #39840: fix(docs): change 'countries' to 'characters' to match JS example to data source (`typo-range-example-js`) - Cleanly mergeable
+- #39839: Fix documentation for `realtime.send` call (`fix-send-call`) - Cleanly mergeable
+- #39834: Editor sidebar manager (`chore/editor-sidebar-manager`) - Cleanly mergeable
+- #39831: chore(studio): split auth templates into subpages (`dnywh/chore/auth-template-subpages`) - Cleanly mergeable
+- #39830: Update index.html (`patch-2`) - Cleanly mergeable
+- #39814: fix: tailwind xl breakpoint mismatch (`tailwind-xl-breakpoint`) - Cleanly mergeable
+- #39809: feat(studio): reports nav tidy up (`prototype/nav-concept-2`) - Cleanly mergeable
+- #39799: chore: strip prefix in hookSecret, update docs and related examples (`cemalkilic-patch-1`) - Cleanly mergeable
+- #39795: Sidebar manager (`chore/sidebar-manager`) - Cleanly mergeable
+- #39784: Revert "fix(studio): remove include data toggle if no pitr" (`revert-39533-fix/remove-include-data-toggle-if-no-pitr`) - Cleanly mergeable
+- #39781: align references to what state the branching in studio feature is in (`branching-docs-terminology`) - Cleanly mergeable
+- #39752: docs: i18n(hi) update Hindi README translation to have latest changes (`i18n/update-hindi-readme`) - Cleanly mergeable
+- #39750: SQL Manual Saving (`chore/sql-tab-behaviour`) - Cleanly mergeable
+- #39748: Add A/B test for realtime button removal (GROWTH-524) (`sean/growth-524-ab-testing-realtime-enabled-button-removal-for-new-users`) - Cleanly mergeable
+- #39742: Fix: Filtering values on a self hosted instance within edge_logs throwing errors (`fix/analytics-self-hosted`) - Cleanly mergeable
+- #39741: chore(deps): bump JamesSingleton/is-organization-member from 1.0.0 to 1.1.0 (`dependabot/github_actions/JamesSingleton/is-organization-member-1.1.0`) - Cleanly mergeable
+- #39740: chore(deps): bump pnpm/action-setup from 4.1.0 to 4.2.0 (`dependabot/github_actions/pnpm/action-setup-4.2.0`) - Cleanly mergeable
+- #39738: chore(deps): bump reviewdog/action-setup from 1.3.0 to 1.4.0 (`dependabot/github_actions/reviewdog/action-setup-1.4.0`) - Cleanly mergeable
+- #39737: chore(deps): bump akhilerm/tag-push-action from 2.1.0 to 2.2.0 (`dependabot/github_actions/akhilerm/tag-push-action-2.2.0`) - Cleanly mergeable
+- #39736: chore(deps): bump actions/stale from 9.0.0 to 9.1.0 (`dependabot/github_actions/actions/stale-9.1.0`) - Cleanly mergeable
+- #39734: Create qwqq (`patch-3`) - Cleanly mergeable
+- #39725: fix(studio): average p95 calculation on query performance (`fix/query-perf-p95-avg-calculation`) - Cleanly mergeable
+- #39716: docs: Vector storage docs (`chrisward/docs-469-investigate-docs-updates`) - Cleanly mergeable
+- #39708: docs: update js client libraries (2.76.1) (`gha/update-js-libs-docs-9`) - Cleanly mergeable
+- #39706: add information about storage in oauth app scope documentation (`oauth-scope-docs`) - Cleanly mergeable
+- #39701: chore(studio): analytics buckets namespace contents (`dnywh/chore/analytics-namespace-contents`) - Cleanly mergeable
+- #39698: [cms]: add custom markdown support to our cms (`alan/add-markdown-to-cms`) - Cleanly mergeable
+- #39695: fix #39693 "Expose Queues via PostgREST" not working because of new parameter condition in pgmq.read  (`fix_pgmq.read`) - Cleanly mergeable
+- #39694: chore(deps): bump vite from 7.0.5 to 7.1.11 in /examples/user-management/sveltekit-user-management (`dependabot/npm_and_yarn/examples/user-management/sveltekit-user-management/vite-7.1.11`) - Cleanly mergeable
+- #39693: Update index.js (`patch-2`) - Cleanly mergeable
+- #39690: Doc improved SvelteKit SSR documentation #23618 (`dhirajTsx-improved-Docs`) - Cleanly mergeable
+- #39689: feat(code-block): add word wrap functionality and controls to code bl… (`feat/wordWrapCli`) - Cleanly mergeable
+- #39674: fix(docs): Correct RLS Policy and Client Setup Steps in Next.js Quickstart (`fix/docs-nextjs-rls`) - Cleanly mergeable
+- #39673: docs: add OAuth example to SvelteKit SSR guide (`docs/sveltekit-oauth-example`) - Cleanly mergeable
+- #39669: Add download backups section to project delete modal (`chore/add-download-backups-section-to-project-delete-modal`) - Cleanly mergeable
+- #39666: feat(branching): setup frontend for easy branch restore (`avallete/devwf-790-setup-frontend-for-easy-branch-restore`) - Cleanly mergeable
+- #39665: fix(docs): Clarify auth.admin.generateLink does not send emails or OTPs (`docs-clarify-generate-link`) - Cleanly mergeable
+- #39648: [Fix]: Handle undefined report.availableIn and improve plan display in ReportChartUpsell (#39451) (`Fixes-#39451`) - Cleanly mergeable
+- #39643: fix(docker): realtime logs in self-hosted dashboard (`patch-1`) - Cleanly mergeable
+- #39636: fix(apps/studio): use `Awaited` for `createClient` function type for `cookieStore` (`zhyd1997-patch-1760761770`) - Cleanly mergeable
+- #39625: feat: Add `disabled` state for PostgREST (`feat/disabled-postgrest`) - Cleanly mergeable
+- #39610: Swap analytics buckets endpoint (`chore/swap-analytics-buckets-endpoints`) - Cleanly mergeable
+- #39579: blog: update pgvector post to include sample documents (`feat/embedding-blog-update`) - Cleanly mergeable
+- #39569: docs(flutter): correct signInWithOtp usage and add verifyOTP step (`fix/flutter-otp-docs`) - Cleanly mergeable
+- #39560: docs: fix small typo (`patch-2`) - Cleanly mergeable
+- #39528: docs: Combine log querying and filtering sources (`chrisward/docs-487-combine-log-sections`) - Cleanly mergeable
+- #39526: Docs/improve broadcast guide (`docs/improve-broadcast-guide`) - Cleanly mergeable
+- #39522: docs: Break up reports page to product sections (`chrischinch/reports-overhaul/break-up`) - Cleanly mergeable
+- #39519: fix: correct whatsmyip link and missing space (`fix/minor_custom_domain_fixes`) - Cleanly mergeable
+- #39515: [bot] sync troubleshooting guides to db (`bot/docs-sync-troubleshooting-9n911pb`) - Cleanly mergeable
+- #39511: chore(studio): consolidate inputs with reveal and copy actions (`dnywh/chore/consolidate-reveal-inputs`) - Cleanly mergeable
+- #39493: [Feature Request] Option to show only direct connection in ORM / Connect snippet (`direct-connection-snippet-request`) - Cleanly mergeable
+- #39492: feat(docs): add word wrap toggle icon next to copy button in code blocks (`master`) - Cleanly mergeable
+- #39469: chore: update cli reference doc (`cli/ref-doc`) - Cleanly mergeable
+- #39461: feat(docs): add OpenRef-based LLM documentation generator (`feature/llm-docs-openref`) - Cleanly mergeable
+- #39458: docs: add troubleshooting to additional resource on homepage (`docs/add-troubleshooting-to-home`) - Cleanly mergeable
+- #39457: Rename SvelteKit setup guide's environment variables name in docs (`patch-2`) - Cleanly mergeable
+- #39455: docs: clarify site url and redirect urls configuration (`docs-clarify-site-url`) - Cleanly mergeable
+- #39444: I have added JSDoc comments to all the components in the `packages/ui… (`JSDoc`) - Cleanly mergeable
+- #39442: feat(log-drains): Add Sentry Log Drain (`abhi-sentry-log-drain`) - Cleanly mergeable
+- #39423: Update jwts.mdx (`master`) - Cleanly mergeable
+- #39418: chore(studio): Discord nudge design tweaks (`dnywh/chore/discord-nudge-experiment-design-tweaks`) - Cleanly mergeable
+- #39403: Auth Report Fixes (`jordi/auth-report-fixes-1`) - Cleanly mergeable
+- #39401: added an FAQ section to the user management docs (`docs/update-manage-user-data`) - Cleanly mergeable
+- #39335: docs: Add SvelteKit SSR OAuth example (`fix/23618-added-an-OAuth-example-to-the-new-SvelteKit-SSR-Documentation`) - Cleanly mergeable
+- #39328: feat: update Figma auth docs (`cemal/feat-update-figma-auth-docs`) - Cleanly mergeable
+- #39309: docs: explicitly enable seeding on remote (`sweatybridge-patch-1`) - Cleanly mergeable
+- #39274: Update Supabase lost account access due to Github account troubleshooting doc (`update-lost-github-account-troubleshooting-doc`) - Cleanly mergeable
+- #39264: fix: typo in writing-supabase-edge-functions.mdc (`fix-typo-ai-editor-rules-edge-functions`) - Cleanly mergeable
+- #39261: feat(ForeignRowSelector): persist and retrieve sort preferences in select record modal (`feature/remember-sorting-preferences`) - Cleanly mergeable
+- #39234: fix(expo): update Expo social‑auth docs links to canonical quickstart… (`fix/outdatedLink`) - Cleanly mergeable
+- #39223: Update docker-compose.yml (`patch-2`) - Cleanly mergeable
+- #39212: Fix syntax for channel creation in Python example (`patch-2`) - Cleanly mergeable
+- #39210: Docs: Fix incorrect environment variable for Google Auth (`fix/google-auth-docs`) - Cleanly mergeable
+- #39195: docs: Overhaul reports page (`chrischinch/reports`) - Cleanly mergeable
+- #39186: Add `next` param to Next.js server-side auth guide (`nextjs-auth-guide-docs-update`) - Cleanly mergeable
+- #39178: chore: fix small error in postgrest 13 blog post (`patch-10`) - Cleanly mergeable
