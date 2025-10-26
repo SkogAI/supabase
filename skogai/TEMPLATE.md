@@ -14,6 +14,13 @@ created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
 
+> **Note:** This template is specifically for CLI command documentation. For other types of documentation, see `templates/README.md`:
+> - **Migrations:** `templates/migration-template.md`
+> - **Edge Functions:** `templates/function-template.md`
+> - **How-To Guides:** `templates/guide-template.md`
+> - **Concepts:** `templates/concept-template.md`
+> - **Troubleshooting:** `templates/troubleshooting-template.md`
+
 # supabase [command] [subcommand]
 
 **CLI Version:** v2.34.3
