@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **[Quickstart Testing Guide](QUICKSTART_TESTING.md)** - Verify all basic features work correctly
 - **[Creating Test Issues](docs/CREATING_TEST_ISSUES.md)** - Create GitHub issues for unit tests
+- **[Knowledge Base Templates](skogai/templates/README.md)** - Documentation templates for migrations, functions, guides
+- **[Knowledge Base Coverage](skogai/project/Knowledge%20Base%20Coverage.md)** - Track documentation progress
 
 ## Project Overview
 
@@ -231,6 +233,38 @@ Rate limits (configurable in `config.toml`):
 - 500 joins/sec, 1000 messages/sec
 
 ## Development Workflow
+
+### Knowledge Base Documentation
+
+The project includes comprehensive documentation templates and automation:
+
+**Quick Start:**
+```bash
+# Install optional git hooks for documentation reminders
+./scripts/install-git-hooks.sh
+
+# Use a template when documenting
+cp skogai/templates/migration-template.md skogai/migrations/my-migration.md
+cp skogai/templates/function-template.md supabase/functions/my-func/README.md
+
+# Check documentation coverage
+cat skogai/project/Knowledge\ Base\ Coverage.md
+```
+
+**Available Templates:**
+- `migration-template.md` - For database migrations
+- `function-template.md` - For edge functions
+- `guide-template.md` - For how-to tutorials
+- `concept-template.md` - For architecture concepts
+- `troubleshooting-template.md` - For runbooks
+
+**Git Hook Features:**
+- Detects migrations, functions, config changes after commits
+- Shows friendly reminders to update documentation
+- Suggests relevant templates and locations
+- Non-blocking and optional (disable with `KB_REMINDER_DISABLED=true`)
+
+See `skogai/templates/README.md` for complete template guide.
 
 ### Creating Database Migrations
 
