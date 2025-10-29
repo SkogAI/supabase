@@ -1,0 +1,24 @@
+{
+  "title": "Introduction",
+  "description": "Components and patterns that you can copy and paste into Supabase apps. Accessible. Customizable. Open Source.",
+  "published": true,
+  "featured": false,
+  "component": false,
+  "fragment": false,
+  "toc": true,
+  "body": {
+    "raw": "\n## FAQ\n\n<Accordion type=\"multiple\">\n\n<AccordionItem value=\"faq-1\">\n\t<AccordionTrigger>\n\t\tWhy copy/paste and not packaged as a dependency?\n\t</AccordionTrigger>\n\t<AccordionContent>\nThe idea behind this is to give you ownership and control over the code, allowing you to decide how the components are built and styled.\n\nStart with some sensible defaults, then customize the components to your needs.\n\nOne of the drawback of packaging the components in an npm package is that the style is coupled with the implementation. _The design of your components should be separate from their implementation._\n\n</AccordionContent>\n</AccordionItem>\n\n</Accordion>\n",
+    "code": "var Component=(()=>{var u=Object.create;var r=Object.defineProperty;var f=Object.getOwnPropertyDescriptor;var g=Object.getOwnPropertyNames;var y=Object.getPrototypeOf,b=Object.prototype.hasOwnProperty;var x=(n,e)=>()=>(e||n((e={exports:{}}).exports,e),e.exports),A=(n,e)=>{for(var o in e)r(n,o,{get:e[o],enumerable:!0})},d=(n,e,o,c)=>{if(e&&typeof e==\"object\"||typeof e==\"function\")for(let i of g(e))!b.call(n,i)&&i!==o&&r(n,i,{get:()=>e[i],enumerable:!(c=f(e,i))||c.enumerable});return n};var w=(n,e,o)=>(o=n!=null?u(y(n)):{},d(e||!n||!n.__esModule?r(o,\"default\",{value:n,enumerable:!0}):o,n)),_=n=>d(r({},\"__esModule\",{value:!0}),n);var h=x((v,p)=>{p.exports=_jsx_runtime});var j={};A(j,{default:()=>m,frontmatter:()=>k});var t=w(h()),k={title:\"Introduction\",description:\"Components and patterns that you can copy and paste into Supabase apps. Accessible. Customizable. Open Source.\"};function l(n){let e={a:\"a\",em:\"em\",h2:\"h2\",p:\"p\",span:\"span\",...n.components},{Accordion:o,AccordionContent:c,AccordionItem:i,AccordionTrigger:s}=e;return o||a(\"Accordion\",!0),c||a(\"AccordionContent\",!0),i||a(\"AccordionItem\",!0),s||a(\"AccordionTrigger\",!0),(0,t.jsxs)(t.Fragment,{children:[(0,t.jsxs)(e.h2,{id:\"faq\",children:[(0,t.jsx)(e.a,{className:\"subheading-anchor\",\"aria-label\":\"Link to section\",href:\"#faq\",children:(0,t.jsx)(e.span,{className:\"icon icon-link\"})}),\"FAQ\"]}),`\n`,(0,t.jsx)(o,{type:\"multiple\",children:(0,t.jsxs)(i,{value:\"faq-1\",children:[(0,t.jsx)(s,{children:(0,t.jsx)(e.p,{children:\"Why copy/paste and not packaged as a dependency?\"})}),(0,t.jsxs)(c,{children:[(0,t.jsx)(e.p,{children:\"The idea behind this is to give you ownership and control over the code, allowing you to decide how the components are built and styled.\"}),(0,t.jsx)(e.p,{children:\"Start with some sensible defaults, then customize the components to your needs.\"}),(0,t.jsxs)(e.p,{children:[\"One of the drawback of packaging the components in an npm package is that the style is coupled with the implementation. \",(0,t.jsx)(e.em,{children:\"The design of your components should be separate from their implementation.\"})]})]})]})})]})}function m(n={}){let{wrapper:e}=n.components||{};return e?(0,t.jsx)(e,{...n,children:(0,t.jsx)(l,{...n})}):l(n)}function a(n,e){throw new Error(\"Expected \"+(e?\"component\":\"object\")+\" `\"+n+\"` to be defined: you likely forgot to import, pass, or provide it.\")}return _(j);})();\n;return Component;"
+  },
+  "_id": "docs/index.mdx",
+  "_raw": {
+    "sourceFilePath": "docs/index.mdx",
+    "sourceFileName": "index.mdx",
+    "sourceFileDir": "docs",
+    "contentType": "mdx",
+    "flattenedPath": "docs"
+  },
+  "type": "Doc",
+  "slug": "/docs",
+  "slugAsParams": ""
+}

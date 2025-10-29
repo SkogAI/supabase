@@ -1,0 +1,24 @@
+{
+  "title": "Themes",
+  "description": "Themes used in Supabase",
+  "published": true,
+  "featured": false,
+  "component": false,
+  "fragment": false,
+  "toc": true,
+  "body": {
+    "raw": "\nDesign System currently takes into account varying themes.\n\nThemes currently in development:\n\n- Light\n- Dark (Classic dark)\n- Deep dark\n\nWe also support a system theme, which will automatically switch between light and dark themes based on the user's system settings.\n\n- System\n\n## Try a theme\n\nYou can set the theme of this website using the radio buttons below\n\n<ThemeSettings />\n\n## Theme Pipeline\n\nSupabase is migrating to use tailwind classes that use CSS properties.\nThis is to support the concept of theming, so that:\n\n1. It is easy for the team to update the theme without changing 100s of files.\n2. We could offer custom or additional themes in future.\n",
+    "code": "var Component=(()=>{var m=Object.create;var r=Object.defineProperty;var p=Object.getOwnPropertyDescriptor;var u=Object.getOwnPropertyNames;var f=Object.getPrototypeOf,g=Object.prototype.hasOwnProperty;var y=(t,e)=>()=>(e||t((e={exports:{}}).exports,e),e.exports),b=(t,e)=>{for(var i in e)r(t,i,{get:e[i],enumerable:!0})},a=(t,e,i,o)=>{if(e&&typeof e==\"object\"||typeof e==\"function\")for(let s of u(e))!g.call(t,s)&&s!==i&&r(t,s,{get:()=>e[s],enumerable:!(o=p(e,s))||o.enumerable});return t};var w=(t,e,i)=>(i=t!=null?m(f(t)):{},a(e||!t||!t.__esModule?r(i,\"default\",{value:t,enumerable:!0}):i,t)),x=t=>a(r({},\"__esModule\",{value:!0}),t);var h=y((j,l)=>{l.exports=_jsx_runtime});var T={};b(T,{default:()=>d,frontmatter:()=>k});var n=w(h()),k={title:\"Themes\",description:\"Themes used in Supabase\"};function c(t){let e={a:\"a\",h2:\"h2\",li:\"li\",ol:\"ol\",p:\"p\",span:\"span\",ul:\"ul\",...t.components},{ThemeSettings:i}=e;return i||S(\"ThemeSettings\",!0),(0,n.jsxs)(n.Fragment,{children:[(0,n.jsx)(e.p,{children:\"Design System currently takes into account varying themes.\"}),`\n`,(0,n.jsx)(e.p,{children:\"Themes currently in development:\"}),`\n`,(0,n.jsxs)(e.ul,{children:[`\n`,(0,n.jsx)(e.li,{children:\"Light\"}),`\n`,(0,n.jsx)(e.li,{children:\"Dark (Classic dark)\"}),`\n`,(0,n.jsx)(e.li,{children:\"Deep dark\"}),`\n`]}),`\n`,(0,n.jsx)(e.p,{children:\"We also support a system theme, which will automatically switch between light and dark themes based on the user's system settings.\"}),`\n`,(0,n.jsxs)(e.ul,{children:[`\n`,(0,n.jsx)(e.li,{children:\"System\"}),`\n`]}),`\n`,(0,n.jsxs)(e.h2,{id:\"try-a-theme\",children:[(0,n.jsx)(e.a,{className:\"subheading-anchor\",\"aria-label\":\"Link to section\",href:\"#try-a-theme\",children:(0,n.jsx)(e.span,{className:\"icon icon-link\"})}),\"Try a theme\"]}),`\n`,(0,n.jsx)(e.p,{children:\"You can set the theme of this website using the radio buttons below\"}),`\n`,(0,n.jsx)(i,{}),`\n`,(0,n.jsxs)(e.h2,{id:\"theme-pipeline\",children:[(0,n.jsx)(e.a,{className:\"subheading-anchor\",\"aria-label\":\"Link to section\",href:\"#theme-pipeline\",children:(0,n.jsx)(e.span,{className:\"icon icon-link\"})}),\"Theme Pipeline\"]}),`\n`,(0,n.jsx)(e.p,{children:`Supabase is migrating to use tailwind classes that use CSS properties.\nThis is to support the concept of theming, so that:`}),`\n`,(0,n.jsxs)(e.ol,{children:[`\n`,(0,n.jsx)(e.li,{children:\"It is easy for the team to update the theme without changing 100s of files.\"}),`\n`,(0,n.jsx)(e.li,{children:\"We could offer custom or additional themes in future.\"}),`\n`]})]})}function d(t={}){let{wrapper:e}=t.components||{};return e?(0,n.jsx)(e,{...t,children:(0,n.jsx)(c,{...t})}):c(t)}function S(t,e){throw new Error(\"Expected \"+(e?\"component\":\"object\")+\" `\"+t+\"` to be defined: you likely forgot to import, pass, or provide it.\")}return x(T);})();\n;return Component;"
+  },
+  "_id": "docs/theming.mdx",
+  "_raw": {
+    "sourceFilePath": "docs/theming.mdx",
+    "sourceFileName": "theming.mdx",
+    "sourceFileDir": "docs",
+    "contentType": "mdx",
+    "flattenedPath": "docs/theming"
+  },
+  "type": "Doc",
+  "slug": "/docs/theming",
+  "slugAsParams": "theming"
+}

@@ -1,0 +1,24 @@
+{
+  "title": "Prompts",
+  "description": "Rules for AI Code Editors for Supabase",
+  "published": true,
+  "featured": false,
+  "component": false,
+  "fragment": false,
+  "toc": true,
+  "body": {
+    "raw": "\n## Installation\n\n<BlockItem name=\"ai-editor-rules\" description=\"Rules for AI Code Editors for Supabase\" />\n\n## Folder structure\n\n<RegistryBlock itemName=\"ai-editor-rules\" />\n\n## Usage\n\nRunning the install command above will add the rule to the `.cursor/rules` directory in your project. If you don't have a `.cursor/rules` directory, it will be created for you.\n\nRules are project-specific, so you can have different rules for different projects depending on your needs. Rules are automatically included when matching files are referenced.\n\nIf you're installing the rules in a monorepo, you'll need to move the `.cursor` directory at the\nroot directory and update all paths in the `.mdc` files.\n",
+    "code": "var Component=(()=>{var f=Object.create;var a=Object.defineProperty;var m=Object.getOwnPropertyDescriptor;var p=Object.getOwnPropertyNames;var y=Object.getPrototypeOf,g=Object.prototype.hasOwnProperty;var b=(n,e)=>()=>(e||n((e={exports:{}}).exports,e),e.exports),k=(n,e)=>{for(var o in e)a(n,o,{get:e[o],enumerable:!0})},c=(n,e,o,t)=>{if(e&&typeof e==\"object\"||typeof e==\"function\")for(let i of p(e))!g.call(n,i)&&i!==o&&a(n,i,{get:()=>e[i],enumerable:!(t=m(e,i))||t.enumerable});return n};var x=(n,e,o)=>(o=n!=null?f(y(n)):{},c(e||!n||!n.__esModule?a(o,\"default\",{value:n,enumerable:!0}):o,n)),j=n=>c(a({},\"__esModule\",{value:!0}),n);var l=b((N,s)=>{s.exports=_jsx_runtime});var _={};k(_,{default:()=>h,frontmatter:()=>R});var r=x(l()),R={title:\"Prompts\",description:\"Rules for AI Code Editors for Supabase\"};function d(n){let e={a:\"a\",code:\"code\",h2:\"h2\",p:\"p\",span:\"span\",...n.components},{BlockItem:o,RegistryBlock:t}=e;return o||u(\"BlockItem\",!0),t||u(\"RegistryBlock\",!0),(0,r.jsxs)(r.Fragment,{children:[(0,r.jsxs)(e.h2,{id:\"installation\",children:[(0,r.jsx)(e.a,{className:\"subheading-anchor\",\"aria-label\":\"Link to section\",href:\"#installation\",children:(0,r.jsx)(e.span,{className:\"icon icon-link\"})}),\"Installation\"]}),`\n`,(0,r.jsx)(o,{name:\"ai-editor-rules\",description:\"Rules for AI Code Editors for Supabase\"}),`\n`,(0,r.jsxs)(e.h2,{id:\"folder-structure\",children:[(0,r.jsx)(e.a,{className:\"subheading-anchor\",\"aria-label\":\"Link to section\",href:\"#folder-structure\",children:(0,r.jsx)(e.span,{className:\"icon icon-link\"})}),\"Folder structure\"]}),`\n`,(0,r.jsx)(t,{itemName:\"ai-editor-rules\"}),`\n`,(0,r.jsxs)(e.h2,{id:\"usage\",children:[(0,r.jsx)(e.a,{className:\"subheading-anchor\",\"aria-label\":\"Link to section\",href:\"#usage\",children:(0,r.jsx)(e.span,{className:\"icon icon-link\"})}),\"Usage\"]}),`\n`,(0,r.jsxs)(e.p,{children:[\"Running the install command above will add the rule to the \",(0,r.jsx)(e.code,{children:\".cursor/rules\"}),\" directory in your project. If you don't have a \",(0,r.jsx)(e.code,{children:\".cursor/rules\"}),\" directory, it will be created for you.\"]}),`\n`,(0,r.jsx)(e.p,{children:\"Rules are project-specific, so you can have different rules for different projects depending on your needs. Rules are automatically included when matching files are referenced.\"}),`\n`,(0,r.jsxs)(e.p,{children:[\"If you're installing the rules in a monorepo, you'll need to move the \",(0,r.jsx)(e.code,{children:\".cursor\"}),` directory at the\nroot directory and update all paths in the `,(0,r.jsx)(e.code,{children:\".mdc\"}),\" files.\"]})]})}function h(n={}){let{wrapper:e}=n.components||{};return e?(0,r.jsx)(e,{...n,children:(0,r.jsx)(d,{...n})}):d(n)}function u(n,e){throw new Error(\"Expected \"+(e?\"component\":\"object\")+\" `\"+n+\"` to be defined: you likely forgot to import, pass, or provide it.\")}return j(_);})();\n;return Component;"
+  },
+  "_id": "docs/ai-editors-rules/prompts.mdx",
+  "_raw": {
+    "sourceFilePath": "docs/ai-editors-rules/prompts.mdx",
+    "sourceFileName": "prompts.mdx",
+    "sourceFileDir": "docs/ai-editors-rules",
+    "contentType": "mdx",
+    "flattenedPath": "docs/ai-editors-rules/prompts"
+  },
+  "type": "Doc",
+  "slug": "/docs/ai-editors-rules/prompts",
+  "slugAsParams": "ai-editors-rules/prompts"
+}

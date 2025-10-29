@@ -1,0 +1,24 @@
+{
+  "title": "Figma",
+  "description": "Every component recreated in Figma. With customizable props, typography and icons.",
+  "published": true,
+  "featured": false,
+  "component": false,
+  "fragment": false,
+  "toc": true,
+  "body": {
+    "raw": "\nThe Figma UI Kit is open sourced by [Pietro Schirano](https://twitter.com/skirano).\n\n<AspectRatio ratio={12 / 9} className=\"w-full mt-4\">\n  <iframe\n    src=\"https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fdesign%2FWCja3lpEj1DeunV1d5zu5D%2FDesign-System%3Fnode-id%3D520%253A1715%26t%3Dz8Quu7PADvSqD0Ss-1\"\n    className=\"h-full w-full overflow-hidden rounded-lg border bg-surface-100\"\n  ></iframe>\n</AspectRatio>\n\n## Additional resources\n\n### Figma Diagram Kit\n\n<AspectRatio ratio={12 / 9} className=\"w-full mt-4\">\n  <iframe\n    src=\"https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fdesign%2Fd6EV8a9G2yLht01AayAkmJ%2FDiagram-Kit-(Variables)%3Fnode-id%3D47%253A7265%26t%3D3JsjisJgJqD08wGG-1\"\n    className=\"h-full w-full overflow-hidden rounded-lg border bg-surface-100\"\n  ></iframe>\n</AspectRatio>\n\n## Grab a copy\n\nhttps://www.figma.com/community/file/1203061493325953101\n",
+    "code": "var Component=(()=>{var h=Object.create;var t=Object.defineProperty;var f=Object.getOwnPropertyDescriptor;var p=Object.getOwnPropertyNames;var u=Object.getPrototypeOf,g=Object.prototype.hasOwnProperty;var w=(a,e)=>()=>(e||a((e={exports:{}}).exports,e),e.exports),b=(a,e)=>{for(var n in e)t(a,n,{get:e[n],enumerable:!0})},s=(a,e,n,o)=>{if(e&&typeof e==\"object\"||typeof e==\"function\")for(let r of p(e))!g.call(a,r)&&r!==n&&t(a,r,{get:()=>e[r],enumerable:!(o=f(e,r))||o.enumerable});return a};var F=(a,e,n)=>(n=a!=null?h(u(a)):{},s(e||!a||!a.__esModule?t(n,\"default\",{value:a,enumerable:!0}):n,a)),y=a=>s(t({},\"__esModule\",{value:!0}),a);var l=w((N,c)=>{c.exports=_jsx_runtime});var x={};b(x,{default:()=>m,frontmatter:()=>D});var i=F(l()),D={title:\"Figma\",description:\"Every component recreated in Figma. With customizable props, typography and icons.\"};function d(a){let e={a:\"a\",h2:\"h2\",h3:\"h3\",p:\"p\",span:\"span\",...a.components},{AspectRatio:n}=e;return n||k(\"AspectRatio\",!0),(0,i.jsxs)(i.Fragment,{children:[(0,i.jsxs)(e.p,{children:[\"The Figma UI Kit is open sourced by \",(0,i.jsx)(e.a,{href:\"https://twitter.com/skirano\",children:\"Pietro Schirano\"}),\".\"]}),`\n`,(0,i.jsx)(n,{ratio:12/9,className:\"w-full mt-4\",children:(0,i.jsx)(\"iframe\",{src:\"https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fdesign%2FWCja3lpEj1DeunV1d5zu5D%2FDesign-System%3Fnode-id%3D520%253A1715%26t%3Dz8Quu7PADvSqD0Ss-1\",className:\"h-full w-full overflow-hidden rounded-lg border bg-surface-100\"})}),`\n`,(0,i.jsxs)(e.h2,{id:\"additional-resources\",children:[(0,i.jsx)(e.a,{className:\"subheading-anchor\",\"aria-label\":\"Link to section\",href:\"#additional-resources\",children:(0,i.jsx)(e.span,{className:\"icon icon-link\"})}),\"Additional resources\"]}),`\n`,(0,i.jsxs)(e.h3,{id:\"figma-diagram-kit\",children:[(0,i.jsx)(e.a,{className:\"subheading-anchor\",\"aria-label\":\"Link to section\",href:\"#figma-diagram-kit\",children:(0,i.jsx)(e.span,{className:\"icon icon-link\"})}),\"Figma Diagram Kit\"]}),`\n`,(0,i.jsx)(n,{ratio:12/9,className:\"w-full mt-4\",children:(0,i.jsx)(\"iframe\",{src:\"https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fdesign%2Fd6EV8a9G2yLht01AayAkmJ%2FDiagram-Kit-(Variables)%3Fnode-id%3D47%253A7265%26t%3D3JsjisJgJqD08wGG-1\",className:\"h-full w-full overflow-hidden rounded-lg border bg-surface-100\"})}),`\n`,(0,i.jsxs)(e.h2,{id:\"grab-a-copy\",children:[(0,i.jsx)(e.a,{className:\"subheading-anchor\",\"aria-label\":\"Link to section\",href:\"#grab-a-copy\",children:(0,i.jsx)(e.span,{className:\"icon icon-link\"})}),\"Grab a copy\"]}),`\n`,(0,i.jsx)(e.p,{children:(0,i.jsx)(e.a,{href:\"https://www.figma.com/community/file/1203061493325953101\",children:\"https://www.figma.com/community/file/1203061493325953101\"})})]})}function m(a={}){let{wrapper:e}=a.components||{};return e?(0,i.jsx)(e,{...a,children:(0,i.jsx)(d,{...a})}):d(a)}function k(a,e){throw new Error(\"Expected \"+(e?\"component\":\"object\")+\" `\"+a+\"` to be defined: you likely forgot to import, pass, or provide it.\")}return y(x);})();\n;return Component;"
+  },
+  "_id": "docs/figma.mdx",
+  "_raw": {
+    "sourceFilePath": "docs/figma.mdx",
+    "sourceFileName": "figma.mdx",
+    "sourceFileDir": "docs",
+    "contentType": "mdx",
+    "flattenedPath": "docs/figma"
+  },
+  "type": "Doc",
+  "slug": "/docs/figma",
+  "slugAsParams": "figma"
+}

@@ -1,0 +1,24 @@
+{
+  "title": "Navigation",
+  "description": "Navigation patterns help users understand where they are and where they can go next.",
+  "published": true,
+  "featured": false,
+  "component": false,
+  "fragment": false,
+  "toc": true,
+  "body": {
+    "raw": "\nSupabase has a necessarily complex navigation system to handle multiple products and levels of hierarchy. This page introduces those general patterns, best practices, and the components involved.\n\n## Components\n\n### NavMenu\n\nA horizontal list of related views within a consistent PageLayout context, allowing for clearer page-level organisation. Activating a NavMenu item should trigger a URL change.\n\n[NavMenu component guidelines](../components/nav-menu)\n",
+    "code": "var Component=(()=>{var p=Object.create;var i=Object.defineProperty;var m=Object.getOwnPropertyDescriptor;var u=Object.getOwnPropertyNames;var g=Object.getPrototypeOf,v=Object.prototype.hasOwnProperty;var x=(e,n)=>()=>(n||e((n={exports:{}}).exports,n),n.exports),f=(e,n)=>{for(var t in n)i(e,t,{get:n[t],enumerable:!0})},r=(e,n,t,s)=>{if(n&&typeof n==\"object\"||typeof n==\"function\")for(let o of u(n))!v.call(e,o)&&o!==t&&i(e,o,{get:()=>n[o],enumerable:!(s=m(n,o))||s.enumerable});return e};var N=(e,n,t)=>(t=e!=null?p(g(e)):{},r(n||!e||!e.__esModule?i(t,\"default\",{value:e,enumerable:!0}):t,e)),y=e=>r(i({},\"__esModule\",{value:!0}),e);var l=x((M,c)=>{c.exports=_jsx_runtime});var b={};f(b,{default:()=>d,frontmatter:()=>_});var a=N(l()),_={title:\"Navigation\",description:\"Navigation patterns help users understand where they are and where they can go next.\"};function h(e){let n={a:\"a\",h2:\"h2\",h3:\"h3\",p:\"p\",span:\"span\",...e.components};return(0,a.jsxs)(a.Fragment,{children:[(0,a.jsx)(n.p,{children:\"Supabase has a necessarily complex navigation system to handle multiple products and levels of hierarchy. This page introduces those general patterns, best practices, and the components involved.\"}),`\n`,(0,a.jsxs)(n.h2,{id:\"components\",children:[(0,a.jsx)(n.a,{className:\"subheading-anchor\",\"aria-label\":\"Link to section\",href:\"#components\",children:(0,a.jsx)(n.span,{className:\"icon icon-link\"})}),\"Components\"]}),`\n`,(0,a.jsxs)(n.h3,{id:\"navmenu\",children:[(0,a.jsx)(n.a,{className:\"subheading-anchor\",\"aria-label\":\"Link to section\",href:\"#navmenu\",children:(0,a.jsx)(n.span,{className:\"icon icon-link\"})}),\"NavMenu\"]}),`\n`,(0,a.jsx)(n.p,{children:\"A horizontal list of related views within a consistent PageLayout context, allowing for clearer page-level organisation. Activating a NavMenu item should trigger a URL change.\"}),`\n`,(0,a.jsx)(n.p,{children:(0,a.jsx)(n.a,{href:\"../components/nav-menu\",children:\"NavMenu component guidelines\"})})]})}function d(e={}){let{wrapper:n}=e.components||{};return n?(0,a.jsx)(n,{...e,children:(0,a.jsx)(h,{...e})}):h(e)}return y(b);})();\n;return Component;"
+  },
+  "_id": "docs/ui-patterns/navigation.mdx",
+  "_raw": {
+    "sourceFilePath": "docs/ui-patterns/navigation.mdx",
+    "sourceFileName": "navigation.mdx",
+    "sourceFileDir": "docs/ui-patterns",
+    "contentType": "mdx",
+    "flattenedPath": "docs/ui-patterns/navigation"
+  },
+  "type": "Doc",
+  "slug": "/docs/ui-patterns/navigation",
+  "slugAsParams": "ui-patterns/navigation"
+}
