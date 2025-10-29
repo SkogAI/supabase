@@ -311,6 +311,14 @@ enabled = false
 # Obtain from https://clerk.com/setup/supabase
 # domain = "example.clerk.accounts.dev"
 
+# SAML 2.0 Single Sign-On (Enterprise SSO)
+# Requires self-hosted Supabase instance
+# See docs/SAML_QUICKSTART.md for complete setup guide
+[auth.external.saml]
+enabled = true
+# SAML metadata is auto-generated at: http://localhost:54321/auth/v1/sso/saml/metadata
+# Register providers via Admin API or scripts/saml-setup.sh
+
 # OAuth server configuration
 [auth.oauth_server]
 # Enable OAuth server functionality
