@@ -174,16 +174,32 @@ grep GOTRUE_SAML_PRIVATE_KEY .env | grep " " && echo "Key has spaces - FIX NEEDE
 
 ## Security Checklist
 
-Before going to production:
+⚠️ **CRITICAL SECURITY NOTICE**: Read `SECURITY_NOTICE.md` before production deployment!
 
-- [ ] Use HTTPS for all endpoints (update URLs in ZITADEL)
-- [ ] Store SAML private key in secure secrets manager
-- [ ] Remove private key from .env and use environment-based secrets
-- [ ] Enable audit logging in GoTrue
-- [ ] Set up certificate rotation schedule (annually)
-- [ ] Configure proper CORS settings
-- [ ] Implement rate limiting for SSO endpoints
-- [ ] Set up monitoring and alerting for auth failures
+The SAML private key is currently committed in `.env`. This is acceptable for local development but **MUST** be addressed before production.
+
+### Before Going to Production:
+
+- [ ] **Generate NEW production key** (do not use the committed key)
+- [ ] **Store key in secrets manager** (AWS, Azure, Vault, etc.)
+- [ ] **Remove key from .env** and use environment variables
+- [ ] **Update ZITADEL** with new SP metadata
+- [ ] **Use HTTPS** for all endpoints (update URLs in ZITADEL)
+- [ ] **Enable audit logging** in GoTrue
+- [ ] **Set up certificate rotation** schedule (annually)
+- [ ] **Configure CORS** settings properly
+- [ ] **Implement rate limiting** for SSO endpoints
+- [ ] **Set up monitoring** and alerting for auth failures
+- [ ] **Test complete flow** in staging environment
+- [ ] **Document key rotation** procedures
+
+### Development vs Production Keys
+
+| Environment | Key Location | Notes |
+|-------------|--------------|-------|
+| **Development** | .env (committed) | ✅ OK - Already exposed in git |
+| **Staging** | Secrets manager | ⚠️ Generate separate key |
+| **Production** | Secrets manager | ⚠️ NEVER use committed key |
 
 ## Available Scripts
 

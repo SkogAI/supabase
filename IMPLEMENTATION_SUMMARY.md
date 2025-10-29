@@ -47,7 +47,7 @@ All configuration validation checks pass:
 The issue description mentioned "Enable Auth Service" and referenced STATUS.md showing "Phase 0". However:
 
 - **STATUS.md does not exist** in this repository
-- **Auth service was already enabled** in docker-compose.yml (lines 84-166)
+- **Auth service was already enabled** in docker-compose.yml
 - The auth service (supabase-auth) was already configured and ready to run
 
 What was actually needed (and now completed):
@@ -116,7 +116,7 @@ From the issue description:
 
 1. ✅ **Hardcoded private key in docker-compose.override.yml**
    - Solution: Used environment variable substitution in docker-compose.yml
-   - Private key stored in .env (not committed in production)
+   - ⚠️ Private key currently in .env (see security warning below)
 
 2. ✅ **Auth service not enabled**
    - Finding: Auth service was already enabled
@@ -128,14 +128,28 @@ From the issue description:
 
 ## Security Notes
 
-⚠️ **Important**: The SAML private key in `.env` is for development/testing.
+⚠️ **CRITICAL SECURITY WARNING**: The SAML private key is currently committed in `.env` file!
 
-For production deployments:
-- Use environment-specific secrets management
-- Never commit private keys to git
-- Rotate keys annually
-- Use HTTPS for all endpoints
-- Enable audit logging
+**Immediate Actions Required:**
+
+1. **For Development/Testing:** This is acceptable for local development only
+2. **Before Production:**
+   - Remove the private key from .env before deploying
+   - Add .env to .gitignore (if not already)
+   - Use environment variables or secrets management:
+     - Docker secrets
+     - HashiCorp Vault
+     - AWS Secrets Manager
+     - Azure Key Vault
+     - Environment-specific .env files (not committed)
+
+**Production Deployment Checklist:**
+- [ ] Remove GOTRUE_SAML_PRIVATE_KEY from committed .env
+- [ ] Set key via environment variable or secrets manager
+- [ ] Rotate the current key (as it's now public in git history)
+- [ ] Use HTTPS for all endpoints
+- [ ] Enable audit logging
+- [ ] Implement annual key rotation schedule
 
 ## Quick Reference
 

@@ -105,14 +105,22 @@ curl -L "http://localhost:8000/auth/v1/sso?domain=yourdomain.com"
 
 ## Security Notes
 
-⚠️ **IMPORTANT**: The SAML private key in `.env` is for development/testing only.
+⚠️ **CRITICAL**: The SAML private key has been committed to `.env` for development.
 
-For production:
-1. Use environment-specific secrets management (e.g., AWS Secrets Manager, HashiCorp Vault)
-2. Never commit private keys to version control
-3. Rotate keys annually
-4. Use strong certificates with proper expiration dates
-5. Enable audit logging for authentication events
+**Current Status:**
+- ✅ OK for local development and testing
+- ⚠️ MUST CHANGE before production deployment
+
+**Production Requirements:**
+1. **Generate new production key** - DO NOT use the committed key
+2. **Use secrets management** (AWS Secrets Manager, HashiCorp Vault, etc.)
+3. **Never commit production keys** to version control
+4. **Rotate keys annually** or after any exposure
+5. **Enable audit logging** for authentication events
+6. **Use HTTPS** for all endpoints
+7. **Implement key rotation** schedule
+
+**Important:** See `SECURITY_NOTICE.md` for detailed security guidance and remediation steps.
 
 ## Troubleshooting
 
