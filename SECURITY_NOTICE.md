@@ -10,7 +10,7 @@ This was done as part of the development setup process, but represents a securit
 
 - ✅ `.env` is in `.gitignore` - Future changes won't be committed
 - ⚠️ However, the current version with the private key is in git history
-- ⚠️ The key in git history: `GOTRUE_SAML_PRIVATE_KEY=MIIEpQ...`
+- ⚠️ A SAML private key exists in the committed .env file
 
 ## Immediate Actions
 
@@ -64,8 +64,8 @@ The committed key can be used for:
 
 4. **Remove Old Key from .env**
    ```bash
-   # Comment out or remove the line
-   # GOTRUE_SAML_PRIVATE_KEY=MIIEpQ...
+   # Comment out or remove the line in .env
+   # GOTRUE_SAML_PRIVATE_KEY=<remove-this-line>
    ```
 
 ## Why This Matters
