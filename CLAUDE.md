@@ -100,17 +100,32 @@ uv pip install -r requirements-dev.txt
 ### SAML SSO Operations
 
 ```bash
+# Validate complete SAML configuration (33 automated checks)
+./scripts/validate-saml-complete.sh
+
+# Quick configuration check
+./scripts/validate-saml-config.sh
+
+# Generate SAML certificates
+./scripts/generate-saml-key.sh
+
 # Automated SAML setup (generates certs, creates provider)
 ./scripts/saml-setup.sh -d yourcompany.com -m https://instance.zitadel.cloud/saml/v2/metadata
 
 # Skip certificate generation if already have certs
 ./scripts/saml-setup.sh -d yourcompany.com -m https://metadata-url -s
 
-# Manual certificate generation
-openssl genrsa -out saml_sp_private.key 2048
-openssl req -new -x509 -key saml_sp_private.key \
-  -out saml_sp_cert.pem -days 3650 \
-  -subj "/C=US/ST=State/L=City/O=Org/CN=domain.com"
+# Test SAML endpoints
+./scripts/test_saml_endpoints.sh
+
+# Test complete auth flow
+./scripts/test_saml.sh --user-email test@yourcompany.com
+
+# View SAML logs
+./scripts/check_saml_logs.sh
+
+# Validate attribute mapping
+./scripts/validate_saml_attributes.sh
 
 # Get SP metadata
 curl http://localhost:8000/auth/v1/sso/saml/metadata
@@ -131,7 +146,9 @@ docker logs supabase-auth 2>&1 | grep -i saml | tail -50
 
 # Health check
 curl http://localhost:8000/auth/v1/sso/saml/metadata
-````
+```
+
+**Documentation**: See [SAML_README.md](SAML_README.md) for complete setup guide
 
 ## Architecture
 
