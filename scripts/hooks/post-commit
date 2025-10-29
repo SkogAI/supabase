@@ -1,0 +1,26 @@
+#!/bin/bash
+# Git post-commit hook for skogai memory system
+# Automatically syncs changes to Basic Memory MCP after commits
+
+# Get repository root
+REPO_ROOT=$(git rev-parse --show-toplevel)
+SKOGAI_DIR="$REPO_ROOT/skogai"
+
+# Check if this commit modified skogai directory
+if git diff-tree --no-commit-id --name-only -r HEAD | grep -q "^skogai/"; then
+    echo "📝 Detected changes in skogai/ - syncing to memory system..."
+    
+    # Check if sync script exists
+    if [[ -f "$REPO_ROOT/scripts/sync-memory.sh" ]]; then
+        "$REPO_ROOT/scripts/sync-memory.sh" --quiet
+        if [[ $? -eq 0 ]]; then
+            echo "✓ Memory sync complete"
+        else
+            echo "⚠ Memory sync failed (non-fatal)"
+        fi
+    else
+        echo "⚠ sync-memory.sh not found, skipping sync"
+    fi
+fi
+
+exit 0
