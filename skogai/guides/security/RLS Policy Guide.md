@@ -1,9 +1,5 @@
 ---
-<<<<<<< HEAD
-title: RLS Policy Complete Guide
-=======
 title: RLS Policy Guide
->>>>>>> heutonasueno
 type: note
 permalink: guides/security/rls-policy-guide
 tags:
@@ -12,22 +8,13 @@ tags:
 - policies
 - postgresql
 - access-control
-<<<<<<< HEAD
 - testing
 - implementation
-- consolidated
----
-
-# RLS Policy Complete Guide
-
-Complete guide to Row Level Security policies with patterns, best practices, implementation details, and comprehensive testing strategies.
-=======
 ---
 
 # RLS Policy Guide
 
 Complete guide to Row Level Security policies with patterns, best practices, and testing strategies.
->>>>>>> heutonasueno
 
 ## Overview
 
@@ -165,132 +152,6 @@ Complete guide to Row Level Security policies with patterns, best practices, and
 
 [migration] 20251005065505_initial_schema.sql created initial RLS policies for profiles and posts #history #database
 [migration] 20251005053101_enhanced_rls_policies.sql enhanced with role-specific policies #history #database
-
-<<<<<<< HEAD
-## Implementation Summary
-
-[summary] Comprehensive RLS implementation with 12 policies across 2 tables #implementation #overview
-[implementation] Migration 20251005053101_enhanced_rls_policies.sql created role-specific policies #migration #database
-[testing] Comprehensive test suite at tests/rls_test_suite.sql validates all policies #testing #automation
-[testing] npm script test:rls runs full RLS validation suite #testing #workflow
-[documentation] Complete implementation covering service role, authenticated, and anonymous access #security #comprehensive
-
-### Policy Coverage
-
-[coverage-profiles] Profiles table has 6 policies: 1 service_role, 4 authenticated, 1 anon #table #policies
-[coverage-posts] Posts table has 6 policies: 1 service_role, 4 authenticated, 1 anon #table #policies
-[policy] Service role policies grant full admin access bypassing all restrictions #admin #access
-[policy] Authenticated policies allow SELECT all, INSERT/UPDATE/DELETE own only #user #access
-[policy] Anonymous policies allow SELECT published content only, no modifications #public #readonly
-
-### Access Control Matrix
-
-[access] Service role can view all profiles, posts (published + drafts) #admin #full-access
-[access] Authenticated users can view all profiles, published posts + own drafts #user #conditional
-[access] Authenticated users can create/update/delete own profiles and posts only #user #ownership
-[access] Anonymous users can view all profiles, published posts only #public #readonly
-[access] Anonymous users cannot create/update/delete any data #public #readonly
-[restriction] Users cannot view other users' draft posts #security #isolation
-[restriction] Users cannot modify other users' profiles or posts #security #ownership
-
-## Testing RLS - Local Testing
-
-[test-local] Start Supabase with `npm run db:start` for local testing #workflow #setup
-[test-local] Reset database with `npm run db:reset` to apply migrations and seed data #workflow #setup
-[test-local] Access Studio at http://localhost:8000 for SQL Editor testing #workflow #ui
-[test-local] SQL Editor runs as service role by default bypassing RLS #testing #context
-
-### Testing Different User Contexts
-
-[test-auth] Set JWT claim to simulate authenticated user: `SELECT set_config('request.jwt.claim.sub', 'uuid', true)` #testing #simulation
-[test-auth] Reset JWT claim with `SELECT set_config('request.jwt.claim.sub', NULL, true)` #testing #cleanup
-[test-anon] Switch to anonymous role with `SET ROLE anon` #testing #simulation
-[test-anon] Reset from anonymous role with `RESET ROLE` #testing #cleanup
-[test-service] Service role is default in SQL Editor, has full access #testing #admin
-
-### Seed Data for Testing
-
-[seed] Alice user: 00000000-0000-0000-0000-000000000001 (alice@example.com) #testing #data
-[seed] Bob user: 00000000-0000-0000-0000-000000000002 (bob@example.com) #testing #data
-[seed] Charlie user: 00000000-0000-0000-0000-000000000003 (charlie@example.com) #testing #data
-[seed] All test users have password "password123" #testing #auth
-[test-example] Test Alice accessing data: `SELECT set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-000000000001', true)` #testing #example
-
-## Testing RLS - Automated Test Suite
-
-[test-suite] Comprehensive SQL test suite at tests/rls_test_suite.sql (11KB+) #testing #automation
-[test-suite] Run with `npm run test:rls` command #testing #workflow
-[test-validation] Validates RLS enabled on all public tables #testing #verification
-[test-validation] Validates service role has full access #testing #admin
-[test-validation] Validates authenticated users can view all public data #testing #user
-[test-validation] Validates authenticated users can only modify own data #testing #ownership
-[test-validation] Validates anonymous users have read-only access #testing #readonly
-[test-validation] Validates anonymous users cannot modify any data #testing #restriction
-[test-validation] Validates cross-user access restrictions #testing #isolation
-[test-validation] Validates service role can bypass restrictions #testing #admin
-
-### Expected Test Output
-
-[output] All tests show "✅ PASS" with descriptions #testing #success
-[output] Test suite reports "TEST SUITE COMPLETE - All tests passed!" #testing #validation
-[test-failure] Any failures indicate policy misconfiguration requiring investigation #testing #troubleshooting
-
-## Testing RLS - JavaScript/TypeScript
-
-[test-js] Use @supabase/supabase-js client for integration testing #testing #client
-[test-js] Create anonymous client with anon key for public access tests #testing #anonymous
-[test-js] Create authenticated client after signInWithPassword for user tests #testing #authenticated
-[test-js] Create service client with service_role key for admin tests #testing #admin
-[test-example] Test anonymous read: `supabase.from('posts').select().eq('published', true)` #testing #sql
-[test-example] Test authenticated update: `supabase.from('profiles').update({bio}).eq('id', user.id)` #testing #sql
-[test-assertion] Expect error=null for allowed operations #testing #validation
-[test-assertion] Expect data=[] (empty array) for blocked operations #testing #validation
-
-## Testing RLS - CI/CD Integration
-
-[ci] GitHub Actions workflow schema-lint.yml includes RLS validation #ci #automation
-[ci] Workflow checks for tables without RLS policies #ci #validation
-[ci] Workflow runs test suite with `supabase db execute --file tests/rls_test_suite.sql` #ci #testing
-[ci] CI fails if any tables lack RLS or tests fail #ci #security
-[integration] Add custom RLS tests to migration validation workflow #ci #customization
-
-## Testing Scenarios - Common Patterns
-
-[scenario] User registration creates profile via trigger, user can update own profile #testing #workflow
-[scenario] Post creation as draft, user sees own draft, others cannot #testing #privacy
-[scenario] Post publishing makes content visible to anonymous users #testing #access
-[scenario] Data breach attempts blocked by RLS at database level #testing #security
-[test-breach] Anonymous user attempts INSERT on posts table - should fail #testing #attack
-[test-breach] Authenticated user attempts UPDATE on other user's post - should affect 0 rows #testing #attack
-[test-breach] Anonymous user attempts to view auth.users emails - should error #testing #attack
-
-## Production Readiness
-
-[production] Review all policies before deployment to prevent data exposure #deployment #security
-[production] Test with real user scenarios not just unit tests #deployment #validation
-[production] Monitor for unauthorized access attempts in production logs #deployment #monitoring
-[production] Regularly audit policy effectiveness and coverage #deployment #maintenance
-
-### Adding New Tables
-
-[workflow] Enable RLS: `ALTER TABLE table ENABLE ROW LEVEL SECURITY` #workflow #setup
-[workflow] Add service role policy with `FOR ALL TO service_role USING (true) WITH CHECK (true)` #workflow #admin
-[workflow] Add authenticated policies with appropriate USING/WITH CHECK conditions #workflow #user
-[workflow] Add anonymous policy if public read access needed #workflow #public
-[workflow] Document policies with `COMMENT ON TABLE` statements #workflow #documentation
-[workflow] Add table to tests/rls_test_suite.sql for validation #workflow #testing
-
-## Key Takeaways
-
-[takeaway] RLS enforced at database level, cannot be bypassed by application code #security #guarantee
-[takeaway] Role-based policies for service_role, authenticated, and anon #security #roles
-[takeaway] Comprehensive automated test suite validates all policies #testing #automation
-[takeaway] Complete documentation guides understanding and extending policies #documentation #maintenance
-[takeaway] Clear patterns and examples for adding new tables #documentation #scalability
-[takeaway] Defense in depth with multiple validation layers #security #architecture
-
-=======
->>>>>>> heutonasueno
 ## Related Documentation
 
 - [[Row Level Security]] - Core RLS concept
@@ -299,15 +160,3 @@ Complete guide to Row Level Security policies with patterns, best practices, and
 - [[Storage Architecture]] - Storage bucket security
 - [[PostgreSQL Database]] - Database configuration
 - [[Authentication System]] - User authentication
-<<<<<<< HEAD
-
-## Source Files Consolidated
-
-This guide consolidates information from:
-- RLS_POLICIES.md (428 lines) - Policy patterns, best practices, troubleshooting
-- RLS_IMPLEMENTATION_SUMMARY.md (242 lines) - Implementation details, policy coverage, access matrix
-- RLS_TESTING.md (591 lines) - Testing guidelines, test suite details, CI/CD integration
-
-All source files have been merged into this comprehensive semantic guide.
-=======
->>>>>>> heutonasueno

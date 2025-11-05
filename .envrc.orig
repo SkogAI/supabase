@@ -1,6 +1,2 @@
-<<<<<<< HEAD
 eval "$(skogcli config export-env --namespace skogai,claude,openai,supabase)" # supabase for "online connected project" envs
-=======
-eval "$(skogcli config export-env --namespace skogai,claude,openai)" # supabase for "online connected project" envs
->>>>>>> heutonasueno
 source .venv/bin/activate
