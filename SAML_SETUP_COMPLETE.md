@@ -1,155 +1,140 @@
-# SAML SSO Setup Complete
-
-## Changes Made
-
-This document summarizes the changes made to enable SAML SSO authentication for the Supabase instance.
-
-### 1. Generated SAML Certificates
-
-- Generated RSA 2048-bit private key using `scripts/generate-saml-key.sh`
-- Created base64-encoded private key for GoTrue configuration
-- Key stored securely in `.env` file (NOT committed to git in production)
-
-### 2. Updated Docker Compose Configuration
-
-**File**: `supabase/docker/docker-compose.yml`
-
-Added SAML environment variables to the `auth` service:
-```yaml
-# SAML SSO Configuration
-GOTRUE_SAML_ENABLED: ${GOTRUE_SAML_ENABLED:-false}
-GOTRUE_SAML_PRIVATE_KEY: ${GOTRUE_SAML_PRIVATE_KEY:-}
-```
-
-These variables are read from the `.env` file and passed to the GoTrue auth service.
-
-### 3. Updated Environment Configuration
-
-**File**: `.env`
-
-Added active SAML configuration:
-```bash
-GOTRUE_SAML_ENABLED=true
-GOTRUE_SAML_PRIVATE_KEY=<base64-encoded-key>
-```
+# SAML Setup - Complete Reference
 
 ## Current Status
+✅ SAML certificates generated (PKCS#1 format)
+✅ `.env` file updated with correct private key format
+✅ Auth service restarted
 
-✅ **Auth Service**: Already enabled in docker-compose.yml (lines 84-166)
-✅ **SAML Configuration**: Added to auth service environment
-✅ **SAML Certificates**: Generated and configured
-✅ **Environment Variables**: Set in .env file
+## What Still Needs to Be Done
 
-## Next Steps
+### 1. Add SAML Provider to Database
 
-To complete the SAML SSO setup, follow these steps:
+```sql
+-- Create SSO provider
+INSERT INTO auth.sso_providers (id, resource_id)
+VALUES (gen_random_uuid(), 'skogai-saml-provider')
+RETURNING id;
 
-### 1. Start/Restart Supabase
+-- Use the returned ID in the next step
+-- Add domain
+INSERT INTO auth.sso_domains (id, sso_provider_id, domain, created_at, updated_at)
+VALUES (gen_random_uuid(), '<ID_FROM_ABOVE>', 'skogai.se', NOW(), NOW());
 
-```bash
-cd supabase/docker
-docker compose down
-docker compose up -d
+-- Add SAML provider configuration
+INSERT INTO auth.saml_providers (
+  id,
+  sso_provider_id,
+  entity_id,
+  metadata_xml,
+  metadata_url,
+  attribute_mapping
+) VALUES (
+  gen_random_uuid(),
+  '<ID_FROM_ABOVE>',
+  'https://auth.aldervall.se/saml/v2/metadata',
+  E'<?xml version="1.0" encoding="UTF-8"?>
+<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" entityID="https://auth.aldervall.se/saml/v2/metadata">
+<IDPSSODescriptor WantAuthnRequestsSigned="1" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+<SingleSignOnService xmlns="urn:oasis:names:tc:SAML:2.0:metadata" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://auth.aldervall.se/saml/v2/SSO"></SingleSignOnService>
+</IDPSSODescriptor>
+</EntityDescriptor>',
+  'https://auth.aldervall.se/saml/v2/metadata',
+  '{"keys": {"email": "Email", "name": "FullName", "first_name": "FirstName", "last_name": "SurName"}}'::jsonb
+);
 ```
 
-### 2. Verify SAML Endpoints
+### 2. Quick Commands
 
-Check that SAML metadata endpoint is accessible:
 ```bash
-curl http://localhost:8000/auth/v1/sso/saml/metadata
+# Add provider to database
+docker exec supabase_db_SkogAI psql -U postgres -d postgres -c "
+INSERT INTO auth.sso_providers (id, resource_id)
+VALUES (gen_random_uuid(), 'skogai-saml-provider')
+RETURNING id;
+"
+
+# Check SAML status
+curl -s "https://localhost:54321/auth/v1/sso?domain=skogai.se" -k | jq '.'
+
+# View auth logs
+docker logs supabase_auth_SkogAI 2>&1 | tail -50
+
+# Check database providers
+docker exec supabase_db_SkogAI psql -U postgres -d postgres -c "
+SELECT sp.id, d.domain, saml.entity_id
+FROM auth.sso_providers sp
+LEFT JOIN auth.sso_domains d ON d.sso_provider_id = sp.id
+LEFT JOIN auth.saml_providers saml ON saml.sso_provider_id = sp.id;
+"
 ```
 
-Expected: XML metadata response with service provider configuration
+## Certificate Files
 
-### 3. Configure ZITADEL Identity Provider
+Located in: `saml-certs/`
+- `saml_sp_private_pkcs1.key` - PKCS#1 format (used in .env)
+- `saml_sp_cert.pem` - Certificate
 
-1. Create SAML application in ZITADEL
-2. Set Entity ID: `http://localhost:8000/auth/v1/sso/saml/metadata`
-3. Set ACS URL: `http://localhost:8000/auth/v1/sso/saml/acs`
-4. Map attributes: `Email`, `FullName`, `FirstName`, `SurName`
-5. Get ZITADEL metadata URL
+## ZITADEL Configuration
 
-### 4. Register SAML Provider in Supabase
+**Your ZITADEL IdP:**
+- Metadata URL: https://auth.aldervall.se/saml/v2/metadata
+- Entity ID: https://auth.aldervall.se/saml/v2/metadata
+- SSO Location: https://auth.aldervall.se/saml/v2/SSO
 
-Use the automated setup script:
-```bash
-./scripts/saml-setup.sh \
-  -d yourdomain.com \
-  -m https://your-zitadel-instance/saml/v2/metadata
-```
+**Your Supabase SP (configure in ZITADEL):**
+- Entity ID: https://localhost:54321/auth/v1/sso/saml/metadata
+- ACS URL: https://localhost:54321/auth/v1/sso/saml/acs
 
-Or register manually via Admin API (requires SERVICE_ROLE_KEY):
-```bash
-curl -X POST "http://localhost:8000/auth/v1/admin/sso/providers" \
-  -H "Authorization: Bearer ${SERVICE_ROLE_KEY}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "type": "saml",
-    "domains": ["yourdomain.com"],
-    "metadata_url": "https://your-zitadel-instance/saml/v2/metadata"
-  }'
-```
+## Testing Flow
 
-### 5. Test SAML Authentication
-
-Run the test suite:
-```bash
-./scripts/test_saml.sh --user-email test@yourdomain.com
-```
-
-Or test manually:
-```bash
-# Initiate SAML login
-curl -L "http://localhost:8000/auth/v1/sso?domain=yourdomain.com"
-```
-
-## Security Notes
-
-⚠️ **CRITICAL**: The SAML private key has been committed to `.env` for development.
-
-**Current Status:**
-- ✅ OK for local development and testing
-- ⚠️ MUST CHANGE before production deployment
-
-**Production Requirements:**
-1. **Generate new production key** - DO NOT use the committed key
-2. **Use secrets management** (AWS Secrets Manager, HashiCorp Vault, etc.)
-3. **Never commit production keys** to version control
-4. **Rotate keys annually** or after any exposure
-5. **Enable audit logging** for authentication events
-6. **Use HTTPS** for all endpoints
-7. **Implement key rotation** schedule
-
-**Important:** See `SECURITY_NOTICE.md` for detailed security guidance and remediation steps.
+1. User visits: `https://localhost:54321/auth/v1/sso?domain=skogai.se`
+2. Supabase redirects to ZITADEL login
+3. User authenticates at ZITADEL
+4. ZITADEL redirects back with SAML assertion
+5. User logged into Supabase
 
 ## Troubleshooting
 
-### 404 on SAML Endpoints
-- Check that auth service is running: `docker ps | grep supabase-auth`
-- Verify Kong routes are configured correctly
-- Check auth service logs: `docker logs supabase-auth`
+### "SAML 2.0 is disabled"
+- Check: `docker exec supabase_auth_SkogAI env | grep SAML`
+- Should see `GOTRUE_SAML_ENABLED=true`
 
-### Invalid Signature Error
-- Verify certificate matches between ZITADEL and Supabase
-- Check that GOTRUE_SAML_PRIVATE_KEY is correctly base64-encoded
-- Ensure no line breaks or extra spaces in the private key
+### "SAML private key not in PKCS#1 format"
+- Key must start with `-----BEGIN RSA PRIVATE KEY-----`
+- Current key is correct (PKCS#1 format)
 
-### User Not Created
-- Check attribute mapping in provider registration
-- Verify email attribute is present in SAML assertion
-- Check auth service logs for errors
+### "No SAML provider found"
+- Run database insert commands above
+- Check with: `SELECT * FROM auth.sso_providers;`
 
-## Documentation References
+### Auth won't start
+- Check logs: `docker logs supabase_auth_SkogAI`
+- Usually means private key format is wrong
 
-- SAML Implementation Guide: `skogai/guides/saml/SAML Implementation Summary.md`
-- ZITADEL Setup: `skogai/guides/saml/ZITADEL SAML Integration Guide.md`
-- Supabase SAML Docs: https://supabase.com/docs/guides/auth/enterprise-sso/auth-sso-saml
-- ZITADEL SAML Docs: https://zitadel.com/docs/guides/integrate/login/saml
+## Environment Variables in .env
 
-## Scripts Available
+```bash
+GOTRUE_SAML_ENABLED=true
+GOTRUE_SAML_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----"
+```
 
-- `scripts/generate-saml-key.sh` - Generate SAML certificates
-- `scripts/saml-setup.sh` - Automated SAML provider registration
-- `scripts/test_saml.sh` - Test SAML authentication flow
-- `scripts/check_saml_logs.sh` - View SAML-related logs
-- `scripts/validate_saml_attributes.sh` - Validate attribute mapping
+**Note:** The private key must be:
+1. In PKCS#1 format (`BEGIN RSA PRIVATE KEY`)
+2. Single line with `\n` for newlines
+3. Wrapped in double quotes
+
+## Key Files Modified
+
+- `.env` - Contains SAML environment variables
+- `saml-certs/saml_sp_private_pkcs1.key` - PKCS#1 private key
+- `saml-certs/saml_sp_cert.pem` - Certificate
+- `scripts/saml-setup.sh` - Updated with local paths
+
+## What Supabase CLI Doesn't Do
+
+The Supabase CLI **does NOT**:
+- Automatically load custom env vars from `.env` into containers
+- Have config.toml support for SAML
+- Persist SAML providers across `db:reset`
+
+You must manually restart auth service after `.env` changes.

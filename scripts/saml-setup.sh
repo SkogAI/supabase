@@ -27,8 +27,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-CERT_DIR="/secure/saml/certs"
-BACKUP_DIR="/backups/saml"
+CERT_DIR="${CERT_DIR:-$(pwd)/saml-certs}"
+BACKUP_DIR="${BACKUP_DIR:-$(pwd)/saml-backups}"
 SUPABASE_URL="${SUPABASE_URL:-http://localhost:8000}"
 SERVICE_ROLE_KEY="${SERVICE_ROLE_KEY:-}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

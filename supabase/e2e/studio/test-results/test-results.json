@@ -1,0 +1,938 @@
+{
+  "config": {
+    "configFile": "/home/skogix/dev/supabase/supabase/e2e/studio/playwright.config.ts",
+    "rootDir": "/home/skogix/dev/supabase/supabase/e2e/studio/features",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 3,
+    "metadata": {
+      "actualWorkers": 4
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/test-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/home/skogix/dev/supabase/supabase/e2e/studio/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 4
+        },
+        "id": "setup",
+        "name": "setup",
+        "testDir": "/home/skogix/dev/supabase/supabase/e2e/studio/features",
+        "testIgnore": [],
+        "testMatch": [
+          "/.*\\.setup\\.ts/"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "/home/skogix/dev/supabase/supabase/e2e/studio/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 4
+        },
+        "id": "Features",
+        "name": "Features",
+        "testDir": "/home/skogix/dev/supabase/supabase/e2e/studio/features",
+        "testIgnore": [],
+        "testMatch": [
+          "/.*\\.spec\\.ts/"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.53.0",
+    "workers": 4,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "_global.setup.ts",
+      "file": "_global.setup.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Global Setup",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "setup",
+              "projectName": "setup",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 2,
+                  "error": {
+                    "message": "Error: browserType.launch: Executable doesn't exist at /home/skogix/.cache/ms-playwright/chromium_headless_shell-1178/chrome-linux/headless_shell\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     pnpm exec playwright install                                        ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝",
+                    "stack": "Error: browserType.launch: Executable doesn't exist at /home/skogix/.cache/ms-playwright/chromium_headless_shell-1178/chrome-linux/headless_shell\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     pnpm exec playwright install                                        ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                  },
+                  "errors": [
+                    {
+                      "message": "Error: browserType.launch: Executable doesn't exist at /home/skogix/.cache/ms-playwright/chromium_headless_shell-1178/chrome-linux/headless_shell\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     pnpm exec playwright install                                        ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-11-05T18:44:37.484Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/home/skogix/dev/supabase/supabase/e2e/studio/test-results/_global.setup.ts-Global-Setup-setup/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "706511a1bb0f809cccea-e757554ade4021482abf",
+          "file": "_global.setup.ts",
+          "line": 20,
+          "column": 6
+        }
+      ]
+    },
+    {
+      "title": "database.spec.ts",
+      "file": "database.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Database",
+          "file": "database.spec.ts",
+          "line": 68,
+          "column": 15,
+          "specs": [],
+          "suites": [
+            {
+              "title": "Schema Visualizer",
+              "file": "database.spec.ts",
+              "line": 93,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "actions works as expected",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 90000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Features",
+                      "projectName": "Features",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "4add86b697651c504d0f-2c21e5ea101a83892837",
+                  "file": "database.spec.ts",
+                  "line": 94,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Tables",
+              "file": "database.spec.ts",
+              "line": 143,
+              "column": 17,
+              "specs": [
+                {
+                  "title": "actions works as expected",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 90000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Features",
+                      "projectName": "Features",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "4add86b697651c504d0f-705f3ab4adeb389a7129",
+                  "file": "database.spec.ts",
+                  "line": 144,
+                  "column": 9
+                },
+                {
+                  "title": "CRUD operations and copy works as expected",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 90000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Features",
+                      "projectName": "Features",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "4add86b697651c504d0f-6f8dd508af084a5f5cfc",
+                  "file": "database.spec.ts",
+                  "line": 180,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Tables columns",
+              "file": "database.spec.ts",
+              "line": 274,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "can view, create, update, delete, and filter table columns",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 90000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Features",
+                      "projectName": "Features",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "4add86b697651c504d0f-9a2624bdb2370f0b4206",
+                  "file": "database.spec.ts",
+                  "line": 275,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Triggers",
+              "file": "database.spec.ts",
+              "line": 339,
+              "column": 17,
+              "specs": [
+                {
+                  "title": "actions works as expected",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 90000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Features",
+                      "projectName": "Features",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "4add86b697651c504d0f-d53b6e2f08c02d513b42",
+                  "file": "database.spec.ts",
+                  "line": 340,
+                  "column": 9
+                },
+                {
+                  "title": "CRUD operations works as expected",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 90000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Features",
+                      "projectName": "Features",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "4add86b697651c504d0f-28889a21afc4b0a1bf0c",
+                  "file": "database.spec.ts",
+                  "line": 363,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Database Indexes",
+              "file": "database.spec.ts",
+              "line": 444,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "actions works as expected",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 90000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Features",
+                      "projectName": "Features",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "4add86b697651c504d0f-41a92566b114cce79166",
+                  "file": "database.spec.ts",
+                  "line": 445,
+                  "column": 9
+                },
+                {
+                  "title": "CRUD operations works as expected",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 90000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Features",
+                      "projectName": "Features",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "4add86b697651c504d0f-c6eec9828564bd2fa2c6",
+                  "file": "database.spec.ts",
+                  "line": 479,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Roles",
+              "file": "database.spec.ts",
+              "line": 534,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "actions works as expected",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 90000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Features",
+                      "projectName": "Features",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "4add86b697651c504d0f-835065ddcfd9ff37ab6b",
+                  "file": "database.spec.ts",
+                  "line": 535,
+                  "column": 9
+                },
+                {
+                  "title": "CRUD operations works as expected",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 90000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Features",
+                      "projectName": "Features",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "4add86b697651c504d0f-a514f8c6621164739377",
+                  "file": "database.spec.ts",
+                  "line": 552,
+                  "column": 9
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Database Enumerated Types",
+          "file": "database.spec.ts",
+          "line": 595,
+          "column": 15,
+          "specs": [
+            {
+              "title": "actions works as expected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4add86b697651c504d0f-fa03dc27b42a0812bb17",
+              "file": "database.spec.ts",
+              "line": 596,
+              "column": 7
+            },
+            {
+              "title": "CRUD operations works as expected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4add86b697651c504d0f-527c4fea07ca64c9e992",
+              "file": "database.spec.ts",
+              "line": 623,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Database Functions",
+          "file": "database.spec.ts",
+          "line": 681,
+          "column": 15,
+          "specs": [
+            {
+              "title": "actions works as expected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4add86b697651c504d0f-6467b13c7f5242886db6",
+              "file": "database.spec.ts",
+              "line": 682,
+              "column": 7
+            },
+            {
+              "title": "CRUD operations works as expected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4add86b697651c504d0f-44ed55869699a84e290d",
+              "file": "database.spec.ts",
+              "line": 708,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "home.spec.ts",
+      "file": "home.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Project",
+          "file": "home.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Can navigate to project home page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d318381359a9b96acb1e-43d698c34cefcfa22956",
+              "file": "home.spec.ts",
+              "line": 6,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "logs.spec.ts",
+      "file": "logs.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Logs",
+          "file": "logs.spec.ts",
+          "line": 43,
+          "column": 6,
+          "specs": [
+            {
+              "title": "API Gateway logs page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ee800b8f709b91acd6c6-6381532c1e622cb7b3e0",
+              "file": "logs.spec.ts",
+              "line": 45,
+              "column": 9
+            },
+            {
+              "title": "Postgres logs page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ee800b8f709b91acd6c6-93ac8c4670aa4bbdae48",
+              "file": "logs.spec.ts",
+              "line": 45,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "sql-editor.spec.ts",
+      "file": "sql-editor.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "SQL Editor",
+          "file": "sql-editor.spec.ts",
+          "line": 52,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should check if SQL editor is working as expected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7fe3f2f2fb7434d2c507-36517798e6ba31de6f57",
+              "file": "sql-editor.spec.ts",
+              "line": 120,
+              "column": 7
+            },
+            {
+              "title": "exporting works as expected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7fe3f2f2fb7434d2c507-6744226bdc2ea1f1a87d",
+              "file": "sql-editor.spec.ts",
+              "line": 160,
+              "column": 7
+            },
+            {
+              "title": "snippet favourite works as expected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7fe3f2f2fb7434d2c507-5769db510f6a452526f5",
+              "file": "sql-editor.spec.ts",
+              "line": 207,
+              "column": 7
+            },
+            {
+              "title": "share with team works as expected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7fe3f2f2fb7434d2c507-3dd1e444d3dd1320e0e7",
+              "file": "sql-editor.spec.ts",
+              "line": 275,
+              "column": 7
+            },
+            {
+              "title": "folders works as expected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7fe3f2f2fb7434d2c507-f5a3e9e037494add98c8",
+              "file": "sql-editor.spec.ts",
+              "line": 367,
+              "column": 7
+            },
+            {
+              "title": "other SQL snippets actions work as expected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7fe3f2f2fb7434d2c507-92594ef80e01b408a6cc",
+              "file": "sql-editor.spec.ts",
+              "line": 461,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "table-editor.spec.ts",
+      "file": "table-editor.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "table editor",
+          "file": "table-editor.spec.ts",
+          "line": 98,
+          "column": 15,
+          "specs": [
+            {
+              "title": "sidebar actions works as expected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f142e7f9eab86f9b4c2e-184a68a1842e347ea740",
+              "file": "table-editor.spec.ts",
+              "line": 141,
+              "column": 7
+            },
+            {
+              "title": "switching schemas work as expected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f142e7f9eab86f9b4c2e-bc579380b46093dfbb17",
+              "file": "table-editor.spec.ts",
+              "line": 196,
+              "column": 7
+            },
+            {
+              "title": "should show rls accordingly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f142e7f9eab86f9b4c2e-92445327fb141c997a4c",
+              "file": "table-editor.spec.ts",
+              "line": 227,
+              "column": 7
+            },
+            {
+              "title": "add enums and show enums on table",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f142e7f9eab86f9b4c2e-574353f2ce981254f8d0",
+              "file": "table-editor.spec.ts",
+              "line": 256,
+              "column": 7
+            },
+            {
+              "title": "Grid editor exporting works as expected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f142e7f9eab86f9b4c2e-e5572dcecdf8f6e65762",
+              "file": "table-editor.spec.ts",
+              "line": 332,
+              "column": 7
+            },
+            {
+              "title": "filtering rows works as expected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f142e7f9eab86f9b4c2e-cb9ea0be8b5258b90299",
+              "file": "table-editor.spec.ts",
+              "line": 471,
+              "column": 7
+            },
+            {
+              "title": "view table definition works as expected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f142e7f9eab86f9b4c2e-06295d5b2520b963bbb7",
+              "file": "table-editor.spec.ts",
+              "line": 508,
+              "column": 7
+            },
+            {
+              "title": "sorting rows works as expected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f142e7f9eab86f9b4c2e-aa290568d617b9373793",
+              "file": "table-editor.spec.ts",
+              "line": 526,
+              "column": 7
+            },
+            {
+              "title": "importing, pagination and large data actions works as expected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Features",
+                  "projectName": "Features",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "f142e7f9eab86f9b4c2e-c408404a1a7e6c2f1d2b",
+              "file": "table-editor.spec.ts",
+              "line": 567,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-11-05T18:44:36.714Z",
+    "duration": 801.748,
+    "expected": 0,
+    "skipped": 32,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

@@ -15,11 +15,16 @@ For your bot to seamlessly interact with Slack, you'll need to configure Slack A
 
 Deploy the following code as an Edge function using the CLI:
 
+```bash
+supabase --project-ref nacho_slacker secrets \
+set SLACK_TOKEN=<xoxb-0000000000-0000000000-01010101010nacho101010>
+```
+
 Here's the code of the Edge Function, you can change the response to handle the text received:
 
 ```ts index.ts
-import { serve } from "https://deno.land/std@0.197.0/http/server.ts";
-import { WebClient } from "https://deno.land/x/slack_web_api@6.7.2/mod.js";
+import { serve } from 'https://deno.land/std@0.197.0/http/server.ts';
+import { WebClient } from 'https://deno.land/x/slack_web_api@6.7.2/mod.js';
 
 const slackBotToken = Deno.env.get("SLACK_TOKEN") ?? "";
 const botClient = new WebClient(slackBotToken);
@@ -31,12 +36,12 @@ serve(async (req) => {
     console.log(JSON.stringify(reqBody, null, 2));
     const { token, challenge, type, event } = reqBody;
 
-    if (type == "url_verification") {
+    if (type == 'url_verification') {
       return new Response(JSON.stringify({ challenge }), {
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
         status: 200,
       });
-    } else if (event.type == "app_mention") {
+    } else if (event.type == 'app_mention') {
       const { user, text, channel, ts } = event;
       // Here you should process the text received and return a response:
       const response = await botClient.chat.postMessage({
@@ -44,14 +49,13 @@ serve(async (req) => {
         text: `Hello <@${user}>!`,
         thread_ts: ts,
       });
-      return new Response("ok", { status: 200 });
+      return new Response('ok', { status: 200 });
     }
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       status: 500,
     });
   }
 });
 ```
-

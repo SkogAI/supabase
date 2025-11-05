@@ -1,0 +1,96 @@
+## PR Mergeability Report
+
+Triggered by push to master: manual
+
+### ⚠️ PRs with Merge Conflicts
+- #212: refactor: generalize branch/workflow management scripts
+
+All scripts now work on any branch/workflow by default, with optional
+filtering via --prefix or --workflow parameters.
+
+Changes:
+- claude-cleanup: Works on all merged branches (optional --prefix filter)
+- claude-sync: Works on all branches (optional --prefix filter)
+- claude-status: Shows all branches (optional --prefix filter)
+- claude-watch: Watches latest workflow (optional --workflow filter)
+- auto-create-pr: Works on any branch (optional --prefix filter)
+
+All scripts maintain backward compatibility while being truly generic.
+No more hardcoded bot-specific logic!
+
+Updated scripts/README.md with:
+- New generic usage examples for all scripts
+- Documentation for optional filtering parameters
+- Added [TODO] entries for all undocumented scripts
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com> (`skogix-script-cleanup`) - **HAS CONFLICTS**
+- #211: . (`skogix`) - **HAS CONFLICTS**
+- #210: . (`session2-new-claude`) - **HAS CONFLICTS**
+- #209: Squash merge skogix into master (`heutonasueno`) - **HAS CONFLICTS**
+- #208: Add test runner script, test template, and update documentation
+
+Co-authored-by: Skogix <690279+Skogix@users.noreply.github.com> (`copilot/fix-a7a7063d-b96b-4025-9c90-2680931cc429`) - **HAS CONFLICTS**
+- #207: docs: add comprehensive local development documentation
+
+- Add CONTRIBUTING.md with detailed contribution guidelines
+- Add ARCHITECTURE.md with system architecture overview
+- Enhance README.md with expanded development workflows
+- Enhance DEVOPS.md with quick reference section
+- Expand troubleshooting guide with more common issues
+
+Co-authored-by: Skogix <690279+Skogix@users.noreply.github.com> (`copilot/fix-705fa5c1-d944-48d8-b2b7-bd129d691c78`) - **HAS CONFLICTS**
+- #206: Add comprehensive database performance monitoring and optimization features
+
+Co-authored-by: Skogix <690279+Skogix@users.noreply.github.com> (`copilot/fix-7f01e436-43ea-4602-a0e4-14470f6ef43e`) - **HAS CONFLICTS**
+- #205: WIP (`claude/issue-185-20251013-1559`) - **HAS CONFLICTS**
+- #204: .  (`claude/issue-162-20251010-1240`) - **HAS CONFLICTS**
+- #202: . (`aaa`) - **HAS CONFLICTS**
+- #201: Merge branch 'skogix-script-cleanup' into 185-a-cleanup-of-the-scripts-folder-to-look-over-the-usage-of-each-script-and-create-a-readme-thereafter (`185-a-cleanup-of-the-scripts-folder-to-look-over-the-usage-of-each-script-and-create-a-readme-thereafter`) - **HAS CONFLICTS**
+- #212: refactor: generalize branch/workflow management scripts
+
+All scripts now work on any branch/workflow by default, with optional
+filtering via --prefix or --workflow parameters.
+
+Changes:
+- claude-cleanup: Works on all merged branches (optional --prefix filter)
+- claude-sync: Works on all branches (optional --prefix filter)
+- claude-status: Shows all branches (optional --prefix filter)
+- claude-watch: Watches latest workflow (optional --workflow filter)
+- auto-create-pr: Works on any branch (optional --prefix filter)
+
+All scripts maintain backward compatibility while being truly generic.
+No more hardcoded bot-specific logic!
+
+Updated scripts/README.md with:
+- New generic usage examples for all scripts
+- Documentation for optional filtering parameters
+- Added [TODO] entries for all undocumented scripts
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com> (`skogix-script-cleanup`) - **HAS CONFLICTS**
+- #211: . (`skogix`) - **HAS CONFLICTS**
+- #210: . (`session2-new-claude`) - **HAS CONFLICTS**
+- #209: Squash merge skogix into master (`heutonasueno`) - **HAS CONFLICTS**
+- #208: Add test runner script, test template, and update documentation
+
+Co-authored-by: Skogix <690279+Skogix@users.noreply.github.com> (`copilot/fix-a7a7063d-b96b-4025-9c90-2680931cc429`) - **HAS CONFLICTS**
+- #207: docs: add comprehensive local development documentation
+
+- Add CONTRIBUTING.md with detailed contribution guidelines
+- Add ARCHITECTURE.md with system architecture overview
+- Enhance README.md with expanded development workflows
+- Enhance DEVOPS.md with quick reference section
+- Expand troubleshooting guide with more common issues
+
+Co-authored-by: Skogix <690279+Skogix@users.noreply.github.com> (`copilot/fix-705fa5c1-d944-48d8-b2b7-bd129d691c78`) - **HAS CONFLICTS**
+- #206: Add comprehensive database performance monitoring and optimization features
+
+Co-authored-by: Skogix <690279+Skogix@users.noreply.github.com> (`copilot/fix-7f01e436-43ea-4602-a0e4-14470f6ef43e`) - **HAS CONFLICTS**
+- #205: WIP (`claude/issue-185-20251013-1559`) - **HAS CONFLICTS**
+- #204: .  (`claude/issue-162-20251010-1240`) - **HAS CONFLICTS**
+- #202: . (`aaa`) - **HAS CONFLICTS**
+- #201: Merge branch 'skogix-script-cleanup' into 185-a-cleanup-of-the-scripts-folder-to-look-over-the-usage-of-each-script-and-create-a-readme-thereafter (`185-a-cleanup-of-the-scripts-folder-to-look-over-the-usage-of-each-script-and-create-a-readme-thereafter`) - **HAS CONFLICTS**
+
